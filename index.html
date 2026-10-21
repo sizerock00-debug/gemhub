@@ -325,7 +325,50 @@ document.getElementById('detailBackdrop').addEventListener('click',e=>{if(e.targ
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDetail()});
 
 // 서버 일정은 실제 등록된 자료만 표시합니다. 형식: {game:'아이온',date:'2026-10-24',name:'서버명',url:'https://서버홈페이지'}
-const serverSchedules=[]; // 추후 실제 일정 데이터 연결
+
+const serverSchedules=[];
+
+async function loadServerSchedules(){
+  if(!authClient){
+    console.error('Supabase 연결을 확인해 주세요.');
+    return;
+  }
+
+  const {data,error}=await authClient
+    .from('server_schedule_requests')
+    .select('game,server_name,opening_at,promotion_url')
+    .eq('status','approved')
+    .order('opening_at',{ascending:true});
+
+  if(error){
+    console.error('서버 일정 불러오기 실패:',error.message);
+    return;
+  }
+
+  serverSchedules.length=0;
+
+  for(const item of data||[]){
+    const date=new Date(item.opening_at);
+    if(Number.isNaN(date.getTime())) continue;
+
+    const koreanDate=new Intl.DateTimeFormat('en-CA',{
+      timeZone:'Asia/Seoul',
+      year:'numeric',
+      month:'2-digit',
+      day:'2-digit'
+    }).format(date);
+
+    serverSchedules.push({
+      game:item.game,
+      date:koreanDate,
+      name:item.server_name,
+      url:item.promotion_url
+    });
+  }
+
+  renderSchedule();
+}
+
 let scheduleMonthOffset=0;
 function scheduleISO(d){return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}
 function renderSchedule(){
@@ -358,6 +401,6 @@ document.getElementById('scheduleToday').addEventListener('click',()=>{scheduleM
 
 renderAds();
 
-renderGames();renderRows();renderSchedule();refreshAuth();loadTradePosts();
+renderGames();renderRows();renderSchedule();loadServerSchedules();refreshAuth();loadTradePosts();
 </script>
 </body></html>
