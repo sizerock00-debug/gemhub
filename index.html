@@ -13,6 +13,13 @@
 
 /* 겜허브 마이페이지 */
 .account-shell{position:relative}.account-menu{position:absolute;right:0;top:calc(100% + 12px);width:min(360px,calc(100vw - 28px));z-index:25;background:linear-gradient(150deg,#261638,#130e20);border:1px solid #8751b3;border-radius:19px;box-shadow:0 24px 70px #000c,0 0 35px #913aff20;padding:17px}.account-menu[hidden],.profile-backdrop[hidden]{display:none!important}.account-menu:before{content:'';position:absolute;right:24px;top:-7px;width:12px;height:12px;background:#261638;border-left:1px solid #8751b3;border-top:1px solid #8751b3;transform:rotate(45deg)}.account-head{display:flex;align-items:center;gap:13px;padding:9px 4px 16px;border-bottom:1px solid #4c315f}.account-avatar{height:62px;width:62px;display:grid;place-items:center;font-size:35px;background:linear-gradient(140deg,#5a2986,#25133d);border:2px solid #a45fe4;border-radius:18px;flex-shrink:0}.account-head strong{display:block;font-size:17px;color:#f4e4ff;overflow-wrap:anywhere}.account-head small{display:block;font-size:12px;color:#b9a5c9;margin-top:5px;overflow-wrap:anywhere}.account-tag{font-size:11px;color:#dcb6ff;border:1px solid #66458b;border-radius:15px;padding:3px 8px;display:inline-block;margin-top:7px}.account-list{display:grid;gap:5px;padding-top:12px}.account-link{width:100%;text-align:left;background:transparent;color:#e9dcf5;border:0;border-radius:10px;padding:12px 10px;display:flex;align-items:center;gap:12px;font-size:14px}.account-link:hover{background:#563077}.account-link span{font-size:19px}.account-link em{margin-left:auto;color:#aa94ba;font-size:11px;font-style:normal}.account-link.logout{color:#f4bad3;border-top:1px solid #4c315f;border-radius:0;margin-top:6px;padding-top:17px}.profile-backdrop{position:fixed;inset:0;z-index:40;background:#05030be8;display:flex;align-items:center;justify-content:center;padding:16px}.profile-dialog{width:min(100%,480px);max-height:92vh;overflow:auto;background:linear-gradient(140deg,#251538,#151020);border:1px solid #9560c5;border-radius:20px;padding:24px;box-shadow:0 25px 80px #000d}.profile-dialog h2{margin:0 0 8px;color:#ebccff}.profile-dialog p{font-size:13px;line-height:1.7;color:#c8b5d8}.profile-dialog label{display:block;margin:16px 0 7px;font-size:13px;color:#dec8ee}.profile-dialog input{width:100%;border-radius:10px;padding:12px;background:#100b1b;color:white;border:1px solid #6e488c}.avatar-options{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.avatar-choice{min-height:56px;border-radius:12px;background:#27193b;border:1px solid #593c76;color:white;font-size:29px}.avatar-choice.active{border:2px solid #d6a1ff;background:#58307c;box-shadow:0 0 16px #b25cff66}.profile-actions{display:flex;gap:9px;margin-top:20px}.profile-actions .btn{flex:1}.profile-message{min-height:18px;margin-top:12px;color:#e8c9ff;font-size:13px;overflow-wrap:anywhere}.profile-close{float:right;border:0;background:transparent;color:white;font-size:25px}.profile-hint{font-size:12px;color:#a995bd;margin-top:8px}@media(max-width:760px){.account-menu{right:-4px}.account-head strong{font-size:15px}}
+
+/* 사용자 사진 업로드 */
+.account-avatar{overflow:hidden}.account-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-tools{margin-top:15px;padding:14px;border:1px solid #593c76;border-radius:12px;background:#1a112a}
+.photo-tools label{margin:0 0 8px}.photo-tools input[type=file]{font-size:12px;padding:9px;width:100%;max-width:100%}
+.photo-preview{display:flex;align-items:center;gap:12px;margin-top:12px}.photo-preview img{width:72px;height:72px;object-fit:cover;border-radius:14px;border:2px solid #a45fe4}
+.photo-preview[hidden]{display:none}.photo-preview small{color:#cdb9df;line-height:1.6}
 </style>
 </head>
 <body>
@@ -24,7 +31,7 @@
 <section class="section notice"><strong>🔒 이용 안내</strong><br>현재 보이는 매물은 디자인 확인용 가상 예시이며 실제 판매 글이 아닙니다. 회원가입과 로그인, 프로필 설정은 사용할 수 있습니다. 거래 글 등록과 광고 신청은 아직 연결되지 않았습니다. 실제 운영 전에는 게임별 거래 정책과 광고 심사 기준을 확인하고 신고·차단 기능을 마련할 예정입니다.</section></main>
 <footer class="footer">© GEMHUB · 겜허브 첫 번째 메인 화면 테스트 버전</footer><div class="toast" id="toast" role="status"></div>
 <div class="auth-backdrop" id="authBackdrop" aria-hidden="true"><div class="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="authTitle"><button class="auth-close" id="authClose" type="button" aria-label="닫기">×</button><h2 id="authTitle">겜허브 회원가입</h2><p id="authDescription">이메일로 가입한 후 받은 인증 메일을 확인해주세요.</p><form id="authForm"><label for="authEmail">이메일</label><input id="authEmail" type="email" autocomplete="email" required placeholder="example@email.com"><label for="authPassword">비밀번호 (8자 이상)</label><input id="authPassword" type="password" autocomplete="current-password" minlength="8" required placeholder="비밀번호 입력"><div class="auth-buttons"><button type="submit" class="btn primary" id="authSubmit">회원가입</button><button type="button" class="btn" id="authSwitch">로그인으로 전환</button></div></form><p class="auth-message" id="authMessage" role="status"></p></div></div>
-<div class="profile-backdrop" id="profileBackdrop" hidden><div class="profile-dialog" role="dialog" aria-modal="true" aria-labelledby="profileTitle"><button class="profile-close" id="profileClose" type="button" aria-label="닫기">×</button><h2 id="profileTitle">💜 내 프로필 꾸미기</h2><p>겜허브에서 사용할 닉네임과 캐릭터를 골라보세요. 로그인 계정에 저장되어 다른 기기에서도 유지됩니다.</p><form id="profileForm"><label for="profileNickname">닉네임 (2~16자)</label><input id="profileNickname" type="text" minlength="2" maxlength="16" required autocomplete="nickname" placeholder="사용할 닉네임"><label>기본 캐릭터 선택</label><div class="avatar-options" id="avatarOptions" role="group" aria-label="프로필 캐릭터"></div><div class="profile-hint">사진 직접 업로드는 다음 단계에서 추가할 예정입니다.</div><div class="profile-actions"><button class="btn" id="profileCancel" type="button">취소</button><button class="btn primary" id="profileSave" type="submit">변경사항 저장</button></div><div class="profile-message" id="profileMessage" role="status"></div></form></div></div>
+<div class="profile-backdrop" id="profileBackdrop" hidden><div class="profile-dialog" role="dialog" aria-modal="true" aria-labelledby="profileTitle"><button class="profile-close" id="profileClose" type="button" aria-label="닫기">×</button><h2 id="profileTitle">💜 내 프로필 꾸미기</h2><p>겜허브에서 사용할 닉네임과 캐릭터를 골라보세요. 로그인 계정에 저장되어 다른 기기에서도 유지됩니다.</p><form id="profileForm"><label for="profileNickname">닉네임 (2~16자)</label><input id="profileNickname" type="text" minlength="2" maxlength="16" required autocomplete="nickname" placeholder="사용할 닉네임"><label>기본 캐릭터 선택</label><div class="avatar-options" id="avatarOptions" role="group" aria-label="프로필 캐릭터"></div><div class="profile-hint">캐릭터를 누르면 기본 프로필로 변경됩니다.</div><div class="photo-tools"><label for="profilePhoto">📷 내 사진 업로드 (선택 사항)</label><input id="profilePhoto" type="file" accept="image/jpeg,image/png,image/webp"><div class="profile-hint">JPG · PNG · WEBP만 가능 / 최대 2MB. 사진을 고른 뒤 아래 저장 버튼을 눌러주세요.</div><div class="photo-preview" id="photoPreview" hidden><img id="photoPreviewImage" alt="선택한 프로필 사진 미리보기"><small id="photoPreviewText">사진 미리보기</small></div><button class="btn" id="photoReset" type="button" style="margin-top:12px">기본 캐릭터로 변경</button></div><div class="profile-actions"><button class="btn" id="profileCancel" type="button">취소</button><button class="btn primary" id="profileSave" type="submit">변경사항 저장</button></div><div class="profile-message" id="profileMessage" role="status"></div></form></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 const games=['전체','리니지 클래식','리니지W','메이플스토리','리니지M','던전앤파이터','기타 게임'];
@@ -59,12 +66,58 @@ const avatarOptions=document.getElementById('avatarOptions');
 const avatarSet=['🎮','🧙','🥷','🦊','🐻','🐰','🐱','🤖','🐲','👾'];
 let currentUser=null;
 let chosenAvatar='🎮';
+let chosenPhoto=null;
+let removePhoto=false;
+let photoPreviewUrl=null;
+let profilePhotoGeneration=0;
+const profilePhotoInput=document.getElementById('profilePhoto');
+const photoPreview=document.getElementById('photoPreview');
+const photoPreviewImage=document.getElementById('photoPreviewImage');
+const photoPreviewText=document.getElementById('photoPreviewText');
+function clearLocalPhotoPreview(){if(photoPreviewUrl){URL.revokeObjectURL(photoPreviewUrl);photoPreviewUrl=null}}
+function setPhotoPreview(url,text){photoPreview.hidden=!url;if(url){photoPreviewImage.src=url;photoPreviewText.textContent=text||'프로필 사진';}else{photoPreviewImage.removeAttribute('src')}}
+async function getOwnPhotoUrl(path){
+  if(!authClient||!currentUser||typeof path!=='string'||!path.startsWith(currentUser.id+'/'))return null;
+  const {data,error}=await authClient.storage.from('avatars').createSignedUrl(path,3600);
+  if(error){console.warn('사진 주소 생성 실패',error.message);return null}
+  return data?.signedUrl||null;
+}
+async function refreshProfilePhoto(){
+  const generation=++profilePhotoGeneration;
+  const menuAvatar=document.getElementById('menuAvatar');
+  const path=currentUser?.user_metadata?.gemhub_photo_path;
+  if(!path)return;
+  const url=await getOwnPhotoUrl(path);
+  if(generation!==profilePhotoGeneration||!url||currentUser?.user_metadata?.gemhub_photo_path!==path)return;
+  const img=document.createElement('img');img.src=url;img.alt='내 프로필 사진';
+  img.onerror=()=>{if(generation===profilePhotoGeneration){menuAvatar.textContent=currentUser?.user_metadata?.gemhub_avatar||'🎮'}};
+  menuAvatar.replaceChildren(img);
+}
+
 function setMenuOpen(open){accountMenu.hidden=!open;accountTrigger.setAttribute('aria-expanded',String(open))}
-function drawProfile(){const metadata=currentUser?.user_metadata||{};const nickname=metadata.gemhub_nickname||'겜허브 회원';const avatar=avatarSet.includes(metadata.gemhub_avatar)?metadata.gemhub_avatar:'🎮';document.getElementById('menuNickname').textContent=nickname;document.getElementById('menuAvatar').textContent=avatar;document.getElementById('menuEmail').textContent=currentUser?.email||'';accountTrigger.textContent='👤 '+(metadata.gemhub_nickname||'내 계정')+' ▾'}
-function openProfile(){if(!currentUser){openAuth('signin');return}setMenuOpen(false);document.getElementById('profileNickname').value=currentUser.user_metadata?.gemhub_nickname||'';chosenAvatar=avatarSet.includes(currentUser.user_metadata?.gemhub_avatar)?currentUser.user_metadata.gemhub_avatar:'🎮';renderAvatars();document.getElementById('profileMessage').textContent='';profileBackdrop.hidden=false;document.getElementById('profileNickname').focus()}
-function closeProfile(){profileBackdrop.hidden=true}
-function renderAvatars(){avatarOptions.replaceChildren();avatarSet.forEach(avatar=>{const button=document.createElement('button');button.type='button';button.className='avatar-choice'+(avatar===chosenAvatar?' active':'');button.textContent=avatar;button.setAttribute('aria-label',avatar+' 캐릭터 선택');button.setAttribute('aria-pressed',String(avatar===chosenAvatar));button.addEventListener('click',()=>{chosenAvatar=avatar;renderAvatars()});avatarOptions.appendChild(button)})}
-async function logout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error){showToast('로그아웃 실패: '+error.message);return}currentUser=null;setMenuOpen(false);closeProfile();showToast('로그아웃했습니다.');await refreshAuth()}
+function drawProfile(){const metadata=currentUser?.user_metadata||{};const nickname=metadata.gemhub_nickname||'겜허브 회원';const avatar=avatarSet.includes(metadata.gemhub_avatar)?metadata.gemhub_avatar:'🎮';document.getElementById('menuNickname').textContent=nickname;document.getElementById('menuAvatar').textContent=avatar;refreshProfilePhoto();document.getElementById('menuEmail').textContent=currentUser?.email||'';accountTrigger.textContent='👤 '+(metadata.gemhub_nickname||'내 계정')+' ▾'}
+function openProfile(){if(!currentUser){openAuth('signin');return}setMenuOpen(false);document.getElementById('profileNickname').value=currentUser.user_metadata?.gemhub_nickname||'';chosenAvatar=avatarSet.includes(currentUser.user_metadata?.gemhub_avatar)?currentUser.user_metadata.gemhub_avatar:'🎮';chosenPhoto=null;removePhoto=false;profilePhotoInput.value='';clearLocalPhotoPreview();setPhotoPreview(null);renderAvatars();if(currentUser.user_metadata?.gemhub_photo_path){getOwnPhotoUrl(currentUser.user_metadata.gemhub_photo_path).then(url=>{if(!profileBackdrop.hidden&&!chosenPhoto&&!removePhoto&&url)setPhotoPreview(url,'현재 저장된 사진')})}document.getElementById('profileMessage').textContent='';profileBackdrop.hidden=false;document.getElementById('profileNickname').focus()}
+function closeProfile(){profileBackdrop.hidden=true;clearLocalPhotoPreview();chosenPhoto=null;profilePhotoInput.value='';setPhotoPreview(null)}
+function renderAvatars(){avatarOptions.replaceChildren();avatarSet.forEach(avatar=>{const button=document.createElement('button');button.type='button';button.className='avatar-choice'+(avatar===chosenAvatar?' active':'');button.textContent=avatar;button.setAttribute('aria-label',avatar+' 캐릭터 선택');button.setAttribute('aria-pressed',String(avatar===chosenAvatar));button.addEventListener('click',()=>{chosenAvatar=avatar;removePhoto=true;chosenPhoto=null;profilePhotoInput.value='';clearLocalPhotoPreview();setPhotoPreview(null);renderAvatars()});avatarOptions.appendChild(button)})}
+profilePhotoInput.addEventListener('change',()=>{
+  const file=profilePhotoInput.files?.[0];
+  clearLocalPhotoPreview();chosenPhoto=null;
+  if(!file){setPhotoPreview(null);return}
+  if(!['image/jpeg','image/png','image/webp'].includes(file.type)){
+    profilePhotoInput.value='';document.getElementById('profileMessage').textContent='JPG, PNG, WEBP 사진만 올릴 수 있습니다.';return;
+  }
+  if(file.size>2*1024*1024){
+    profilePhotoInput.value='';document.getElementById('profileMessage').textContent='사진 크기는 2MB 이하만 가능합니다.';return;
+  }
+  chosenPhoto=file;removePhoto=false;photoPreviewUrl=URL.createObjectURL(file);
+  setPhotoPreview(photoPreviewUrl,'선택한 사진 · 저장 버튼을 누르면 업로드됩니다.');
+  document.getElementById('profileMessage').textContent='';renderAvatars();
+});
+document.getElementById('photoReset').addEventListener('click',()=>{
+  removePhoto=true;chosenPhoto=null;profilePhotoInput.value='';clearLocalPhotoPreview();setPhotoPreview(null);
+  document.getElementById('profileMessage').textContent='기본 캐릭터로 변경할 준비가 됐습니다. 저장 버튼을 눌러주세요.';
+});
+async function logout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error){showToast('로그아웃 실패: '+error.message);return}currentUser=null;++profilePhotoGeneration;document.getElementById('menuAvatar').textContent='🎮';setMenuOpen(false);closeProfile();showToast('로그아웃했습니다.');await refreshAuth()}
 loginButton.addEventListener('click',async()=>{if(currentUser)await logout();else openAuth('signin')});
 signupButton.addEventListener('click',()=>openAuth('signup'));
 accountTrigger.addEventListener('click',()=>setMenuOpen(accountMenu.hidden));
@@ -76,7 +129,17 @@ document.getElementById('profileClose').addEventListener('click',closeProfile);
 document.getElementById('profileCancel').addEventListener('click',closeProfile);
 profileBackdrop.addEventListener('click',event=>{if(event.target===profileBackdrop)closeProfile()});
 document.addEventListener('keydown',event=>{if(event.key==='Escape'){setMenuOpen(false);closeProfile()}});
-document.getElementById('profileForm').addEventListener('submit',async event=>{event.preventDefault();if(!authClient||!currentUser)return;const nickname=document.getElementById('profileNickname').value.trim();const message=document.getElementById('profileMessage');if(nickname.length<2||nickname.length>16){message.textContent='닉네임은 2~16자로 입력해주세요.';return}const save=document.getElementById('profileSave');save.disabled=true;message.textContent='저장 중입니다...';try{const {data,error}=await authClient.auth.updateUser({data:{gemhub_nickname:nickname,gemhub_avatar:chosenAvatar}});if(error)throw error;currentUser=data.user;drawProfile();message.textContent='저장되었습니다!';showToast('프로필이 저장되었습니다.');closeProfile()}catch(error){message.textContent='저장 실패: '+(error?.message||'다시 시도해주세요.')}finally{save.disabled=false}});
+document.getElementById('profileForm').addEventListener('submit',async event=>{event.preventDefault();if(!authClient||!currentUser)return;const nickname=document.getElementById('profileNickname').value.trim();const message=document.getElementById('profileMessage');if(nickname.length<2||nickname.length>16){message.textContent='닉네임은 2~16자로 입력해주세요.';return}const save=document.getElementById('profileSave');save.disabled=true;message.textContent='저장 중입니다...';try{let photoPath=currentUser.user_metadata?.gemhub_photo_path||null;
+if(chosenPhoto){
+  const extension={'image/jpeg':'jpg','image/png':'png','image/webp':'webp'}[chosenPhoto.type];
+  if(!extension||chosenPhoto.size>2*1024*1024)throw new Error('사진 형식 또는 크기를 확인해 주세요.');
+  const path=currentUser.id+'/'+Date.now()+'-'+Math.random().toString(36).slice(2,9)+'.'+extension;
+  message.textContent='사진을 업로드하고 있습니다...';
+  const upload=await authClient.storage.from('avatars').upload(path,chosenPhoto,{contentType:chosenPhoto.type,upsert:false});
+  if(upload.error)throw upload.error;
+  photoPath=path;
+}else if(removePhoto){photoPath=null}
+const {data,error}=await authClient.auth.updateUser({data:{gemhub_nickname:nickname,gemhub_avatar:chosenAvatar,gemhub_photo_path:photoPath}});if(error)throw error;currentUser=data.user;drawProfile();message.textContent='저장되었습니다!';showToast('프로필이 저장되었습니다.');closeProfile()}catch(error){message.textContent='저장 실패: '+(error?.message||'다시 시도해주세요.')}finally{save.disabled=false}});
 async function refreshAuth(){if(!authClient){showToast('로그인 서비스를 연결하지 못했습니다.');return}try{const {data,error}=await authClient.auth.getUser();if(error)throw error;currentUser=data.user||null;if(currentUser){loginButton.textContent='로그아웃';signupButton.hidden=true;accountShell.hidden=false;drawProfile()}else{loginButton.textContent='로그인';signupButton.hidden=false;accountShell.hidden=true;setMenuOpen(false)}}catch(error){console.error('인증 상태 확인 오류',error)}}
 if(authClient)authClient.auth.onAuthStateChange(()=>{setTimeout(refreshAuth,0)});
 renderGames();renderRows();refreshAuth();
