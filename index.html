@@ -82,20 +82,31 @@ async function getOwnPhotoUrl(path){
   if(error){console.warn('사진 주소 생성 실패',error.message);return null}
   return data?.signedUrl||null;
 }
+let menuPhotoPath=null;
 async function refreshProfilePhoto(){
   const generation=++profilePhotoGeneration;
   const menuAvatar=document.getElementById('menuAvatar');
   const path=currentUser?.user_metadata?.gemhub_photo_path;
-  if(!path)return;
+  if(!path){menuPhotoPath=null;return;}
+  // Repeated auth refreshes must not replace a loaded photo with an emoji.
+  if(menuPhotoPath===path && menuAvatar.querySelector('img'))return;
   const url=await getOwnPhotoUrl(path);
-  if(generation!==profilePhotoGeneration||!url||currentUser?.user_metadata?.gemhub_photo_path!==path)return;
-  const img=document.createElement('img');img.src=url;img.alt='내 프로필 사진';
-  img.onerror=()=>{if(generation===profilePhotoGeneration){menuAvatar.textContent=currentUser?.user_metadata?.gemhub_avatar||'🎮'}};
-  menuAvatar.replaceChildren(img);
+  if(generation!==profilePhotoGeneration||currentUser?.user_metadata?.gemhub_photo_path!==path)return;
+  if(!url){console.warn('프로필 사진 주소를 가져오지 못했습니다.');return;}
+  const img=document.createElement('img');
+  img.alt='내 프로필 사진';
+  img.style.cssText='width:100%;height:100%;object-fit:cover;display:block;border-radius:15px;';
+  img.onload=()=>{
+    if(generation!==profilePhotoGeneration||currentUser?.user_metadata?.gemhub_photo_path!==path)return;
+    menuAvatar.replaceChildren(img);
+    menuPhotoPath=path;
+  };
+  img.onerror=()=>{console.warn('계정 메뉴 프로필 사진 표시 실패');};
+  img.src=url;
 }
 
 function setMenuOpen(open){accountMenu.hidden=!open;accountTrigger.setAttribute('aria-expanded',String(open))}
-function drawProfile(){const metadata=currentUser?.user_metadata||{};const nickname=metadata.gemhub_nickname||'겜허브 회원';const avatar=avatarSet.includes(metadata.gemhub_avatar)?metadata.gemhub_avatar:'🎮';document.getElementById('menuNickname').textContent=nickname;document.getElementById('menuAvatar').textContent=avatar;refreshProfilePhoto();document.getElementById('menuEmail').textContent=currentUser?.email||'';accountTrigger.textContent='👤 '+(metadata.gemhub_nickname||'내 계정')+' ▾'}
+function drawProfile(){const metadata=currentUser?.user_metadata||{};const nickname=metadata.gemhub_nickname||'겜허브 회원';const avatar=avatarSet.includes(metadata.gemhub_avatar)?metadata.gemhub_avatar:'🎮';document.getElementById('menuNickname').textContent=nickname;if(menuPhotoPath!==metadata.gemhub_photo_path||!document.getElementById('menuAvatar').querySelector('img')){document.getElementById('menuAvatar').textContent=avatar;refreshProfilePhoto();}document.getElementById('menuEmail').textContent=currentUser?.email||'';accountTrigger.textContent='👤 '+(metadata.gemhub_nickname||'내 계정')+' ▾'}
 function openProfile(){if(!currentUser){openAuth('signin');return}setMenuOpen(false);document.getElementById('profileNickname').value=currentUser.user_metadata?.gemhub_nickname||'';chosenAvatar=avatarSet.includes(currentUser.user_metadata?.gemhub_avatar)?currentUser.user_metadata.gemhub_avatar:'🎮';chosenPhoto=null;removePhoto=false;profilePhotoInput.value='';clearLocalPhotoPreview();setPhotoPreview(null);renderAvatars();if(currentUser.user_metadata?.gemhub_photo_path){getOwnPhotoUrl(currentUser.user_metadata.gemhub_photo_path).then(url=>{if(!profileBackdrop.hidden&&!chosenPhoto&&!removePhoto&&url)setPhotoPreview(url,'현재 저장된 사진')})}document.getElementById('profileMessage').textContent='';profileBackdrop.hidden=false;document.getElementById('profileNickname').focus()}
 function closeProfile(){profileBackdrop.hidden=true;clearLocalPhotoPreview();chosenPhoto=null;profilePhotoInput.value='';setPhotoPreview(null)}
 function renderAvatars(){avatarOptions.replaceChildren();avatarSet.forEach(avatar=>{const button=document.createElement('button');button.type='button';button.className='avatar-choice'+(avatar===chosenAvatar?' active':'');button.textContent=avatar;button.setAttribute('aria-label',avatar+' 캐릭터 선택');button.setAttribute('aria-pressed',String(avatar===chosenAvatar));button.addEventListener('click',()=>{chosenAvatar=avatar;removePhoto=true;chosenPhoto=null;profilePhotoInput.value='';clearLocalPhotoPreview();setPhotoPreview(null);renderAvatars()});avatarOptions.appendChild(button)})}
@@ -117,7 +128,7 @@ document.getElementById('photoReset').addEventListener('click',()=>{
   removePhoto=true;chosenPhoto=null;profilePhotoInput.value='';clearLocalPhotoPreview();setPhotoPreview(null);
   document.getElementById('profileMessage').textContent='기본 캐릭터로 변경할 준비가 됐습니다. 저장 버튼을 눌러주세요.';
 });
-async function logout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error){showToast('로그아웃 실패: '+error.message);return}currentUser=null;++profilePhotoGeneration;document.getElementById('menuAvatar').textContent='🎮';setMenuOpen(false);closeProfile();showToast('로그아웃했습니다.');await refreshAuth()}
+async function logout(){if(!authClient)return;const {error}=await authClient.auth.signOut();if(error){showToast('로그아웃 실패: '+error.message);return}currentUser=null;menuPhotoPath=null;++profilePhotoGeneration;document.getElementById('menuAvatar').textContent='🎮';setMenuOpen(false);closeProfile();showToast('로그아웃했습니다.');await refreshAuth()}
 loginButton.addEventListener('click',async()=>{if(currentUser)await logout();else openAuth('signin')});
 signupButton.addEventListener('click',()=>openAuth('signup'));
 accountTrigger.addEventListener('click',()=>setMenuOpen(accountMenu.hidden));
