@@ -194,7 +194,7 @@ body{background:#050314;color:#f6eaff}
 .schedule-entry{flex:none!important;display:block!important;white-space:normal!important;overflow:visible!important;word-break:keep-all!important;overflow-wrap:anywhere!important;min-height:30px!important}
 .schedule-count{font-size:11px;color:#f6cbff;font-weight:800;margin:0 0 4px}
 </style>
-</style>
+
 </head>
 <body>
 <header class="top"><div class="wrap top-inner"><div><a href="#" class="logo">🎮 겜<span>허브</span> <small style="font-size:12px">GEMHUB</small></a><div class="sub">게임 거래와 서버 홍보를 한곳에서</div></div><div class="actions"><button class="btn primary" id="myPageButton" type="button">👤 마이페이지</button><button class="btn" data-demo="로그인">로그인</button><button class="btn" data-demo="광고 문의">📢 광고 문의</button><button class="btn" data-demo="회원가입">회원가입</button><button class="btn primary" data-demo="거래 글 등록" hidden aria-hidden="true" tabindex="-1">+ 거래 글 등록</button><div class="account-shell" id="accountShell" hidden><button class="btn" id="accountTrigger" type="button" aria-expanded="false" aria-controls="accountMenu">👤 내 계정 ▾</button><div class="account-menu" id="accountMenu" hidden><div class="account-head"><div class="account-avatar" id="menuAvatar">🎮</div><div><strong id="menuNickname">겜허브 회원</strong><small id="menuEmail"></small><span class="account-tag">GEMHUB MEMBER</span></div></div><div class="account-list"><button class="account-link" type="button" id="myPageTrade"><span>✏️</span> 거래 글 등록</button><button class="account-link" type="button" id="editProfile"><span>👤</span> 내 프로필 · 닉네임 <em>수정</em></button><button class="account-link" type="button" data-coming="내 거래 글"><span>📋</span> 내 거래 글 <em>준비 중</em></button><button class="account-link" type="button" data-coming="관심 매물"><span>💜</span> 관심 매물 <em>준비 중</em></button><button class="account-link" type="button" data-coming="알림"><span>🔔</span> 알림 <em>준비 중</em></button><button class="account-link" type="button" data-coming="계정 설정"><span>⚙️</span> 계정 설정 <em>준비 중</em></button><button class="account-link logout" type="button" id="menuLogout"><span>🚪</span> 로그아웃</button></div></div></div></div></div></header>
@@ -635,7 +635,7 @@ scheduleForm.addEventListener('submit', async (event) => {
 }
 
 .schedule-entry.ad-sky {
-  background: #87ceeb;
+  background: #87ceeb !important;
 color: #111111 !important;
   border: 1px solid #b8e8ff;
 }
