@@ -346,10 +346,12 @@ async function loadServerSchedules(){
     return;
   }
 
+  
+    
   const {data,error}=await authClient
-    .from('server_schedule_requests')
-    .select('game,server_name,opening_at,promotion_url')
-    .eq('status','approved')
+  .from('server_schedules')
+  .select('game,server_name,opening_at,promotion_url')
+  
     .order('opening_at',{ascending:true});
 
   if(error){
@@ -498,7 +500,7 @@ scheduleForm.addEventListener('submit', async (event) => {
     }
 
     const { error } = await authClient
-      .from('server_schedule_requests')
+      .from('server_schedules')
       .insert({
         game,
         server_name: serverName,
