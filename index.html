@@ -237,51 +237,7 @@ const gameNav=document.getElementById('games'),rows=document.getElementById('row
 function renderGames(){gameNav.replaceChildren();games.filter(game=>game!=='전체').forEach(game=>{const b=document.createElement('button');b.className='game'+(game===selected?' active':'');b.textContent=game;b.type='button';b.setAttribute('aria-pressed',String(game===selected));b.addEventListener('click',()=>{selected=game;localStorage.setItem('gemhubSelectedGame',selected);adPage=0;renderGames();renderRows();renderAds();renderSchedule();document.querySelector('.schedule-panel')?.scrollIntoView({behavior:'smooth',block:'start'});});gameNav.appendChild(b)})}
 function formatPostTime(value){if(!value)return "-";const d=new Date(value);if(Number.isNaN(d.getTime()))return "-";return new Intl.DateTimeFormat("ko-KR",{timeZone:"Asia/Seoul",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).format(d)}
 function renderRows(){const kind=document.getElementById('kind').value;const query=document.getElementById('search').value.trim().toLowerCase();const data=listings.filter(x=>(selected==='전체'||x.game===selected)&&(kind==='전체'||(kind==='완료'?x.status==='completed':x.kind===kind))&&[x.game,x.server,x.title,x.price].some(v=>String(v||'').toLowerCase().includes(query)));rows.replaceChildren();data.forEach(x=>{const tr=document.createElement('tr');tr.className='clickable-row';tr.tabIndex=0;tr.setAttribute('role','button');tr.setAttribute('aria-label',x.title+' 상세보기');[x.game,x.server,x.kind,x.title,formatPostTime(x.created_at),x.price].forEach((value,i)=>{const td=document.createElement('td');td.textContent=value;if(i===2){const tag=document.createElement('span');tag.className='pill';tag.textContent=value;td.replaceChildren(tag)}if(i===5)td.className='price';tr.appendChild(td)});tr.addEventListener('click',()=>openDetail(x));tr.addEventListener('keydown',e=>{if(e.key==='Enter')openDetail(x)});const favCell=document.createElement('td');
-const favButton=document.createElement('button');
-favButton.type='button';
-favButton.textContent='☆ 관심';
-favButton.addEventListener('click',async(e)=>{
-  e.stopPropagation();
-  const {data:{user}}=await authClient.auth.getUser();
-  if(!user){
-    showToast('관심 등록은 로그인 후 이용할 수 있습니다.');
-    return;
-  }
-  const {data:existing,error:findError}=await authClient
-    .from('trade_favorites')
-    .select('id')
-    .eq('trade_post_id',x.id)
-    .eq('user_id',user.id)
-    .maybeSingle();
-  if(findError){
-    showToast('관심 목록을 확인하지 못했습니다.');
-    return;
-  }
-  if(existing){
-    const {error}=await authClient
-      .from('trade_favorites')
-      .delete()
-      .eq('id',existing.id);
-    if(error){
-      showToast('관심 해제에 실패했습니다.');
-      return;
-    }
-    favButton.textContent='☆ 관심';
-    showToast('관심 등록을 해제했습니다.');
-  }else{
-    const {error}=await authClient
-      .from('trade_favorites')
-      .insert({user_id:user.id,trade_post_id:x.id});
-    if(error){
-      showToast('관심 등록에 실패했습니다.');
-      return;
-    }
-    favButton.textContent='★ 관심';
-    showToast('관심 매물로 등록했습니다.');
-  }
-});
-favCell.appendChild(favButton);
-tr.appendChild(favCell);rows.appendChild(tr)});empty.hidden=data.length!==0}
+rows.appendChild(tr)});empty.hidden=data.length!==0}
 document.getElementById('kind').addEventListener('change',renderRows);document.getElementById('search').addEventListener('input',renderRows);
 // Supabase 공개용 연결 정보: secret/service_role 키는 절대 사용하지 않습니다.
 const SUPABASE_URL='https://scivlgypxtuzsgfbxgdf.supabase.co';
