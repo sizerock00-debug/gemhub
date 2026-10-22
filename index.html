@@ -463,7 +463,7 @@ if (scheduleTitleElement?.parentElement) {
     scheduleForm
   );
 }
-
+scheduleForm.remove();
 scheduleForm.addEventListener('submit', async (event) => {
   event.preventDefault();
 
