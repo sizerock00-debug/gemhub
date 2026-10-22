@@ -409,7 +409,13 @@ function renderSchedule(){
   const number=document.createElement('div');number.className='schedule-number';number.textContent=day.getDate()+'일';cell.appendChild(number);
   const entries=serverSchedules.filter(x=>x.date===iso&&(selected==='전체'||x.game===selected));
   if(entries.length){const count=document.createElement('div');count.className='schedule-count';count.textContent=`서버 ${entries.length}개`;cell.appendChild(count)}
-  for(const item of entries){const valid=typeof item.url==='string'&&/^https:\/\/[^\s]+$/i.test(item.url);const el=document.createElement(valid?'a':'div');el.className='schedule-entry';el.textContent=item.name||'이름 미등록';if(valid){el.href=item.url;el.target='_blank';el.rel='noopener noreferrer';el.title='서버 홈페이지 열기'}else{el.title='홈페이지 주소 미등록'}cell.appendChild(el)}
+  for(const item of entries){const valid=typeof item.url==='string'&&/^https:\/\/[^\s]+$/i.test(item.url);const el=document.createElement(valid?'a':'div');el.className = 'schedule-entry ' + ({
+  premium: 'ad-premium',
+  'red-yellow': 'ad-red-yellow',
+  sky: 'ad-sky',
+  'black-white': 'ad-black-white',
+  'blue-white': 'ad-blue-white'
+}[item.adStyle] || 'ad-sky');el.textContent=item.name||'이름 미등록';if(valid){el.href=item.url;el.target='_blank';el.rel='noopener noreferrer';el.title='서버 홈페이지 열기'}else{el.title='홈페이지 주소 미등록'}cell.appendChild(el)}
   grid.appendChild(cell)
  }
 }
