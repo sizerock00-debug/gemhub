@@ -415,7 +415,8 @@ function renderSchedule(){
   sky: 'ad-sky',
   'black-white': 'ad-black-white',
   'blue-white': 'ad-blue-white'
-}[item.adStyle] || 'ad-sky');el.textContent=item.name||'이름 미등록';if(valid){el.href=item.url;el.target='_blank';el.rel='noopener noreferrer';el.title='서버 홈페이지 열기'}else{el.title='홈페이지 주소 미등록'}cell.appendChild(el)}
+}[item.adStyle] || 'ad-sky');el.style.setProperty('background-color', '#87ceeb', 'important');
+el.style.setProperty('color', '#111111', 'important');el.textContent=item.name||'이름 미등록';if(valid){el.href=item.url;el.target='_blank';el.rel='noopener noreferrer';el.title='서버 홈페이지 열기'}else{el.title='홈페이지 주소 미등록'}cell.appendChild(el)}
   grid.appendChild(cell)
  }
 }
