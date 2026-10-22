@@ -27,7 +27,55 @@ a{color:#d5afff}
 <section class="card"><h2>🎨 광고 디자인</h2><p>광고 디자인 5종 선택</p></section>
 <section class="card"><h2>💰 광고 금액·기간</h2><p>광고 금액과 노출 기간 관리</p></section>
 </div>
+
 <p><a href="index.html">← 겜허브 홈페이지로 돌아가기</a></p>
 </main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const adminClient = window.supabase.createClient(
+  'https://scivlgypxtuzsgfbxgdf.supabase.co';_index.html의_SUPABASE_URL',
+  'sb_publishable_D5cYjFWB8Yd7UJ22ldJYPg_eEAUMtBa';_index.html의_SUPABASE_PUBLISHABLE_KEY'
+);
+
+async function checkAdmin() {
+  const main = document.querySelector('main');
+  main.style.display = 'none';
+
+  try {
+    const { data: { user }, error } =
+      await adminClient.auth.getUser();
+
+    if (error || !user) {
+      main.replaceChildren();
+      main.textContent = '로그인이 필요합니다. 겜허브 홈페이지에서 로그인해 주세요.';
+      main.style.display = 'block';
+      return;
+    }
+
+    const { data, error: adminError } = await adminClient
+      .from('gemhub_admins')
+      .select('user_id')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    if (adminError || !data) {
+      main.replaceChildren();
+      main.textContent = '관리자 권한이 없거나 확인할 수 없습니다.';
+      main.style.display = 'block';
+      return;
+    }
+
+    main.style.display = 'block';
+  } catch (error) {
+    main.replaceChildren();
+    main.textContent = '관리자 인증에 실패했습니다. 연결 설정을 확인해 주세요.';
+    main.style.display = 'block';
+  }
+}
+
+checkAdmin();
+</script>
 </body>
 </html>
+
+
