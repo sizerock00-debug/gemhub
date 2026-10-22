@@ -104,7 +104,19 @@ body{background:#050314;color:#f6eaff}
 .actions>[data-demo="로그인"],.actions>[data-demo="회원가입"]{display:inline-flex!important;align-items:center;justify-content:center;white-space:nowrap}
 .actions>[data-demo="회원가입"][hidden]{display:none!important}
 #accountTrigger{display:none!important}
-.account-shell{position:static}
+.actions>[data-demo="광고 문의"]{
+  
+  position:fixed;
+  top:18px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:100;
+  display:inline-flex!important;
+  align-items:center;
+  justify-content:center;
+  white-space:nowrap;
+}
+ .account-shell{position:static}
 .account-menu{top:calc(100% + 10px);right:0}
 [data-demo="거래 글 등록"]{display:none!important}#myPageButton{font-size:15px;padding:12px 21px;white-space:nowrap}
 .board-tabs[hidden]{display:none!important}
