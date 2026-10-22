@@ -166,6 +166,44 @@ checkAdmin();
   await loadSchedules();
 })();
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const cards = document.querySelectorAll('.grid .card');
+  const scheduleSection = Array.from(
+    document.querySelectorAll('main section.card')
+  ).find(section =>
+    section.querySelector('h2')?.textContent.includes('서버 일정 신청 관리')
+  );
+
+  if (!cards.length || !scheduleSection) {
+    console.error('서버 일정 카드 또는 일정 목록을 찾지 못했습니다.');
+    return;
+  }
+
+  const card = cards[0];
+  card.style.cursor = 'pointer';
+  card.setAttribute('role', 'button');
+  card.setAttribute('tabindex', '0');
+  card.setAttribute('aria-label', '서버 일정 관리 목록으로 이동');
+
+  const goToSchedules = () => {
+    scheduleSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const heading = scheduleSection.querySelector('h2');
+    if (heading) {
+      heading.setAttribute('tabindex', '-1');
+      heading.focus({ preventScroll: true });
+    }
+  };
+
+  card.addEventListener('click', goToSchedules);
+  card.addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      goToSchedules();
+    }
+  });
+});
+</script>
 </body>
 </html>
 
