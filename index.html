@@ -227,7 +227,7 @@ body{background:#050314;color:#f6eaff}
 <div class="trade-backdrop" id="tradeBackdrop" aria-hidden="true"><div class="trade-dialog" role="dialog" aria-modal="true" aria-labelledby="tradeTitle"><button class="trade-close" type="button" id="tradeClose" aria-label="닫기">×</button><h2 id="tradeTitle">🛒 거래 글 등록</h2><p>로그인한 회원만 글을 등록할 수 있습니다. 실제 개인정보, 비밀번호, 현금 거래 정보는 올리지 마세요.</p><form id="tradeForm"><label for="tradeGame">게임</label><select id="tradeGame" required></select><label for="tradeServer">서버 이름</label><input id="tradeServer" maxlength="80" required placeholder="예: 서버 A"><label for="tradeCategory">거래 종류</label><select id="tradeCategory" required><option value="아이템">아이템 거래</option><option value="계정">계정 거래</option><option value="부주 구인">부주 구인</option></select><label for="tradePostTitle">거래 글 제목</label><input id="tradePostTitle" maxlength="120" required placeholder="예: 장비 판매합니다"><label for="tradePrice">가격 / 조건 (게임 내 재화)</label><input id="tradePrice" maxlength="80" required placeholder="예: 100만 아데나 / 협의"><label for="tradeContent">상세 설명</label><textarea id="tradeContent" maxlength="3000" required placeholder="아이템 정보와 거래 조건을 적어주세요."></textarea><div class="trade-actions"><button type="button" class="btn" id="tradeCancel">취소</button><button type="submit" class="btn primary" id="tradeSave">등록하기</button></div><div class="trade-message" id="tradeMessage" role="status"></div></form></div></div>
 <div class="auth-backdrop" id="authBackdrop" aria-hidden="true"><div class="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="authTitle"><button class="auth-close" id="authClose" type="button" aria-label="닫기">×</button><h2 id="authTitle">겜허브 회원가입</h2><p id="authDescription">이메일로 가입한 후 받은 인증 메일을 확인해주세요.</p><form id="authForm"><label for="authEmail">이메일</label><input id="authEmail" type="email" autocomplete="email" required placeholder="example@email.com"><label for="authPassword">비밀번호 (8자 이상)</label><input id="authPassword" type="password" autocomplete="current-password" minlength="8" required placeholder="비밀번호 입력"><div class="auth-buttons"><button type="submit" class="btn primary" id="authSubmit">회원가입</button><button type="button" class="btn" id="authSwitch">로그인으로 전환</button></div></form><p class="auth-message" id="authMessage" role="status"></p></div></div>
 <div class="profile-backdrop" id="profileBackdrop" hidden><div class="profile-dialog" role="dialog" aria-modal="true" aria-labelledby="profileTitle"><button class="profile-close" id="profileClose" type="button" aria-label="닫기">×</button><h2 id="profileTitle">💜 내 프로필 꾸미기</h2><p>겜허브에서 사용할 닉네임과 캐릭터를 골라보세요. 로그인 계정에 저장되어 다른 기기에서도 유지됩니다.</p><form id="profileForm"><label for="profileNickname">닉네임 (2~16자)</label><input id="profileNickname" type="text" minlength="2" maxlength="16" required autocomplete="nickname" placeholder="사용할 닉네임"><label>기본 캐릭터 선택</label><div class="avatar-options" id="avatarOptions" role="group" aria-label="프로필 캐릭터"></div><div class="profile-hint">사진 직접 업로드는 다음 단계에서 추가할 예정입니다.</div><div class="profile-actions"><button class="btn" id="profileCancel" type="button">취소</button><button class="btn primary" id="profileSave" type="submit">변경사항 저장</button></div><div class="profile-message" id="profileMessage" role="status"></div></form></div></div>
-<div class="detail-backdrop" id="detailBackdrop" aria-hidden="true"><div class="detail-dialog" role="dialog" aria-modal="true" aria-labelledby="detailTitle"><button class="detail-close" type="button" id="detailClose" aria-label="닫기">×</button><h2 id="detailTitle"></h2><div id="detailMeta" class="muted"></div><p id="detailContent"></p></div></div>
+<div class="detail-backdrop" id="detailBackdrop" aria-hidden="true"><div class="detail-dialog" role="dialog" aria-modal="true" aria-labelledby="detailTitle"><button class="detail-close" type="button" id="detailClose" aria-label="닫기">×</button><h2 id="detailTitle"></h2><div id="detailMeta" class="muted"></div> <p id="detailContent"></p><button type="button" class="btn" id="detailFavorite">☆ 관심 등록</button></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 const games=['전체','리니지 클래식','리니지W','리니지M','아이온','메이플스토리','뮤','디아블로','던전앤파이터','다크에덴','미르2','R2'];
@@ -375,9 +375,29 @@ function renderAds(){
 setInterval(()=>{adPage++;renderAds()},10000);
 document.querySelectorAll('.board-tab').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.board-tab').forEach(x=>x.classList.toggle('active',x===button));document.getElementById('kind').value=button.dataset.filter;renderRows()}));
 document.getElementById('reloadPosts').addEventListener('click',loadTradePosts);
-function openDetail(post){document.getElementById('detailTitle').textContent=post.title||'거래 글';document.getElementById('detailMeta').textContent=[post.game,post.server,post.category,post.price].filter(Boolean).join(' · ');document.getElementById('detailContent').textContent=post.content||'상세 설명이 없습니다.';document.getElementById('detailBackdrop').classList.add('open');document.getElementById('detailBackdrop').setAttribute('aria-hidden','false')}
+let currentDetailPost=null;function openDetail(post){currentDetailPost=post;document.getElementById('detailTitle').textContent=post.title||'거래 글';document.getElementById('detailMeta').textContent=[post.game,post.server,post.category,post.price].filter(Boolean).join(' · ');document.getElementById('detailContent').textContent=post.content||'상세 설명이 없습니다.';document.getElementById('detailBackdrop').classList.add('open');document.getElementById('detailBackdrop').setAttribute('aria-hidden','false')}
 function closeDetail(){document.getElementById('detailBackdrop').classList.remove('open');document.getElementById('detailBackdrop').setAttribute('aria-hidden','true')}
 document.getElementById('detailClose').addEventListener('click',closeDetail);
+document.getElementById('detailFavorite').addEventListener('click',async()=>{
+  if(!currentDetailPost)return;
+  const {data:{user}}=await authClient.auth.getUser();
+  if(!user){showToast('관심 등록은 로그인 후 이용할 수 있습니다.');return;}
+  const postId=currentDetailPost.id;
+  if(!postId){showToast('게시글 정보를 확인할 수 없습니다.');return;}
+  const {data:existing,error:findError}=await authClient.from('trade_favorites').select('id').eq('trade_post_id',postId).eq('user_id',user.id).maybeSingle();
+  if(findError){showToast('관심 목록을 확인하지 못했습니다.');return;}
+  if(existing){
+    const {error}=await authClient.from('trade_favorites').delete().eq('id',existing.id);
+    if(error){showToast('관심 해제에 실패했습니다.');return;}
+    document.getElementById('detailFavorite').textContent='☆ 관심 등록';
+    showToast('관심 등록을 해제했습니다.');
+  }else{
+    const {error}=await authClient.from('trade_favorites').insert({user_id:user.id,trade_post_id:postId});
+    if(error){showToast('관심 등록에 실패했습니다.');return;}
+    document.getElementById('detailFavorite').textContent='★ 관심 등록됨';
+    showToast('관심 매물로 등록했습니다.');
+  }
+});
 document.getElementById('detailBackdrop').addEventListener('click',e=>{if(e.target.id==='detailBackdrop')closeDetail()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDetail()});
 
