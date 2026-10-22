@@ -350,7 +350,7 @@ async function loadServerSchedules(){
     
   const {data,error}=await authClient
   .from('server_schedules')
-  .select('game,server_name,opening_at,promotion_url,ad_amount,ad_style,ad_start_date,ad_end_date')
+  .select('game,server_name,opening_at,promotion_url,ad_amount,ad_style,ad_start_date,ad_end_date,expires_at')
   
     .order('opening_at',{ascending:true});
 
@@ -362,6 +362,7 @@ async function loadServerSchedules(){
   serverSchedules.length=0;
 
   for(const item of data||[]){
+   if (item.expires_at && new Date(item.expires_at).getTime() <= Date.now()) continue;
     const date=new Date(item.opening_at);
     if(Number.isNaN(date.getTime())) continue;
 
