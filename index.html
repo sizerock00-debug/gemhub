@@ -350,7 +350,7 @@ async function loadServerSchedules(){
     
   const {data,error}=await authClient
   .from('server_schedules')
-  .select('game,server_name,opening_at,promotion_url')
+  .select('game,server_name,opening_at,promotion_url,ad_amount,ad_style,ad_start_date,ad_end_date')
   
     .order('opening_at',{ascending:true});
 
@@ -373,11 +373,15 @@ async function loadServerSchedules(){
     }).format(date);
 
     serverSchedules.push({
-      game:item.game,
-      date:koreanDate,
-      name:item.server_name,
-      url:item.promotion_url
-    });
+  game: item.game,
+  date: koreanDate,
+  name: item.server_name,
+  url: item.promotion_url,
+  adAmount: item.ad_amount || 0,
+  adStyle: item.ad_style || 'sky',
+  adStartDate: item.ad_start_date || '',
+  adEndDate: item.ad_end_date || ''
+});
   }
 
   renderSchedule();
@@ -608,8 +612,50 @@ scheduleForm.addEventListener('submit', async (event) => {
     font-size: 12px;
     padding: 5px 3px;
   }
-}</style>
 
+/* 겜허브 광고 디자인 5종 */
+.schedule-entry.ad-premium {
+  background: #ff3030;
+  color: #111111;
+  border: 1px solid #ff7777;
+  animation: gemhub-pulse 2s ease-in-out infinite;
+}
+
+.schedule-entry.ad-red-yellow {
+  background: #ff3030;
+  color: #ffe45c;
+  border: 1px solid #ff7777;
+}
+
+.schedule-entry.ad-sky {
+  background: #87ceeb;
+  color: #111111;
+  border: 1px solid #b8e8ff;
+}
+
+.schedule-entry.ad-black-white {
+  background: #111318;
+  color: #ffffff;
+  border: 1px solid #777777;
+}
+
+.schedule-entry.ad-blue-white {
+  background: #1769d2;
+  color: #ffffff;
+  border: 1px solid #75aaff;
+}
+
+@keyframes gemhub-pulse {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.35); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .schedule-entry.ad-premium {
+    animation: none;
+  }
+}
+</style>
 <div id="gemhubAdModal" hidden>
   <div class="gemhub-ad-card" role="dialog"
        aria-modal="true" aria-labelledby="gemhubAdTitle">
