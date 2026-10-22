@@ -75,6 +75,97 @@ async function checkAdmin() {
 
 checkAdmin();
 </script>
+<script>
+(async function setupScheduleAdmin() {
+  const main = document.querySelector('main');
+  const section = document.createElement('section');
+  section.className = 'card';
+  section.style.marginTop = '24px';
+  section.innerHTML = '<h2>📅 서버 일정 신청 관리</h2><p>신청 목록을 불러와 승인하거나 거절할 수 있습니다.</p><button id="reloadSchedules" type="button">목록 새로고침</button><p id="scheduleMessage" role="status"></p><div id="scheduleList"></div>';
+  main.appendChild(section);
+
+  const list = section.querySelector('#scheduleList');
+  const message = section.querySelector('#scheduleMessage');
+
+  function makeButton(label, action, id) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = label;
+    button.style.margin = '4px';
+    button.addEventListener('click', async () => {
+      button.disabled = true;
+      const { error } = await adminClient
+        .from('server_schedules')
+        .update({ status: action })
+        .eq('id', id);
+      if (error) {
+        message.textContent = '변경 실패: ' + error.message;
+        button.disabled = false;
+        return;
+      }
+      message.textContent = '일정 상태를 변경했습니다.';
+      await loadSchedules();
+    });
+    return button;
+  }
+
+  async function loadSchedules() {
+    message.textContent = '신청 목록을 불러오는 중입니다...';
+    list.replaceChildren();
+
+    const { data, error } = await adminClient
+      .from('server_schedules')
+      .select('id,game,server_name,opening_at,promotion_url,description,status')
+      .order('opening_at', { ascending: true });
+
+    if (error) {
+      message.textContent = '목록을 불러오지 못했습니다: ' + error.message;
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      message.textContent = '등록된 서버 일정이 없습니다.';
+      return;
+    }
+
+    message.textContent = '총 ' + data.length + '건의 일정';
+    data.forEach(item => {
+      const card = document.createElement('div');
+      card.style.cssText = 'margin-top:12px;padding:14px;border:1px solid #67418e;border-radius:10px;overflow-wrap:anywhere';
+
+      const title = document.createElement('h3');
+      title.textContent = (item.game || '게임 미입력') + ' · ' + (item.server_name || '서버명 미입력');
+
+      const details = document.createElement('p');
+      details.textContent = '오픈일: ' + (item.opening_at || '미입력') + ' · 상태: ' + (item.status || '미설정');
+
+      const description = document.createElement('p');
+      description.textContent = item.description || '';
+
+      card.append(title, details, description);
+
+      if (item.promotion_url) {
+        const link = document.createElement('a');
+        link.href = item.promotion_url;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = '서버 홈페이지 열기';
+        card.appendChild(link);
+      }
+
+      if (item.status === 'pending') {
+        card.appendChild(makeButton('승인', 'approved', item.id));
+        card.appendChild(makeButton('거절', 'rejected', item.id));
+      }
+
+      list.appendChild(card);
+    });
+  }
+
+  section.querySelector('#reloadSchedules').addEventListener('click', loadSchedules);
+  await loadSchedules();
+})();
+</script>
 </body>
 </html>
 
