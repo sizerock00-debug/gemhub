@@ -580,7 +580,35 @@ scheduleForm.addEventListener('submit', async (event) => {
   color: white;
   cursor: pointer;
 }
-</style>
+/* 겜허브 달력 서버명 가독성 개선 */
+.schedule-entry {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  margin-top: 5px;
+  padding: 7px 6px;
+  border-radius: 6px;
+  font-family: "Malgun Gothic", sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+}
+
+.schedule-entry:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 2px;
+}
+
+@media (max-width: 600px) {
+  .schedule-entry {
+    font-size: 12px;
+    padding: 5px 3px;
+  }
+}</style>
 
 <div id="gemhubAdModal" hidden>
   <div class="gemhub-ad-card" role="dialog"
