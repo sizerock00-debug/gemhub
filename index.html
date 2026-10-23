@@ -505,7 +505,7 @@ box-shadow:inset 0 0 9px #ff45cb55,0 0 7px #e91bff88,0 0 8px #ffae3855!important
 <div class="favorites-backdrop" id="favoritesBackdrop" hidden><section class="favorites-dialog" role="dialog" aria-modal="true" aria-labelledby="favoritesHeading"><div class="favorites-heading"><h2 id="favoritesHeading">💗 내 관심 거래</h2><button type="button" id="favoritesClose" aria-label="닫기">×</button></div><p>관심 등록한 거래 물품을 다시 확인할 수 있습니다.</p><div id="favoritesList"></div></section></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-const games=['전체','로블록스','마인크래프트','발로란트','리그오브레전드','FC온라인','메이플스토리','서든어택','배틀그라운드','오버워치2','원신','스타크래프트','던전앤파이터','리니지 클래식','리니지W','리니지M','아이온','뮤','디아블로','다크에덴','미르2','R2'];
+const games=['전체','리니지 클래식','리니지W','아이온','뮤','메이플스토리','로스트아크','블레이드앤소울','바람의나라','렌2','기타게임','로블록스','마인크래프트','발로란트','리그오브레전드','FC온라인','서든어택','배틀그라운드','오버워치2','원신','스타크래프트','던전앤파이터','리니지M','디아블로','다크에덴','미르2','R2'];
 let listings=[]; // 실제 Supabase 거래 글만 표시합니다.
 /* 로그인 사용자별 관심 거래: 기존 trade_favorites RLS 테이블 활용 */
 let favoriteIds=new Set();
@@ -570,7 +570,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeFavorites()});
 
 let selected=localStorage.getItem('gemhubSelectedGame')||'전체';
 const gameNav=document.getElementById('games'),rows=document.getElementById('rows'),empty=document.getElementById('empty');
-const gameIcons={'전체':'▦','로블록스':'◈','마인크래프트':'🟩','발로란트':'🔻','리그오브레전드':'⚔','FC온라인':'⚽','메이플스토리':'🍄','서든어택':'🪽','배틀그라운드':'🎯','오버워치2':'🎮','원신':'✨','스타크래프트':'✦','던전앤파이터':'🔥','리니지 클래식':'⚔','리니지W':'🛡','리니지M':'👑','아이온':'🪽','뮤':'💎','디아블로':'🔥','다크에덴':'🦇','미르2':'🐉','R2':'🛡'};
+const gameIcons={'전체':'▦','로블록스':'◈','마인크래프트':'🟩','발로란트':'🔻','리그오브레전드':'⚔','FC온라인':'⚽','메이플스토리':'🍄','서든어택':'🪽','배틀그라운드':'🎯','오버워치2':'🎮','원신':'✨','스타크래프트':'✦','던전앤파이터':'🔥','리니지 클래식':'⚔','리니지W':'🛡','리니지M':'👑','아이온':'🪽','뮤':'💎','디아블로':'🔥','다크에덴':'🦇','미르2':'🐉','R2':'🛡','로스트아크':'⚓','블레이드앤소울':'⚔','바람의나라':'🍃','렌2':'🏰','기타게임':'🎲'};
 function chooseGame(game){selected=game;localStorage.setItem('gemhubSelectedGame',selected);adPage=0;renderGames();renderRows();renderAds();renderSchedule()}
 function renderGames(){
  gameNav.replaceChildren();
@@ -578,7 +578,7 @@ function renderGames(){
  games.forEach(game=>{
   const b=document.createElement('button');b.className='game'+(game===selected?' active':'');b.type='button';b.setAttribute('aria-pressed',String(game===selected));
   const ico=document.createElement('span');ico.className='game-icon';ico.textContent=gameIcons[game]||'🎮';
-  const label=document.createElement('span');label.className='game-label';label.textContent=game;b.append(ico,label);b.addEventListener('click',()=>chooseGame(game));gameNav.appendChild(b);
+  const label=document.createElement('span');label.className='game-label';label.textContent=game==='리니지 클래식'?'리니지':game==='전체'?'전체게임':game;b.append(ico,label);b.addEventListener('click',()=>chooseGame(game));gameNav.appendChild(b);
 
  });
 }
