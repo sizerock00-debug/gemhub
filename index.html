@@ -1191,7 +1191,7 @@ function adNode(ad){
   if(ad?.image && /^https?:\/\//i.test(ad.image)){
     const img=document.createElement('img');img.src=ad.image;img.alt=ad.name||'서버 광고';img.loading='lazy';el.appendChild(img);
   }
-  if(!ad?.image){const label=document.createElement('span');label.className='ad-placeholder';label.textContent='광고 문의';el.appendChild(label)}
+  // 미등록 광고칸은 홈페이지에서 글자 없이 빈 칸으로 유지합니다.
   return el;
 }
 /* 메인 광고 자동 슬라이더 - 향후 관리자 광고 데이터 연결용 */
@@ -1231,24 +1231,19 @@ renderMainBanner();restartMainBanner();
 
 function renderAds(){
   const relevant=paidAds.filter(ad=>selected==='전체'||ad.game==='전체'||ad.game===selected);
-  // 광고가 부족할 때 다른 게임 광고를 섞거나 같은 광고를 중복 노출하지 않습니다.
-  const pageSize=50; // 왼쪽 10 + 오른쪽 10 + 하단 30
-  const pages=Math.max(1,Math.ceil(relevant.length/pageSize));
-  const start=(adPage%pages)*pageSize;
-  const visible=relevant.slice(start,start+pageSize);
+  // 광고는 관리자에서 지정한 위치와 칸 번호에만 표시합니다.
   // 중앙 달력 하단까지 좌우 광고 슬롯 자동 확장 (데스크톱 기준)
   const center=document.querySelector('.layout-grid > .center-area');
   const sideHeight=window.innerWidth>780 && center ? center.getBoundingClientRect().height : 0;
   const sideGap=5, sideTileHeight=window.innerWidth>780 ? 138 : 0;
   const sideCount=sideHeight ? Math.max(10,Math.floor((sideHeight+sideGap)/(sideTileHeight+sideGap))) : 10;
-  for(const [id,offset,count] of [['adsLeft',0,sideCount],['adsRight',10,sideCount],['adsBottom',20,30]]){
+  for(const [id,count] of [['adsLeft',sideCount],['adsRight',sideCount],['adsBottom',30]]){
     const target=document.getElementById(id);
     if(!target)continue;
     target.replaceChildren();
     const placement={adsLeft:'left',adsRight:'right',adsBottom:'bottom'}[id];
     const placed=relevant.filter(a=>a.placement===placement);
-    const group=placed.length?placed:visible.slice(offset,offset+count);
-    for(let i=0;i<count;i++){target.appendChild(adNode(group[i]))}
+    for(let i=0;i<count;i++){target.appendChild(adNode(placed.find(a=>Number(a.slotIndex)===i+1)))}
   }
 }
 
@@ -1256,10 +1251,10 @@ function renderAds(){
 async function gemhubLoadBanners(){
  try{
   if(!authClient)return;
-  const {data,error}=await authClient.from('gemhub_banners').select('id,placement,title,image_url,target_url,game,start_date,end_date,active').eq('active',true).lte('start_date',new Date().toLocaleDateString('en-CA')).gte('end_date',new Date().toLocaleDateString('en-CA')).order('created_at',{ascending:false}).limit(500);
+  const {data,error}=await authClient.from('gemhub_banners').select('id,placement,slot_index,title,image_url,target_url,game,start_date,end_date,active').eq('active',true).lte('start_date',new Date().toLocaleDateString('en-CA')).gte('end_date',new Date().toLocaleDateString('en-CA')).order('created_at',{ascending:false}).limit(500);
   if(error)throw error;
   const banners=(data||[]).filter(b=>/^https:\/\//i.test(b.image_url)&&/^https:\/\//i.test(b.target_url));
-  paidAds=banners.filter(b=>b.placement!=='main').map(b=>({name:b.title,image:b.image_url,url:b.target_url,game:b.game,placement:b.placement}));
+  paidAds=banners.filter(b=>b.placement!=='main').map(b=>({name:b.title,image:b.image_url,url:b.target_url,game:b.game,placement:b.placement,slotIndex:b.slot_index}));
   const slides=banners.filter(b=>b.placement==='main').map(b=>({title:b.title,kicker:'GEMHUB PREMIUM BANNER',description:b.title,tagline:'겜허브 공식 배너 광고',button:'광고 바로가기 →',href:b.target_url,theme:'purple',image:b.image_url}));
   if(slides.length){mainBannerSlides.splice(0,mainBannerSlides.length,...slides);mainBannerIndex=0;renderMainBanner();restartMainBanner()}
   renderAds();
