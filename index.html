@@ -450,6 +450,23 @@ box-shadow:inset 0 0 9px #ff45cb55,0 0 7px #e91bff88,0 0 8px #ffae3855!important
 .top-inner>.header-search{max-width:none!important;flex:1 1 240px!important}
 @media(max-width:1420px){.top-inner>.promotion-inquiry-btn{margin-left:auto!important}.top-inner>.actions{margin-left:0!important}}
 @media(max-width:780px){.top-inner>.promotion-inquiry-btn{margin-left:0!important}}
+</style><style>/* 중앙 메인 광고 슬라이더 */
+.main-banner-carousel{position:relative;overflow:hidden;min-height:220px!important;transition:background-color .35s ease,box-shadow .35s ease}
+.main-banner-carousel[data-banner-theme="purple"]{background-color:#10042d!important}
+.main-banner-carousel[data-banner-theme="blue"]{background-color:#051c3c!important;box-shadow:inset 0 0 55px #0366ff55,0 0 12px #2a75ff55!important}
+.main-banner-carousel[data-banner-theme="pink"]{background-color:#30051f!important;box-shadow:inset 0 0 55px #fa2eaa55,0 0 12px #f128bb55!important}
+.main-banner-carousel .hero-copy{padding-bottom:22px}
+.main-banner-carousel .hero-tagline{max-width:32%;line-height:1.4}
+.main-banner-carousel .hero-cta{display:inline-block;text-decoration:none}
+.banner-controls{position:absolute;bottom:9px;right:12px;z-index:5;display:flex;align-items:center;gap:8px}
+.banner-arrow,.banner-pause{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid #ae62f2;background:#110a2bdc;color:#f4dcff;border-radius:6px;cursor:pointer;font-size:13px}
+.banner-arrow:hover,.banner-pause:hover{background:#6421a6}
+.banner-indicators{display:flex;gap:7px;align-items:center}
+.banner-dot{width:9px;height:9px;border:0;border-radius:50%;background:#8871aa;cursor:pointer;padding:0}
+.banner-dot.active{background:#e8b2ff;box-shadow:0 0 7px #d045ff;width:20px;border-radius:7px}
+.main-banner-carousel .hero-dots{display:none!important}
+@media(max-width:700px){.main-banner-carousel .hero-tagline{display:none}.main-banner-carousel .hero-copy{padding-bottom:30px}.banner-controls{right:8px;bottom:7px}}
+@media(prefers-reduced-motion:reduce){.main-banner-carousel{transition:none!important}}
 </style></head>
 <body>
 <header class="top"><div class="wrap top-inner"><div class="brand-wrap"><a href="#" class="logo"><span class="brand-pad">💎</span> GEM<span>HUB</span></a><div class="sub">게임 거래와 서버 홍보의 모든 것</div></div>
@@ -459,7 +476,7 @@ box-shadow:inset 0 0 9px #ff45cb55,0 0 7px #e91bff88,0 0 8px #ffae3855!important
 <div class="layout-grid">
 <aside class="ad-sidebar" id="adsLeft" aria-label="왼쪽 서버 광고"></aside>
 <div class="center-area">
-<section class="hero"><div class="hero-box"><div class="hero-copy"><p class="hero-kicker">게임을 더 즐겁게, 함께하는 공간</p><div class="hero-brand">GEMHUB</div><h1>게임 거래와 서버 홍보의 모든 것</h1><button class="hero-cta" type="button" data-jump="market">지금 시작하기 →</button></div><p class="hero-tagline">함께하는 게임,<br>더 큰 즐거움!</p><div class="hero-dots" aria-hidden="true"><i></i><i></i><i></i></div></div></section>
+<section class="hero" aria-label="메인 광고 배너"><div class="hero-box main-banner-carousel" id="mainBannerCarousel" aria-roledescription="캐러셀"><div class="hero-copy" id="mainBannerCopy"><p class="hero-kicker" id="mainBannerKicker">게임을 더 즐겁게, 함께하는 공간</p><div class="hero-brand" id="mainBannerTitle">GEMHUB</div><h1 id="mainBannerDescription">게임 거래와 서버 홍보의 모든 것</h1><a class="hero-cta" id="mainBannerLink" href="#market">지금 시작하기 →</a></div><p class="hero-tagline" id="mainBannerTagline">함께하는 게임,<br>더 큰 즐거움!</p><div class="banner-controls"><button type="button" class="banner-arrow" id="bannerPrev" aria-label="이전 배너">❮</button><div class="banner-indicators" id="bannerIndicators" aria-label="배너 선택"></div><button type="button" class="banner-arrow" id="bannerNext" aria-label="다음 배너">❯</button><button type="button" class="banner-pause" id="bannerPause" aria-label="자동 넘김 일시정지">Ⅱ</button></div></div></section>
 <section class="section game-section"><div class="section-title visually-hidden"><h2>🎮 게임 선택</h2></div><nav class="games" id="games" aria-label="게임 선택"></nav></section>
 <div class="market-layout">
 <section class="section" id="market"><div class="board"><div class="board-top"><div class="board-heading-group"><h2 class="board-heading-yellow">🔥 실시간 인기 거래</h2><button class="btn primary board-refresh" type="button" id="reloadPosts" title="최신 거래 글 다시 불러오기">↻ 최신글 새로고침</button></div><div class="filters search-with-guide"><select id="serverFilter" aria-label="서버 선택"><option value="전체">전체 서버</option></select><input id="search" type="search" placeholder="아이템명, 서버명, 캐릭터명 검색..." aria-label="매물 검색" aria-describedby="searchGuide"><p class="search-guide" id="searchGuide">게임과 서버를 선택하거나 물품명으로 검색하세요.</p></div></div>
@@ -687,6 +704,38 @@ function adNode(ad){
   if(!ad?.image){const label=document.createElement('span');label.className='ad-placeholder';label.textContent='광고 문의';el.appendChild(label)}
   return el;
 }
+/* 메인 광고 자동 슬라이더 - 향후 관리자 광고 데이터 연결용 */
+const MAIN_BANNER_INTERVAL_MS=5000;
+const mainBannerSlides=[
+ {title:'GEMHUB',kicker:'게임을 더 즐겁게, 함께하는 공간',description:'게임 거래와 서버 홍보의 모든 것',tagline:'함께하는 게임, 더 큰 즐거움!',button:'지금 시작하기 →',href:'#market',theme:'purple'},
+ {title:'서버 오픈 일정',kicker:'오늘 오픈하는 서버를 찾아보세요',description:'겜허브 서버 오픈 일정 달력',tagline:'새로운 서버를 한눈에!',button:'서버 일정 보기 →',href:'#scheduleTitle',theme:'blue'},
+ {title:'실시간 인기 거래',kicker:'게임별 아이템과 계정 거래',description:'내가 찾는 게임 거래를 더 편리하게',tagline:'원하는 거래를 빠르게!',button:'거래 목록 보기 →',href:'#market',theme:'pink'}
+];
+let mainBannerIndex=0,mainBannerPaused=false,mainBannerTimer=null;
+const bannerRoot=document.getElementById('mainBannerCarousel'),bannerDots=document.getElementById('bannerIndicators');
+function renderMainBanner(){
+ const item=mainBannerSlides[mainBannerIndex];if(!item)return;
+ bannerRoot.dataset.bannerTheme=item.theme;
+ document.getElementById('mainBannerKicker').textContent=item.kicker;
+ document.getElementById('mainBannerTitle').textContent=item.title;
+ document.getElementById('mainBannerDescription').textContent=item.description;
+ document.getElementById('mainBannerTagline').textContent=item.tagline;
+ const link=document.getElementById('mainBannerLink');link.textContent=item.button;link.setAttribute('href',item.href);
+ bannerDots.replaceChildren();
+ mainBannerSlides.forEach((slide,i)=>{const dot=document.createElement('button');dot.type='button';dot.className='banner-dot'+(i===mainBannerIndex?' active':'');dot.setAttribute('aria-label',(i+1)+'번째 배너 보기');dot.setAttribute('aria-current',String(i===mainBannerIndex));dot.addEventListener('click',()=>{mainBannerIndex=i;renderMainBanner();restartMainBanner()});bannerDots.appendChild(dot)});
+}
+function restartMainBanner(){
+ if(mainBannerTimer)clearInterval(mainBannerTimer);
+ if(!mainBannerPaused&&mainBannerSlides.length>1&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches)mainBannerTimer=setInterval(()=>{mainBannerIndex=(mainBannerIndex+1)%mainBannerSlides.length;renderMainBanner()},MAIN_BANNER_INTERVAL_MS);
+}
+document.getElementById('bannerPrev').addEventListener('click',()=>{mainBannerIndex=(mainBannerIndex-1+mainBannerSlides.length)%mainBannerSlides.length;renderMainBanner();restartMainBanner()});
+document.getElementById('bannerNext').addEventListener('click',()=>{mainBannerIndex=(mainBannerIndex+1)%mainBannerSlides.length;renderMainBanner();restartMainBanner()});
+document.getElementById('bannerPause').addEventListener('click',e=>{mainBannerPaused=!mainBannerPaused;e.currentTarget.textContent=mainBannerPaused?'▶':'Ⅱ';e.currentTarget.setAttribute('aria-label',mainBannerPaused?'자동 넘김 재생':'자동 넘김 일시정지');restartMainBanner()});
+bannerRoot.addEventListener('mouseenter',()=>{if(mainBannerTimer)clearInterval(mainBannerTimer)});
+bannerRoot.addEventListener('mouseleave',restartMainBanner);
+document.addEventListener('visibilitychange',()=>{if(document.hidden){if(mainBannerTimer)clearInterval(mainBannerTimer)}else restartMainBanner()});
+renderMainBanner();restartMainBanner();
+
 function renderAds(){
   const relevant=paidAds.filter(ad=>selected==='전체'||ad.game===selected);
   // 광고가 부족할 때 다른 게임 광고를 섞거나 같은 광고를 중복 노출하지 않습니다.
