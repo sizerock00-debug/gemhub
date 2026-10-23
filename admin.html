@@ -482,7 +482,14 @@ function bannerStageRender(){
   const span=document.createElement('span');span.textContent=b?(b.title+' ✎'):'＋ '+({main:'메인',left:'좌측',right:'우측',bottom:'하단'}[placement])+' '+(index+1);el.appendChild(span);
   el.addEventListener('click',()=>bannerOpen(placement,b,index+1));return el;
  };
- const main=$('bannerSlotMain');main.replaceChildren();const mainB=bannerData.find(b=>b.placement==='main');if(mainB){const img=document.createElement('img');img.src=mainB.image_url;img.alt='';main.appendChild(img)}const label=document.createElement('span');label.textContent=mainB?mainB.title+' ✎':'＋ 메인 배너 등록';main.appendChild(label);main.onclick=()=>bannerOpen('main',mainB);
+ const main=$('bannerSlotMain');main.replaceChildren();main.style.display='grid';main.style.gridTemplateColumns='repeat(5,minmax(0,1fr))';main.style.gap='6px';main.style.padding='8px';main.style.cursor='default';main.onclick=null;
+ for(let i=1;i<=10;i++){
+   const b=bannerData.find(x=>x.placement==='main'&&Number(x.slot_index)===i);
+   const btn=document.createElement('button');btn.type='button';btn.className='banner-slot';btn.style.cssText='min-height:60px;padding:5px';
+   if(b){const img=document.createElement('img');img.src=b.image_url;img.alt='';btn.appendChild(img)}
+   const label=document.createElement('span');label.textContent=b?('메인 '+i+'번 · '+b.title+' ✎'):('＋ 메인 '+i+'번');btn.appendChild(label);
+   btn.addEventListener('click',()=>bannerOpen('main',b,i));main.appendChild(btn);
+ }
  for(const [id,placement,count] of placements){const target=$(id);target.replaceChildren();for(let i=0;i<count;i++)target.appendChild(draw(placement,i))}
 }
 $('bannerEditorClose').addEventListener('click',()=>{$('bannerEditor').hidden=true;bannerReset()});
@@ -508,12 +515,12 @@ $('bannerReset').addEventListener('click',()=>bannerOpen($('bannerPlacement').va
 $('bannerRefresh').addEventListener('click',bannerLoad);
 $('bannerForm').addEventListener('submit',async e=>{
  e.preventDefault();
- const obj={placement:$('bannerPlacement').value,slot_index:$('bannerPlacement').value==='main'?null:(Number($('bannerSlotIndex').value)||null),title:$('bannerTitle').value.trim(),image_url:$('bannerImage').value.trim(),target_url:$('bannerUrl').value.trim(),game:$('bannerGame').value,start_date:$('bannerStart').value,end_date:$('bannerEnd').value,active:$('bannerActive').checked};
+ const obj={placement:$('bannerPlacement').value,slot_index:Number($('bannerSlotIndex').value)||null,title:$('bannerTitle').value.trim(),image_url:$('bannerImage').value.trim(),target_url:$('bannerUrl').value.trim(),game:$('bannerGame').value,start_date:$('bannerStart').value,end_date:$('bannerEnd').value,active:$('bannerActive').checked};
  if(![obj.image_url,obj.target_url].every(x=>/^https:\/\//i.test(x))){alert('이미지 및 이동 주소는 HTTPS URL을 사용하세요.');return}
  if(obj.end_date<obj.start_date){alert('종료일은 시작일보다 빠를 수 없습니다.');return}
- if(obj.placement!=='main'&&!obj.slot_index){alert('배치도에서 광고를 등록할 칸을 먼저 선택해 주세요.');return}
+ if(!obj.slot_index){alert('배치도에서 광고를 등록할 칸을 먼저 선택해 주세요.');return}
  const occupied=bannerData.find(b=>b.placement===obj.placement&&Number(b.slot_index)===obj.slot_index&&String(b.id)!==$('bannerId').value);
- if(occupied&&obj.placement!=='main'){alert('이미 사용 중인 광고칸입니다. 해당 칸을 클릭해 기존 광고를 수정하거나 삭제해 주세요.');return}
+ if(occupied){alert('이미 사용 중인 광고칸입니다. 해당 칸을 클릭해 기존 광고를 수정하거나 삭제해 주세요.');return}
  const id=$('bannerId').value,btn=$('bannerForm').querySelector('[type=submit]');btn.disabled=true;
  try{const q=id?client.from('gemhub_banners').update(obj).eq('id',id):client.from('gemhub_banners').insert(obj);const {error}=await q;if(error)throw error;bannerReset();$('bannerEditor').hidden=true;await bannerLoad();$('bannerMessage').textContent='배너가 저장되었습니다.'}catch(err){alert('배너 저장 실패: '+err.message)}finally{btn.disabled=false}
 });
