@@ -433,6 +433,67 @@ body{background:#03020b!important}
 <script>
 const games=['전체','로블록스','마인크래프트','발로란트','리그오브레전드','FC온라인','메이플스토리','서든어택','배틀그라운드','오버워치2','원신','스타크래프트','던전앤파이터','리니지 클래식','리니지W','리니지M','아이온','뮤','디아블로','다크에덴','미르2','R2'];
 let listings=[]; // 실제 Supabase 거래 글만 표시합니다.
+/* 로그인 사용자별 관심 거래: 기존 trade_favorites RLS 테이블 활용 */
+let favoriteIds=new Set();
+let favoritesLoadedFor=null;
+async function loadFavorites(){
+ favoriteIds=new Set();favoritesLoadedFor=currentUser?.id||null;
+ if(currentUser&&authClient){try{const {data,error}=await authClient.from('trade_favorites').select('trade_post_id').eq('user_id',currentUser.id);if(error)throw error;favoriteIds=new Set((data||[]).map(x=>String(x.trade_post_id)))}catch(e){console.error('관심 목록 불러오기 실패',e);showToast('관심 목록을 불러오지 못했습니다.')}}
+ updateFavoriteUI();
+}
+function updateFavoriteUI(){
+ const badge=document.getElementById('favoriteBadge');badge.textContent=String(favoriteIds.size);badge.hidden=favoriteIds.size===0;
+ document.querySelectorAll('[data-favorite-id]').forEach(b=>{const active=favoriteIds.has(b.dataset.favoriteId);b.classList.toggle('is-favorite',active);b.textContent=active?'♥':'♡';b.setAttribute('aria-label',active?'관심 해제':'관심 등록');b.setAttribute('aria-pressed',String(active))});
+ updateDetailFavorite();
+}
+function makeFavoriteButton(post){
+ const b=document.createElement('button');b.type='button';b.className='favorite-heart';b.dataset.favoriteId=String(post.id);
+ const active=favoriteIds.has(String(post.id));b.textContent=active?'♥':'♡';b.classList.toggle('is-favorite',active);b.setAttribute('aria-label',active?'관심 해제':'관심 등록');b.setAttribute('aria-pressed',String(active));
+ b.addEventListener('click',e=>{e.stopPropagation();toggleFavorite(post,b)});
+ return b;
+}
+async function toggleFavorite(post,button){
+ if(!currentUser){showToast('관심 등록은 로그인 후 이용할 수 있습니다.');openAuth('signin');return}
+ if(!authClient)return;
+ if(button?.disabled)return;
+ if(button)button.disabled=true;
+ const key=String(post.id),had=favoriteIds.has(key);
+ try{
+  if(had){const {error}=await authClient.from('trade_favorites').delete().eq('user_id',currentUser.id).eq('trade_post_id',post.id);if(error)throw error;favoriteIds.delete(key)}
+  else{const {error}=await authClient.from('trade_favorites').insert({user_id:currentUser.id,trade_post_id:post.id});if(error)throw error;favoriteIds.add(key)}
+  updateFavoriteUI();if(!document.getElementById('favoritesBackdrop').hidden)renderFavoriteList();
+ }catch(err){console.error('관심 등록 오류',err);showToast('관심 저장에 실패했습니다. 잠시 후 다시 시도해 주세요.')}
+ finally{if(button)button.disabled=false}
+}
+function updateDetailFavorite(){
+ const b=document.getElementById('detailFavorite');if(!b)return;
+ const active=!!currentDetailPost&&favoriteIds.has(String(currentDetailPost.id));b.textContent=active?'♥ 관심 해제':'♡ 관심 등록';b.classList.toggle('is-favorite',active);
+}
+document.getElementById('detailFavorite').addEventListener('click',e=>{if(currentDetailPost)toggleFavorite(currentDetailPost,e.currentTarget)});
+function renderFavoriteList(){
+ const target=document.getElementById('favoritesList');target.replaceChildren();
+ const saved=listings.filter(x=>favoriteIds.has(String(x.id)));
+ if(!saved.length){const p=document.createElement('p');p.className='favorite-empty';p.textContent=favoriteIds.size?'관심 글을 불러오지 못했거나 목록에 없는 글입니다.':'아직 관심 등록한 거래 물품이 없습니다.';target.appendChild(p);return}
+ saved.forEach(post=>{
+  const item=document.createElement('div');item.className='favorite-item';
+  const info=document.createElement('button');info.type='button';info.className='favorite-item-info';
+  const name=document.createElement('strong');name.textContent=post.title||'거래 물품';
+  const meta=document.createElement('small');meta.textContent=[post.game,post.server,post.price].filter(Boolean).join(' · ');
+  info.append(name,meta);info.addEventListener('click',()=>{closeFavorites();openDetail(post)});
+  item.append(info,makeFavoriteButton(post));target.appendChild(item);
+ });
+}
+function openFavorites(){
+ if(!currentUser){showToast('관심 목록은 로그인 후 이용할 수 있습니다.');openAuth('signin');return}
+ document.getElementById('favoritesBackdrop').hidden=false;renderFavoriteList();
+}
+function closeFavorites(){document.getElementById('favoritesBackdrop').hidden=true}
+document.getElementById('favoritesNav').addEventListener('click',openFavorites);
+document.getElementById('favoritesClose').addEventListener('click',closeFavorites);
+document.getElementById('favoritesBackdrop').addEventListener('click',e=>{if(e.target.id==='favoritesBackdrop')closeFavorites()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeFavorites()});
+
+
 let selected=localStorage.getItem('gemhubSelectedGame')||'전체';
 const gameNav=document.getElementById('games'),rows=document.getElementById('rows'),empty=document.getElementById('empty');
 const gameIcons={'전체':'▦','로블록스':'◈','마인크래프트':'🟩','발로란트':'🔻','리그오브레전드':'⚔','FC온라인':'⚽','메이플스토리':'🍄','서든어택':'🪽','배틀그라운드':'🎯','오버워치2':'🎮','원신':'✨','스타크래프트':'✦','던전앤파이터':'🔥','리니지 클래식':'⚔','리니지W':'🛡','리니지M':'👑','아이온':'🪽','뮤':'💎','디아블로':'🔥','다크에덴':'🦇','미르2':'🐉','R2':'🛡'};
@@ -918,66 +979,6 @@ color: #111111 !important;
   modal.dataset.ready = 'yes';
 
   
-/* 로그인 사용자별 관심 거래: 기존 trade_favorites RLS 테이블 활용 */
-let favoriteIds=new Set();
-let favoritesLoadedFor=null;
-async function loadFavorites(){
- favoriteIds=new Set();favoritesLoadedFor=currentUser?.id||null;
- if(currentUser&&authClient){try{const {data,error}=await authClient.from('trade_favorites').select('trade_post_id').eq('user_id',currentUser.id);if(error)throw error;favoriteIds=new Set((data||[]).map(x=>String(x.trade_post_id)))}catch(e){console.error('관심 목록 불러오기 실패',e);showToast('관심 목록을 불러오지 못했습니다.')}}
- updateFavoriteUI();
-}
-function updateFavoriteUI(){
- const badge=document.getElementById('favoriteBadge');badge.textContent=String(favoriteIds.size);badge.hidden=favoriteIds.size===0;
- document.querySelectorAll('[data-favorite-id]').forEach(b=>{const active=favoriteIds.has(b.dataset.favoriteId);b.classList.toggle('is-favorite',active);b.textContent=active?'♥':'♡';b.setAttribute('aria-label',active?'관심 해제':'관심 등록');b.setAttribute('aria-pressed',String(active))});
- updateDetailFavorite();
-}
-function makeFavoriteButton(post){
- const b=document.createElement('button');b.type='button';b.className='favorite-heart';b.dataset.favoriteId=String(post.id);
- const active=favoriteIds.has(String(post.id));b.textContent=active?'♥':'♡';b.classList.toggle('is-favorite',active);b.setAttribute('aria-label',active?'관심 해제':'관심 등록');b.setAttribute('aria-pressed',String(active));
- b.addEventListener('click',e=>{e.stopPropagation();toggleFavorite(post,b)});
- return b;
-}
-async function toggleFavorite(post,button){
- if(!currentUser){showToast('관심 등록은 로그인 후 이용할 수 있습니다.');openAuth('signin');return}
- if(!authClient)return;
- if(button?.disabled)return;
- if(button)button.disabled=true;
- const key=String(post.id),had=favoriteIds.has(key);
- try{
-  if(had){const {error}=await authClient.from('trade_favorites').delete().eq('user_id',currentUser.id).eq('trade_post_id',post.id);if(error)throw error;favoriteIds.delete(key)}
-  else{const {error}=await authClient.from('trade_favorites').insert({user_id:currentUser.id,trade_post_id:post.id});if(error)throw error;favoriteIds.add(key)}
-  updateFavoriteUI();if(!document.getElementById('favoritesBackdrop').hidden)renderFavoriteList();
- }catch(err){console.error('관심 등록 오류',err);showToast('관심 저장에 실패했습니다. 잠시 후 다시 시도해 주세요.')}
- finally{if(button)button.disabled=false}
-}
-function updateDetailFavorite(){
- const b=document.getElementById('detailFavorite');if(!b)return;
- const active=!!currentDetailPost&&favoriteIds.has(String(currentDetailPost.id));b.textContent=active?'♥ 관심 해제':'♡ 관심 등록';b.classList.toggle('is-favorite',active);
-}
-document.getElementById('detailFavorite').addEventListener('click',e=>{if(currentDetailPost)toggleFavorite(currentDetailPost,e.currentTarget)});
-function renderFavoriteList(){
- const target=document.getElementById('favoritesList');target.replaceChildren();
- const saved=listings.filter(x=>favoriteIds.has(String(x.id)));
- if(!saved.length){const p=document.createElement('p');p.className='favorite-empty';p.textContent=favoriteIds.size?'관심 글을 불러오지 못했거나 목록에 없는 글입니다.':'아직 관심 등록한 거래 물품이 없습니다.';target.appendChild(p);return}
- saved.forEach(post=>{
-  const item=document.createElement('div');item.className='favorite-item';
-  const info=document.createElement('button');info.type='button';info.className='favorite-item-info';
-  const name=document.createElement('strong');name.textContent=post.title||'거래 물품';
-  const meta=document.createElement('small');meta.textContent=[post.game,post.server,post.price].filter(Boolean).join(' · ');
-  info.append(name,meta);info.addEventListener('click',()=>{closeFavorites();openDetail(post)});
-  item.append(info,makeFavoriteButton(post));target.appendChild(item);
- });
-}
-function openFavorites(){
- if(!currentUser){showToast('관심 목록은 로그인 후 이용할 수 있습니다.');openAuth('signin');return}
- document.getElementById('favoritesBackdrop').hidden=false;renderFavoriteList();
-}
-function closeFavorites(){document.getElementById('favoritesBackdrop').hidden=true}
-document.getElementById('favoritesNav').addEventListener('click',openFavorites);
-document.getElementById('favoritesClose').addEventListener('click',closeFavorites);
-document.getElementById('favoritesBackdrop').addEventListener('click',e=>{if(e.target.id==='favoritesBackdrop')closeFavorites()});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeFavorites()});
-
 document.querySelectorAll('[data-demo="광고 문의"]').forEach(button => {
     button.addEventListener('click', () => {
       modal.hidden = false;
