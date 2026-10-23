@@ -194,7 +194,53 @@ body{background:#050314;color:#f6eaff}
 .schedule-entry{flex:none!important;display:block!important;white-space:normal!important;overflow:visible!important;word-break:keep-all!important;overflow-wrap:anywhere!important;min-height:30px!important}
 .schedule-count{font-size:11px;color:#f6cbff;font-weight:800;margin:0 0 4px}
 </style>
-
+<style>
+/* GEMHUB 확정 시안: 기능 유지형 메인화면 개편 */
+body{background:#060310}
+.top{position:sticky;top:0;z-index:30;background:#09051bef;backdrop-filter:blur(12px)}
+.top-inner{min-height:64px}
+.layout-grid{grid-template-columns:minmax(115px,10.5%) minmax(0,1fr) minmax(115px,10.5%);gap:9px}
+.ad-sidebar{gap:7px}
+.ad-sidebar .ad-tile{min-height:0;aspect-ratio:1.7/1;border:1px solid #ac36ed;background:radial-gradient(circle at top,#3d1a6a,#10071e 85%)}
+.ad-placeholder{display:flex;align-items:center;justify-content:center;height:100%;min-height:55px;color:#d4a5fa;font-weight:800;font-size:12px;text-shadow:0 0 9px #a344f4}
+.bottom-ads{margin-top:12px;padding:8px}
+.bottom-ads:before{content:'하단 배너 광고 (30개)';display:block;text-align:center;color:#ebcaff;font-weight:800;margin-bottom:7px}
+.bottom-ads-grid{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:5px}
+.bottom-ads .ad-tile{min-height:32px!important;aspect-ratio:3.4/1}
+.bottom-ads .ad-placeholder{min-height:32px;font-size:10px}
+.hero-box{min-height:230px;align-items:flex-start;text-align:left;justify-content:center;padding:25px 5%;background-position:center}
+.hero-box:before{background:linear-gradient(90deg,#08021bee 0%,#0c0324aa 42%,transparent 90%)}
+.hero-brand{font-size:clamp(30px,4vw,54px);margin:5px 0}
+.hero h1{font-size:clamp(17px,1.9vw,26px);max-width:550px;text-align:left;margin:8px 0}
+.hero-highlights{display:none!important}
+.game-click-hint{display:none!important}
+.center-area>.section:has(.games){margin:0 0 9px;display:block}
+.games{display:flex;overflow-x:auto;gap:6px;padding:3px 0 6px}
+.games .game{flex:0 0 auto;min-width:85px;min-height:56px;padding:8px 6px;border:1px solid #7135b0;background:#100a23}
+.games .game.active{background:linear-gradient(130deg,#8c19ed,#4112a9)}
+.board{background:#0b081b;border:1px solid #7131b4}
+.board-top{padding:10px;background:#100a23}
+.board-heading-yellow{color:#f5eaff!important;font-size:19px!important;text-shadow:none!important}
+.search-guide{display:none}
+.search-with-guide #serverFilter{display:block;min-width:110px;max-width:160px;border:1px solid #7440a3;border-radius:6px;background:#180e30;color:#f6e9ff;padding:7px}
+.trade-register-row{padding:6px 12px;background:#100a23}
+.trade-register-wide{width:auto;font-size:12px;padding:8px 12px}
+.market-layout th,.market-layout td{padding:9px 7px;font-size:12px}
+.schedule-panel{margin:10px 0 0!important;border:1px solid #963be8!important;background:#090619}
+.schedule-head{padding:11px 13px!important}
+.schedule-head h2{font-size:18px!important;color:#f4d9ff!important}
+.schedule-period{color:#fff!important;font-size:16px!important}
+.schedule-controls button{font-size:12px;padding:7px 9px!important}
+.schedule-grid{min-width:700px!important;background:#392258!important;gap:1px!important}
+.schedule-day-name{background:#120b26;color:#d8c7f5;font-size:12px!important;padding:8px!important}
+.schedule-date{background:#0b0b1e!important;min-height:94px!important;padding:5px!important}
+.schedule-date.today{background:#1c123b!important;outline:2px solid #ac52fa!important}
+.schedule-number{font-size:12px!important;color:#e7d4ff}
+.schedule-entry{min-height:24px!important;font-size:10px!important;padding:4px!important}
+.schedule-foot{font-size:11px!important}
+@media(max-width:1050px){.layout-grid{grid-template-columns:100px minmax(0,1fr) 100px}.bottom-ads-grid{grid-template-columns:repeat(6,minmax(0,1fr))}}
+@media(max-width:700px){.layout-grid{grid-template-columns:1fr}.center-area{grid-row:1}.ad-sidebar{display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}.ad-sidebar .ad-tile:nth-child(n){display:block}.ad-sidebar .ad-tile{aspect-ratio:2/1}.ad-placeholder{font-size:9px;min-height:30px}.bottom-ads-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.hero-box{min-height:210px}.schedule-grid{min-width:700px!important}.top{position:relative}}
+</style>
 </head>
 <body>
 <header class="top"><div class="wrap top-inner"><div><a href="#" class="logo">🎮 겜<span>허브</span> <small style="font-size:12px">GEMHUB</small></a><div class="sub">게임 거래와 서버 홍보를 한곳에서</div></div><div class="actions"><button class="btn primary" id="myPageButton" type="button">👤 마이페이지</button><button class="btn" data-demo="로그인">로그인</button><button class="btn" data-demo="광고 문의">📢 광고 문의</button><button class="btn" data-demo="회원가입">회원가입</button><button class="btn primary" data-demo="거래 글 등록" hidden aria-hidden="true" tabindex="-1">+ 거래 글 등록</button><div class="account-shell" id="accountShell" hidden><button class="btn" id="accountTrigger" type="button" aria-expanded="false" aria-controls="accountMenu">👤 내 계정 ▾</button><div class="account-menu" id="accountMenu" hidden><div class="account-head"><div class="account-avatar" id="menuAvatar">🎮</div><div><strong id="menuNickname">겜허브 회원</strong><small id="menuEmail"></small><span class="account-tag">GEMHUB MEMBER</span></div></div><div class="account-list"><button class="account-link" type="button" id="myPageTrade"><span>✏️</span> 거래 글 등록</button><button class="account-link" type="button" id="editProfile"><span>👤</span> 내 프로필 · 닉네임 <em>수정</em></button><button class="account-link" type="button" data-coming="내 거래 글"><span>📋</span> 내 거래 글 <em>준비 중</em></button><button class="account-link" type="button" data-coming="관심 매물"><span>💜</span> 관심 매물 <em>준비 중</em></button><button class="account-link" type="button" data-coming="알림"><span>🔔</span> 알림 <em>준비 중</em></button><button class="account-link" type="button" data-coming="계정 설정"><span>⚙️</span> 계정 설정 <em>준비 중</em></button><button class="account-link logout" type="button" id="menuLogout"><span>🚪</span> 로그아웃</button></div></div></div></div></div></header>
@@ -203,25 +249,25 @@ body{background:#050314;color:#f6eaff}
 <aside class="ad-sidebar" id="adsLeft" aria-label="왼쪽 서버 광고"></aside>
 <div class="center-area">
 <section class="hero"><div class="hero-box"><div class="hero-brand">👑 겜허브</div><h1><span class="hot">아이템·계정</span> <span class="white">물품 등록하고</span><br><span class="white">구매자가 나타나면</span> <span class="hot">알림</span><span class="white">을 받아보세요!</span></h1><div class="hero-highlights"><span>📋 <b>아이템 · 계정</b><small>간편하게 등록하세요!</small></span><span>🔔 <b>구매자가 나타나면</b><small>알림 기능 준비 중</small></span><span>🤝 <b>안전하고 빠른 거래</b><small>게임 유저들과 편하게!</small></span></div></div></section>
-<section class="section"><div class="section-title visually-hidden"><h2>🎮 게임 선택</h2></div><nav class="games" id="games" aria-label="게임 선택"></nav><p class="game-click-hint">플레이할 게임을 클릭하시면 일정확인 거래 게시판으로 변경됩니다 클릭하세요^^</p></section>
+<section class="section"><div class="section-title visually-hidden"><h2>🎮 게임 선택</h2></div><nav class="games" id="games" aria-label="게임 선택"></nav><p class="game-click-hint">게임을 선택하면 해당 게임의 거래 물품이 표시됩니다.</p></section>
 <div class="market-layout">
-<section class="section" id="market"><div class="board"><div class="board-top"><div class="board-heading-group"><h2 class="board-heading-yellow">아이템 계정 게시판</h2><button class="btn primary board-refresh" type="button" id="reloadPosts" title="최신 거래 글 다시 불러오기">↻ 최신글 새로고침</button></div><div class="filters search-with-guide"><input id="search" type="search" placeholder="매물·서버 검색" aria-label="매물 검색" aria-describedby="searchGuide"><p class="search-guide" id="searchGuide">게임명 선택 후 서버명 검색! 예: 겜허브서버 → <strong>겜허브</strong>만 입력 후 검색</p></div></div>
+<section class="section" id="market"><div class="board"><div class="board-top"><div class="board-heading-group"><h2 class="board-heading-yellow">🔥 실시간 인기 거래</h2><button class="btn primary board-refresh" type="button" id="reloadPosts" title="최신 거래 글 다시 불러오기">↻ 최신글 새로고침</button></div><div class="filters search-with-guide"><select id="serverFilter" aria-label="서버 선택"><option value="전체">전체 서버</option></select><input id="search" type="search" placeholder="매물·서버 검색" aria-label="매물 검색" aria-describedby="searchGuide"><p class="search-guide" id="searchGuide">게임과 서버를 선택하거나 물품명으로 검색하세요.</p></div></div>
 
 <div class="trade-register-row"><button class="btn primary trade-register-wide" id="boardRegister" type="button">✏️ 물품 등록하기</button></div>
 <div class="board-tabs" hidden><button class="board-tab active" type="button" data-filter="전체">🎮 플레이할게임클릭</button><button class="board-tab" type="button" data-filter="계정">💜 계정</button><button class="board-tab" type="button" data-filter="아이템">📦 아이템</button></div>
 <select id="kind" aria-label="거래 종류" style="display:none"><option value="전체">전체</option><option value="계정">계정</option><option value="아이템">아이템</option></select>
-<div class="board-status" id="boardStatus" role="status">거래 글을 불러오는 중입니다...</div><div class="table-scroll"><table><thead><tr><th>게임</th><th>서버</th><th>종류</th><th>거래 글 제목</th><th>등록시간</th><th>가격</th></tr></thead><tbody id="rows"></tbody></table></div><div class="empty" id="empty" hidden>조건에 맞는 거래 글이 없습니다.</div></div></section></div>
+<div class="board-status" id="boardStatus" role="status">거래 글을 불러오는 중입니다...</div><div class="table-scroll"><table><thead><tr><th>게임</th><th>서버</th><th>종류</th><th>거래 물품</th><th>등록시간</th><th>가격</th></tr></thead><tbody id="rows"></tbody></table></div><div class="empty" id="empty" hidden>조건에 맞는 거래 글이 없습니다.</div></div></section></div>
 
-</div>
-<aside class="ad-sidebar" id="adsRight" aria-label="오른쪽 서버 광고"></aside>
-</div>
 <section class="schedule-panel" aria-label="게임별 한 달 서버 일정표">
-<div class="schedule-head"><h2 id="scheduleTitle">📅 게임별 서버 오픈 일정표</h2><div class="schedule-controls"><button type="button" id="schedulePrev" aria-label="이전 달">◀</button><span id="schedulePeriod" class="schedule-period"></span><button type="button" id="scheduleNext" aria-label="다음 달">▶</button><button type="button" id="scheduleToday">이번 달</button></div></div>
-
+<div class="schedule-head"><h2 id="scheduleTitle">📅 서버 오픈 일정</h2><div class="schedule-controls"><button type="button" id="schedulePrev" aria-label="이전 달">◀</button><span id="schedulePeriod" class="schedule-period"></span><button type="button" id="scheduleNext" aria-label="다음 달">▶</button><button type="button" id="scheduleToday">이번 달</button><button type="button" data-demo="광고 문의">+ 일정 문의</button></div></div>
 <div class="schedule-scroll"><div class="schedule-grid" id="scheduleGrid"></div></div>
 <div class="schedule-foot">서버 이름을 누르면 등록된 공식 홈페이지가 새 창으로 열립니다. 등록된 일정이 없으면 빈칸으로 표시됩니다.</div>
 </section>
-<section class="bottom-ads" aria-label="하단 광고 20개"><div class="bottom-ads-grid" id="adsBottom"></div></section>
+</div>
+<aside class="ad-sidebar" id="adsRight" aria-label="오른쪽 서버 광고"></aside>
+</div>
+
+<section class="bottom-ads" aria-label="하단 광고 30개"><div class="bottom-ads-grid" id="adsBottom"></div></section>
 </main>
 <footer class="footer">© GEMHUB · 겜허브 첫 번째 메인 화면 테스트 버전</footer><div class="toast" id="toast" role="status"></div>
 <div class="trade-backdrop" id="tradeBackdrop" aria-hidden="true"><div class="trade-dialog" role="dialog" aria-modal="true" aria-labelledby="tradeTitle"><button class="trade-close" type="button" id="tradeClose" aria-label="닫기">×</button><h2 id="tradeTitle">🛒 거래 글 등록</h2><p>로그인한 회원만 글을 등록할 수 있습니다. 실제 개인정보, 비밀번호, 현금 거래 정보는 올리지 마세요.</p><form id="tradeForm"><label for="tradeGame">게임</label><select id="tradeGame" required></select><label for="tradeServer">서버 이름</label><input id="tradeServer" maxlength="80" required placeholder="예: 서버 A"><label for="tradeCategory">거래 종류</label><select id="tradeCategory" required><option value="아이템">아이템 거래</option><option value="계정">계정 거래</option><option value="부주 구인">부주 구인</option></select><label for="tradePostTitle">거래 글 제목</label><input id="tradePostTitle" maxlength="120" required placeholder="예: 장비 판매합니다"><label for="tradePrice">가격 / 조건 (게임 내 재화)</label><input id="tradePrice" maxlength="80" required placeholder="예: 100만 아데나 / 협의"><label for="tradeContent">상세 설명</label><textarea id="tradeContent" maxlength="3000" required placeholder="아이템 정보와 거래 조건을 적어주세요."></textarea><div class="trade-actions"><button type="button" class="btn" id="tradeCancel">취소</button><button type="submit" class="btn primary" id="tradeSave">등록하기</button></div><div class="trade-message" id="tradeMessage" role="status"></div></form></div></div>
@@ -234,10 +280,12 @@ const games=['전체','리니지 클래식','리니지W','리니지M','아이온
 let listings=[]; // 실제 Supabase 거래 글만 표시합니다.
 let selected=localStorage.getItem('gemhubSelectedGame')||'전체';
 const gameNav=document.getElementById('games'),rows=document.getElementById('rows'),empty=document.getElementById('empty');
-function renderGames(){gameNav.replaceChildren();games.filter(game=>game!=='전체').forEach(game=>{const b=document.createElement('button');b.className='game'+(game===selected?' active':'');b.textContent=game;b.type='button';b.setAttribute('aria-pressed',String(game===selected));b.addEventListener('click',()=>{selected=game;localStorage.setItem('gemhubSelectedGame',selected);adPage=0;renderGames();renderRows();renderAds();renderSchedule();document.querySelector('.schedule-panel')?.scrollIntoView({behavior:'smooth',block:'start'});});gameNav.appendChild(b)})}
+function renderGames(){gameNav.replaceChildren();games.forEach(game=>{const b=document.createElement('button');b.className='game'+(game===selected?' active':'');b.textContent=game;b.type='button';b.setAttribute('aria-pressed',String(game===selected));b.addEventListener('click',()=>{selected=game;localStorage.setItem('gemhubSelectedGame',selected);adPage=0;renderGames();renderRows();renderAds();renderSchedule();});gameNav.appendChild(b)})}
 function formatPostTime(value){if(!value)return "-";const d=new Date(value);if(Number.isNaN(d.getTime()))return "-";return new Intl.DateTimeFormat("ko-KR",{timeZone:"Asia/Seoul",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).format(d)}
-function renderRows(){const kind=document.getElementById('kind').value;const query=document.getElementById('search').value.trim().toLowerCase();const data=listings.filter(x=>(selected==='전체'||x.game===selected)&&(kind==='전체'||(kind==='완료'?x.status==='completed':x.kind===kind))&&[x.game,x.server,x.title,x.price].some(v=>String(v||'').toLowerCase().includes(query)));rows.replaceChildren();data.forEach(x=>{const tr=document.createElement('tr');tr.className='clickable-row';tr.tabIndex=0;tr.setAttribute('role','button');tr.setAttribute('aria-label',x.title+' 상세보기');[x.game,x.server,x.kind,x.title,formatPostTime(x.created_at),x.price].forEach((value,i)=>{const td=document.createElement('td');td.textContent=value;if(i===2){const tag=document.createElement('span');tag.className='pill';tag.textContent=value;td.replaceChildren(tag)}if(i===5)td.className='price';tr.appendChild(td)});tr.addEventListener('click',()=>openDetail(x));tr.addEventListener('keydown',e=>{if(e.key==='Enter')openDetail(x)});const favCell=document.createElement('td');
+function renderRows(){syncServerFilter();const serverChoice=document.getElementById('serverFilter').value;const kind=document.getElementById('kind').value;const query=document.getElementById('search').value.trim().toLowerCase();const data=listings.filter(x=>(selected==='전체'||x.game===selected)&&(serverChoice==='전체'||x.server===serverChoice)&&(kind==='전체'||(kind==='완료'?x.status==='completed':x.kind===kind))&&[x.game,x.server,x.title,x.price].some(v=>String(v||'').toLowerCase().includes(query)));rows.replaceChildren();data.forEach(x=>{const tr=document.createElement('tr');tr.className='clickable-row';tr.tabIndex=0;tr.setAttribute('role','button');tr.setAttribute('aria-label',x.title+' 상세보기');[x.game,x.server,x.kind,x.title,formatPostTime(x.created_at),x.price].forEach((value,i)=>{const td=document.createElement('td');td.textContent=value;if(i===2){const tag=document.createElement('span');tag.className='pill';tag.textContent=value;td.replaceChildren(tag)}if(i===5)td.className='price';tr.appendChild(td)});tr.addEventListener('click',()=>openDetail(x));tr.addEventListener('keydown',e=>{if(e.key==='Enter')openDetail(x)});const favCell=document.createElement('td');
 rows.appendChild(tr)});empty.hidden=data.length!==0}
+function syncServerFilter(){const filter=document.getElementById('serverFilter');const previous=filter.value;const servers=[...new Set(listings.filter(x=>selected==='전체'||x.game===selected).map(x=>x.server).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ko'));filter.replaceChildren();for(const value of ['전체',...servers]){const o=document.createElement('option');o.value=value;o.textContent=value==='전체'?'전체 서버':value;filter.appendChild(o)}filter.value=servers.includes(previous)?previous:'전체'}
+document.getElementById('serverFilter').addEventListener('change',renderRows);
 document.getElementById('kind').addEventListener('change',renderRows);document.getElementById('search').addEventListener('input',renderRows);
 // Supabase 공개용 연결 정보: secret/service_role 키는 절대 사용하지 않습니다.
 const SUPABASE_URL='https://scivlgypxtuzsgfbxgdf.supabase.co';
@@ -312,16 +360,17 @@ function adNode(ad){
   if(ad?.image && /^https?:\/\//i.test(ad.image)){
     const img=document.createElement('img');img.src=ad.image;img.alt=ad.name||'서버 광고';img.loading='lazy';el.appendChild(img);
   }
+  if(!ad?.image){const label=document.createElement('span');label.className='ad-placeholder';label.textContent='광고 문의';el.appendChild(label)}
   return el;
 }
 function renderAds(){
   const relevant=paidAds.filter(ad=>selected==='전체'||ad.game===selected);
   // 광고가 부족할 때 다른 게임 광고를 섞거나 같은 광고를 중복 노출하지 않습니다.
-  const pageSize=56; // 왼쪽 18 + 오른쪽 18 + 하단 20
+  const pageSize=50; // 왼쪽 10 + 오른쪽 10 + 하단 30
   const pages=Math.max(1,Math.ceil(relevant.length/pageSize));
   const start=(adPage%pages)*pageSize;
   const visible=relevant.slice(start,start+pageSize);
-  for(const [id,offset,count] of [['adsLeft',0,18],['adsRight',18,18],['adsBottom',36,20]]){
+  for(const [id,offset,count] of [['adsLeft',0,10],['adsRight',10,10],['adsBottom',20,30]]){
     const target=document.getElementById(id);
     if(!target)continue;
     target.replaceChildren();
@@ -400,7 +449,7 @@ function renderSchedule(){
  start.setDate(start.getDate()-(start.getDay()+6)%7);
  const end=new Date(year,monthIndex+1,0,12);
  const weekCount=Math.ceil(((end-start)/86400000+1)/7);
- document.getElementById('scheduleTitle').textContent='📅 '+(selected==='전체'?'게임별':selected)+' 서버 오픈 일정표';
+ document.getElementById('scheduleTitle').textContent='📅 서버 오픈 일정'+(selected==='전체'?'':' · '+selected);
  document.getElementById('schedulePeriod').textContent=`${year}년 ${monthIndex+1}월`;
  const grid=document.getElementById('scheduleGrid');grid.replaceChildren();
  for(const name of ['월','화','수','목','금','토','일']){const head=document.createElement('div');head.className='schedule-day-name';head.textContent=name;grid.appendChild(head)}
