@@ -137,7 +137,7 @@ textarea{min-height:88px;resize:vertical}.twocol{display:grid;grid-template-colu
 #bannerSlotsBottom.banner-bottom{grid-template-columns:repeat(5,minmax(0,1fr))!important;grid-auto-flow:row!important;gap:8px!important}
 #bannerSlotsBottom .banner-slot{aspect-ratio:338/138!important;height:auto!important;min-height:0!important;grid-column:auto!important;grid-row:auto!important}
 @media(max-width:650px){#bannerSlotsBottom.banner-bottom{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:3px!important}#bannerSlotsBottom .banner-slot{padding:2px!important}#bannerSlotsBottom .banner-slot span{font-size:8px!important}}
-</style>
+.banner-modal-overlay{position:fixed;inset:0;z-index:99999;background:#05030bd9;display:flex;justify-content:center;align-items:center;padding:18px;overflow:auto}.banner-modal-overlay[hidden]{display:none!important}.banner-modal-dialog{width:min(650px,100%);max-height:92vh;overflow-y:auto;background:#140a26;border:1px solid #a567e7;border-radius:16px;box-shadow:0 20px 80px #000c}.banner-modal-dialog .banner-editor{margin:0;border:0;background:transparent}</style>
 </head>
 <body>
 <header class="top">
@@ -225,20 +225,20 @@ textarea{min-height:88px;resize:vertical}.twocol{display:grid;grid-template-colu
 
 <section class="panel" id="bannerManagement" style="margin-top:18px">
 <h2>🎨 배너 광고 관리</h2><p class="muted">광고주와 직접 협의한 배너만 관리자가 등록합니다. 메인·왼쪽·오른쪽·하단 배너를 관리할 수 있습니다.</p>
-<div class="banner-stage" aria-label="홈페이지 배너 배치 미리보기"><div class="banner-stage-title">✦ GEMHUB 홈페이지 배너 배치도</div>
+<div class="searchrow" style="margin:12px 0"><label>배너 배치도 게임 선택 <select id="bannerStageGame"><option value="전체">전체 게임</option></select></label><span class="muted">게임을 선택한 뒤 광고칸을 클릭하세요.</span></div><div class="banner-stage" aria-label="홈페이지 배너 배치 미리보기"><div class="banner-stage-title">✦ GEMHUB 홈페이지 배너 배치도</div>
 <div class="banner-layout"><div class="banner-side" id="bannerSlotsLeft"></div><div class="banner-center"><button class="banner-slot main" id="bannerSlotMain" type="button" data-place="main"><span>＋ 메인 배너 등록</span></button><div style="text-align:center;padding:14px 5px;border:1px solid #38264c;border-radius:9px;color:#a994c1;font-size:12px">게임 선택 · 거래 게시판 · 서버 오픈 일정</div></div><div class="banner-side" id="bannerSlotsRight"></div></div>
 <div class="banner-bottom" id="bannerSlotsBottom"></div><div class="banner-stage-hint">배너 위치를 클릭하면 등록창이 열립니다. 등록된 배너를 클릭하면 수정할 수 있습니다.</div></div>
-<div class="banner-editor" id="bannerEditor" hidden><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px"><strong id="bannerEditorHeading">새 배너 등록</strong><button type="button" class="btn" id="bannerEditorClose">✕ 닫기</button></div>
+<div class="banner-modal-overlay" id="bannerModalOverlay" hidden><div class="banner-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="bannerEditorHeading"><div class="banner-editor" id="bannerEditor" hidden><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px"><strong id="bannerEditorHeading">새 배너 등록</strong><button type="button" class="btn" id="bannerEditorClose">✕ 닫기</button></div>
 <form id="bannerForm" style="display:grid;gap:10px"><input type="hidden" id="bannerId"><input type="hidden" id="bannerSlotIndex">
-<div class="searchrow"><label>광고 위치<select id="bannerPlacement" required><option value="main">상단 메인 슬라이드</option><option value="left">왼쪽 배너</option><option value="right">오른쪽 배너</option><option value="bottom">하단 배너</option></select></label><label>게임 선택<select id="bannerGame"><option value="전체">전체 게임</option></select></label></div>
+<input type="hidden" id="bannerPlacement"><div class="searchrow"><label>게임 선택<select id="bannerGame"><option value="전체">전체 게임</option></select></label></div>
 <label>광고 이름<input id="bannerTitle" maxlength="120" required placeholder="광고주 또는 배너 이름"></label>
 <label>배너 이미지 URL<input id="bannerImage" type="url" required placeholder="https://.../banner.jpg"></label>
 <div id="bannerPreview" class="status" style="text-align:center">이미지 주소를 입력하면 미리보기가 표시됩니다.</div>
 <label>클릭 시 이동할 URL<input id="bannerUrl" type="url" required placeholder="https://..."></label>
 <div class="searchrow"><label>광고 시작일<input id="bannerStart" type="date" required></label><label>광고 종료일<input id="bannerEnd" type="date" required></label></div>
 <label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="bannerActive" checked style="width:auto">광고 활성화</label>
-<div class="actions"><button class="btn primary" type="submit">배너 저장</button><button class="btn" type="button" id="bannerReset">새 배너 등록</button><button class="btn" type="button" id="bannerRefresh">목록 새로고침</button></div>
-</form></div><div id="bannerMessage" class="muted" role="status" style="margin:12px 0"></div><div id="bannerList"></div>
+<div class="actions"><button class="btn primary" type="submit">배너 저장</button><button class="btn" type="button" id="bannerDelete" hidden>이 배너 삭제</button><button class="btn" type="button" id="bannerReset">새 배너 등록</button><button class="btn" type="button" id="bannerRefresh">목록 새로고침</button></div>
+</form></div></div></div><div id="bannerMessage" class="muted" role="status" style="margin:12px 0"></div><div id="bannerList"></div>
 </section>
 <section class="panel" style="margin-top:18px"><h2>📢 홈페이지 공지사항 관리</h2><form id="adminNoticeForm"><input type="hidden" id="adminNoticeId"><label>공지 제목<input id="adminNoticeTitle" required maxlength="160"></label><label>공지 내용<textarea id="adminNoticeBody" required maxlength="5000"></textarea></label><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="adminNoticePublished" style="width:auto">홈페이지에 공개</label><div class="actions"><button class="btn primary" type="submit">공지 저장</button><button class="btn" type="button" id="adminNoticeReset">초기화</button></div></form><div id="adminNotices" class="message" style="margin-top:12px"></div></section>
   </div>
@@ -465,17 +465,20 @@ $('memberReload').addEventListener('click',memberLoad);
 function bannerOpen(placement,b,slotIndex){
  bannerReset();
  $('bannerPlacement').value=placement;
+ $('bannerGame').value=$('bannerStageGame').value;
  $('bannerSlotIndex').value=slotIndex||b?.slot_index||'';
  if(b){const map={bannerPlacement:'placement',bannerTitle:'title',bannerImage:'image_url',bannerUrl:'target_url',bannerGame:'game',bannerStart:'start_date',bannerEnd:'end_date'};Object.entries(map).forEach(([id,key])=>$(id).value=b[key]||'');$('bannerId').value=b.id;$('bannerActive').checked=b.active;bannerImagePreview()}
  $('bannerEditorHeading').textContent=b?'배너 수정 · '+b.title:'새 배너 등록 · '+({main:'메인',left:'왼쪽',right:'오른쪽',bottom:'하단'}[placement]||'');
  $('bannerEditor').hidden=false;
- $('bannerEditor').scrollIntoView({behavior:'smooth',block:'center'});
+ $('bannerModalOverlay').hidden=false;
+ $('bannerDelete').hidden=!b;
+ $('bannerModalOverlay').scrollTop=0;
 }
 function bannerStageRender(){
  const sideSlots=24; // 홈페이지의 확장된 좌우 광고 영역을 관리 배치도에 표시
  const placements=[['bannerSlotsLeft','left',sideSlots],['bannerSlotsRight','right',sideSlots],['bannerSlotsBottom','bottom',10]];
  const draw=(placement,index)=>{
-  const b=bannerData.find(b=>b.placement===placement&&Number(b.slot_index)===index+1);
+  const b=bannerData.find(b=>b.placement===placement&&Number(b.slot_index)===index+1&&b.game===$('bannerStageGame').value);
   const el=document.createElement('button');el.type='button';el.className='banner-slot'+(placement==='main'?' main':'');
   el.title=b?'배너 수정: '+b.title:'클릭해서 배너 등록';
   if(b){const img=document.createElement('img');img.src=b.image_url;img.alt='';img.loading='lazy';el.appendChild(img)}
@@ -484,7 +487,7 @@ function bannerStageRender(){
  };
  const main=$('bannerSlotMain');main.replaceChildren();main.style.display='grid';main.style.gridTemplateColumns='repeat(5,minmax(0,1fr))';main.style.gap='6px';main.style.padding='8px';main.style.cursor='default';main.onclick=null;
  for(let i=1;i<=10;i++){
-   const b=bannerData.find(x=>x.placement==='main'&&Number(x.slot_index)===i);
+   const b=bannerData.find(x=>x.placement==='main'&&Number(x.slot_index)===i&&x.game===$('bannerStageGame').value);
    const btn=document.createElement('button');btn.type='button';btn.className='banner-slot';btn.style.cssText='min-height:60px;padding:5px';
    if(b){const img=document.createElement('img');img.src=b.image_url;img.alt='';btn.appendChild(img)}
    const label=document.createElement('span');label.textContent=b?('메인 '+i+'번 · '+b.title+' ✎'):('＋ 메인 '+i+'번');btn.appendChild(label);
@@ -492,7 +495,11 @@ function bannerStageRender(){
  }
  for(const [id,placement,count] of placements){const target=$(id);target.replaceChildren();for(let i=0;i<count;i++)target.appendChild(draw(placement,i))}
 }
-$('bannerEditorClose').addEventListener('click',()=>{$('bannerEditor').hidden=true;bannerReset()});
+function bannerClose(){$('bannerModalOverlay').hidden=true;$('bannerEditor').hidden=true;bannerReset()}
+$('bannerEditorClose').addEventListener('click',bannerClose);
+$('bannerModalOverlay').addEventListener('click',e=>{if(e.target===$('bannerModalOverlay'))bannerClose()});
+$('bannerStageGame').addEventListener('change',bannerStageRender);
+$('bannerDelete').addEventListener('click',async()=>{const id=$('bannerId').value;if(!id||!confirm('선택한 배너 광고를 삭제하시겠습니까?'))return;const {error}=await client.from('gemhub_banners').delete().eq('id',id);if(error){alert('삭제 실패: '+error.message);return}bannerClose();await bannerLoad();$('bannerMessage').textContent='배너가 삭제되었습니다.'});
 
 let bannerData=[];
 const bannerFields=['placement','title','image_url','target_url','game','start_date','end_date','active'];
@@ -519,12 +526,12 @@ $('bannerForm').addEventListener('submit',async e=>{
  if(![obj.image_url,obj.target_url].every(x=>/^https:\/\//i.test(x))){alert('이미지 및 이동 주소는 HTTPS URL을 사용하세요.');return}
  if(obj.end_date<obj.start_date){alert('종료일은 시작일보다 빠를 수 없습니다.');return}
  if(!obj.slot_index){alert('배치도에서 광고를 등록할 칸을 먼저 선택해 주세요.');return}
- const occupied=bannerData.find(b=>b.placement===obj.placement&&Number(b.slot_index)===obj.slot_index&&String(b.id)!==$('bannerId').value);
+ const occupied=bannerData.find(b=>b.placement===obj.placement&&Number(b.slot_index)===obj.slot_index&&b.game===obj.game&&String(b.id)!==$('bannerId').value);
  if(occupied){alert('이미 사용 중인 광고칸입니다. 해당 칸을 클릭해 기존 광고를 수정하거나 삭제해 주세요.');return}
  const id=$('bannerId').value,btn=$('bannerForm').querySelector('[type=submit]');btn.disabled=true;
- try{const q=id?client.from('gemhub_banners').update(obj).eq('id',id):client.from('gemhub_banners').insert(obj);const {error}=await q;if(error)throw error;bannerReset();$('bannerEditor').hidden=true;await bannerLoad();$('bannerMessage').textContent='배너가 저장되었습니다.'}catch(err){alert('배너 저장 실패: '+err.message)}finally{btn.disabled=false}
+ try{const q=id?client.from('gemhub_banners').update(obj).eq('id',id):client.from('gemhub_banners').insert(obj);const {error}=await q;if(error)throw error;bannerClose();await bannerLoad();$('bannerMessage').textContent='배너가 저장되었습니다.'}catch(err){alert('배너 저장 실패: '+err.message)}finally{btn.disabled=false}
 });
-scheduleSearchGames.forEach(g=>$('bannerGame').add(new Option(g,g)));
+scheduleSearchGames.forEach(g=>{$('bannerGame').add(new Option(g,g));$('bannerStageGame').add(new Option(g,g))});
 
 /* 새로고침 시 관리자 화면의 스크롤 위치를 복원합니다. */
 const adminScrollKey='gemhub_admin_refresh_scroll';
