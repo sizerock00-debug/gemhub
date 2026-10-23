@@ -613,6 +613,14 @@ box-shadow:inset 0 0 9px #ff45cb55,0 0 7px #e91bff88,0 0 8px #ffae3855!important
 .schedule-grid .schedule-entry.ad-sparkle:hover{filter:none!important}
 .schedule-grid .schedule-entry.ad-sparkle .gemhub-ad-name,.schedule-grid .schedule-entry.ad-sparkle .gemhub-ad-subtitle{animation:none!important;opacity:1!important;filter:none!important;text-shadow:none!important}
 @media(prefers-reduced-motion:reduce){.schedule-grid .schedule-entry.ad-sparkle{animation:none!important;box-shadow:0 0 0 2px #fff,0 0 12px 4px #ffe600!important}}
+</style><style>
+/* High-visibility sparkle demo with moving sheen, static legible lettering */
+@keyframes gemhubSparkleRing{0%,100%{box-shadow:0 0 0 1px #fff9,0 0 4px 1px #ffe50055}50%{box-shadow:0 0 0 3px #fff,0 0 15px 6px #fff,0 0 30px 10px #ffe500}}
+@keyframes gemhubSparkleSweep{0%{background-position:180% 0}100%{background-position:-180% 0}}
+.schedule-grid .schedule-entry.ad-sparkle{animation:gemhubSparkleRing 1.1s ease-in-out infinite!important;isolation:isolate!important;position:relative!important;z-index:2!important;overflow:hidden!important}
+.schedule-grid .schedule-entry.ad-sparkle::before{content:''!important;position:absolute!important;inset:0!important;z-index:-1!important;pointer-events:none!important;background:linear-gradient(110deg,transparent 22%,#ffffff00 34%,#ffffffb0 48%,#ffffff00 62%,transparent 78%)!important;background-size:240% 100%!important;animation:gemhubSparkleSweep 1.65s linear infinite!important}
+.schedule-grid .schedule-entry.ad-sparkle .gemhub-ad-name,.schedule-grid .schedule-entry.ad-sparkle .gemhub-ad-subtitle{position:relative!important;z-index:1!important}
+@media(prefers-reduced-motion:reduce){.schedule-grid .schedule-entry.ad-sparkle,.schedule-grid .schedule-entry.ad-sparkle::before{animation:none!important}.schedule-grid .schedule-entry.ad-sparkle{box-shadow:0 0 0 3px #fff,0 0 14px 5px #ffe500!important}}
 </style></head>
 <body>
 <header class="top"><div class="wrap top-inner"><div class="brand-wrap"><a href="#" class="logo"><span class="brand-pad">💎</span> GEM<span>HUB</span></a><div class="sub">게임 거래와 서버 홍보의 모든 것</div></div>
@@ -1212,7 +1220,7 @@ async function loadServerSchedules(){
 
 const gemhubDemoDailyCounts={"2026-10-19":9,"2026-10-20":7,"2026-10-21":6,"2026-10-22":9,"2026-10-23":10,"2026-10-24":8,"2026-10-25":5,"2026-10-26":7,"2026-10-27":9,"2026-10-28":6,"2026-10-29":10,"2026-10-30":8,"2026-10-31":7,"2026-11-01":9};
 const gemhubDemoColors=['red-yellow','sky','premium','blue-white','black-white'];
-const gemhubCalendarDemoEntries=Object.entries(gemhubDemoDailyCounts).flatMap(([date,count])=>Array.from({length:count},(_,i)=>({date,name:'2.0테더서버 비영리 반지제공',description:'안녕하세요',adStyle:gemhubDemoColors[i%gemhubDemoColors.length],demo:true})));
+const gemhubCalendarDemoEntries=Object.entries(gemhubDemoDailyCounts).flatMap(([date,count])=>Array.from({length:count},(_,i)=>({date,name:'2.0테더서버 비영리 반지제공',description:'안녕하세요',adStyle:gemhubDemoColors[i%gemhubDemoColors.length],adAnimation:i===0?'sparkle':'none',demo:true})));
 let scheduleWeekOffset=0;
 function scheduleISO(d){return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}
 function renderSchedule(){
