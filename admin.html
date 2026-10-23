@@ -107,7 +107,7 @@ textarea{min-height:88px;resize:vertical}.twocol{display:grid;grid-template-colu
 
 #scheduleFormPanel[hidden],#scheduleResults[hidden]{display:none!important}
 .schedule-entry.admin-jump-highlight{outline:4px solid #fff!important;outline-offset:2px!important;box-shadow:0 0 0 5px #e8c0ff,0 0 24px 10px #c966ff!important}
-</style>
+\n.member-layout{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.member-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.member-heading strong{color:#e5c6ff;background:#302044;padding:7px 12px;border-radius:10px}.member-actions{display:flex;gap:5px;align-items:center;flex-wrap:wrap}.member-actions select{width:auto;min-width:80px;padding:6px}.member-actions button{white-space:nowrap}.member-email{overflow-wrap:anywhere}.member-layout .searchrow input{max-width:none}@media(max-width:950px){.member-layout{grid-template-columns:minmax(0,1fr)}}\n</style>
 </head>
 <body>
 <header class="top">
@@ -121,7 +121,7 @@ textarea{min-height:88px;resize:vertical}.twocol{display:grid;grid-template-colu
   <div id="adminApp" hidden>
 <section class="schedule-panel" id="adminHomePreview" aria-label="실제 홈페이지와 동일한 서버 오픈 달력"><div class="schedule-head"><h2 id="adminPreviewTitle">📅 서버 오픈 일정 · 홈페이지 화면 미리보기</h2><div class="schedule-controls"><button type="button" id="adminPreviewPrev">◀</button><span id="adminPreviewPeriod" class="schedule-period"></span><button type="button" id="adminPreviewNext">▶</button><button type="button" id="adminPreviewToday">이번 달</button><button type="button" id="adminPreviewShowAll">전체 달력 보기</button><a href="./index.html" target="_blank" rel="noopener noreferrer" style="color:#ffe57a;font-size:12px">실제 홈페이지 ↗</a></div></div><div class="gemhub-demo-notice">📌 시연용 광고는 실제 등록 데이터가 아닙니다. 실제 광고는 클릭해서 수정하고, 날짜별 + 등록으로 새 광고를 추가하세요.</div><div class="admin-preview-actions"><label><input type="checkbox" id="adminShowDemo" checked> 시연용 광고 표시</label><span id="adminPreviewHelp">시연용 광고도 아래 목록에서 수정·삭제 테스트 가능 (이 브라우저에만 저장)</span><button type="button" id="resetDemoSchedules" class="btn small">시연용 110개 초기화</button></div><div class="schedule-scroll"><div class="schedule-grid" id="adminPreviewGrid"></div></div><div class="schedule-foot">홈페이지와 같은 배치·색상으로 표시합니다. 서버 이름을 누르면 수정 양식이 열립니다. 실제 방문자 화면은 만료된 광고를 제외합니다.</div></section>
 
-    <div class="layout">
+    <div class="layout member-layout">
       <section class="panel" id="scheduleFormPanel" hidden>
         <h2 id="formTitle">새 서버 일정 등록</h2>
         <form id="scheduleForm">
@@ -181,6 +181,13 @@ textarea{min-height:88px;resize:vertical}.twocol{display:grid;grid-template-colu
         <form id="scheduleSearchForm" class="searchrow" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><select id="listGameFilter" aria-label="검색할 게임 선택" required style="min-width:170px;flex:1"><option value="">게임 선택</option></select><input id="search" type="search" required placeholder="서버명 입력 (예: 겜허브)" style="flex:3;min-width:260px;width:100%;max-width:none"><button class="btn primary" type="submit">검색</button><button class="btn" id="clearScheduleSearch" type="button">검색 초기화</button><button class="btn" id="reloadBtn" type="button">새로고침</button></form>
         <div class="message" id="listMessage" role="status"></div>
         <div class="table-wrap" id="scheduleResults" hidden><table><thead><tr><th>게임 / 서버</th><th>오픈</th><th>종료</th><th>관리</th></tr></thead><tbody id="scheduleRows"></tbody></table></div>
+      </section>
+      <section class="panel" id="memberManagement">
+        <div class="member-heading"><h2>👥 회원 관리</h2><strong id="memberCount">회원수 —</strong></div>
+        <p class="muted">회원 검색 · 기간별 이용 정지 · 정지 해제 · 회원 삭제 (관리자 계정 보호)</p>
+        <div class="searchrow"><input id="memberSearch" type="search" placeholder="이메일로 회원 검색" aria-label="회원 검색" style="min-width:180px;flex:1"><button class="btn small" type="button" id="memberReload">조회</button></div>
+        <div id="memberMessage" class="message" role="status">회원 정보를 불러오는 중입니다.</div>
+        <div class="table-wrap"><table><thead><tr><th>회원 이메일</th><th>가입일 / 상태</th><th>관리</th></tr></thead><tbody id="memberRows"></tbody></table></div>
       </section>
     </div>
 <section class="panel" style="margin-top:18px"><h2>📊 통합 운영 현황</h2><div id="adminStats" class="actions"></div><p class="muted">거래 게시글 · 서버 광고 · 공지사항을 함께 관리합니다. 회원의 개인 대화 내용은 열람하지 않습니다.</p><button type="button" class="btn" id="refreshOperations">운영 현황 새로고침</button></section>
@@ -365,13 +372,54 @@ $('search').addEventListener('input',()=>{scheduleSearchSubmitted=false;renderLi
 $('listGameFilter').addEventListener('change',()=>{scheduleSearchSubmitted=false;renderList()});
 $('clearScheduleSearch').addEventListener('click',()=>{$('search').value='';$('listGameFilter').value='';scheduleSearchSubmitted=false;calendarSearchTarget=null;renderList();adminPreviewRender()});
 $('logoutBtn').addEventListener('click',async()=>{await client.auth.signOut();location.href='index.html'});
+
+/* 회원 관리는 관리자 검증을 통과한 Edge Function만 사용합니다. */
+let memberData=[];
+async function memberApi(payload){
+ const {data:{session}}=await client.auth.getSession();
+ if(!session?.access_token)throw Error('관리자 로그인이 필요합니다.');
+ const response=await fetch(SUPABASE_URL+'/functions/v1/gemhub-member-admin',{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_PUBLISHABLE_KEY,'Authorization':'Bearer '+session.access_token},body:JSON.stringify(payload)});
+ const body=await response.json().catch(()=>({}));
+ if(!response.ok||body.error)throw Error(body.error||'회원 관리 서버 오류');
+ return body;
+}
+async function memberLoad(){
+ const msg=$('memberMessage');msg.textContent='회원 목록 조회 중…';
+ try{const result=await memberApi({action:'list'});memberData=result.users||[];$('memberCount').textContent='회원수 '+memberData.length+'명';renderMembers()}
+ catch(e){msg.textContent='회원 조회 실패: '+(e.message||e)}
+}
+function renderMembers(){
+ const q=$('memberSearch').value.trim().toLowerCase(),filtered=memberData.filter(u=>u.email.toLowerCase().includes(q));
+ const tbody=$('memberRows');tbody.replaceChildren();$('memberMessage').textContent='검색 결과 '+filtered.length+'명';
+ if(!filtered.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=3;td.textContent='검색된 회원이 없습니다.';tr.append(td);tbody.append(tr);return}
+ filtered.forEach(u=>{
+  const tr=document.createElement('tr'),email=document.createElement('td'),state=document.createElement('td'),action=document.createElement('td');
+  email.className='member-email';email.textContent=u.email||'(이메일 없음)';
+  const banned=u.banned_until&&new Date(u.banned_until)>new Date();
+  const date=u.created_at?new Date(u.created_at).toLocaleDateString('ko-KR'):'—';
+  state.textContent=date+' · '+(banned?'정지 중 (~'+new Date(u.banned_until).toLocaleDateString('ko-KR')+')':'정상');
+  const actions=document.createElement('div');actions.className='member-actions';
+  const period=document.createElement('select');[1,3,7,14,30,90,365].forEach(n=>period.add(new Option(n+'일',String(n))));period.value='7';period.setAttribute('aria-label','정지 기간');
+  const ban=document.createElement('button');ban.type='button';ban.className='btn small';ban.textContent='정지';
+  const unban=document.createElement('button');unban.type='button';unban.className='btn small';unban.textContent='정지 해제';unban.hidden=!banned;
+  const del=document.createElement('button');del.type='button';del.className='btn small danger';del.textContent='삭제';
+  const run=async(payload,message)=>{if(!confirm(message))return;try{ban.disabled=true;unban.disabled=true;del.disabled=true;await memberApi(payload);await memberLoad()}catch(e){alert('처리 실패: '+(e.message||e));ban.disabled=false;unban.disabled=false;del.disabled=false}};
+  ban.addEventListener('click',()=>run({action:'ban',user_id:u.id,days:Number(period.value)},u.email+' 회원을 '+period.value+'일 정지할까요?'));
+  unban.addEventListener('click',()=>run({action:'unban',user_id:u.id},u.email+' 회원의 정지를 해제할까요?'));
+  del.addEventListener('click',()=>{const check=prompt(u.email+' 회원을 영구 삭제합니다. 복구할 수 없습니다. 계속하려면 DELETE를 입력하세요.');if(check==='DELETE')run({action:'delete',user_id:u.id,confirm:'DELETE'},u.email+' 회원을 정말 영구 삭제할까요?')});
+  actions.append(period,ban,unban,del);action.append(actions);tr.append(email,state,action);tbody.append(tr);
+ });
+}
+$('memberSearch').addEventListener('input',renderMembers);
+$('memberReload').addEventListener('click',memberLoad);
+
 async function boot(){
   try{
     const {data:{user},error}=await client.auth.getUser();
     if(error||!user){authMessage.textContent='관리자 로그인이 필요합니다. 홈페이지에서 로그인한 뒤 이 페이지를 다시 여세요.';return}
     const {data,error:adminError}=await client.from('gemhub_admins').select('user_id').eq('user_id',user.id).maybeSingle();
     if(adminError||!data){authMessage.textContent='이 계정에 관리자 권한이 없습니다.';return}
-    authMessage.textContent='관리자 인증 완료';app.hidden=false;await loadSchedules();await adminLoadOperations();
+    authMessage.textContent='관리자 인증 완료';app.hidden=false;await loadSchedules();await adminLoadOperations();await memberLoad();
   }catch(e){authMessage.textContent='관리자 인증 오류: '+(e?.message||'연결 설정을 확인하세요.')}
 }
 let adminPostsData=[],adminNoticesData=[];
