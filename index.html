@@ -533,6 +533,12 @@ box-shadow:inset 0 0 9px #ff45cb55,0 0 7px #e91bff88,0 0 8px #ffae3855!important
 .favorite-preview h3{font-size:16px;margin:0 0 10px}
 .favorite-preview p{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65}
 .favorite-preview button{border:1px solid #9867c0;background:#513073;color:white;padding:10px 13px;border-radius:9px;cursor:pointer}
+</style><style>
+/* 내 관심 거래: 전용 팝업 및 관심 해제 확인창 */
+#favoritesBackdrop .favorites-dialog{background:#141020!important;color:#fff!important}
+.favorites-toolbar{display:flex;gap:9px;margin:14px 0}.favorites-toolbar input{flex:1;min-width:0;background:#100a1e;color:#fff;border:1px solid #69458d;border-radius:9px;padding:11px}.favorites-toolbar select{background:#100a1e;color:#fff;border:1px solid #69458d;border-radius:9px;padding:11px}
+.favorite-remove-backdrop[hidden]{display:none!important}.favorite-remove-backdrop{position:fixed;inset:0;z-index:2147483100;background:#05020cbb;display:flex;align-items:center;justify-content:center;padding:18px}.favorite-remove-dialog{width:min(420px,100%);padding:24px;border:1px solid #b25cff;border-radius:16px;background:#1c102b;color:#fff;box-shadow:0 20px 70px #000a}.favorite-remove-dialog h3{margin:0 0 12px;color:#f5ddff}.favorite-remove-dialog p{line-height:1.6;color:#d5c4e5}.favorite-remove-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}.favorite-remove-actions button{padding:11px 18px;border-radius:9px;border:1px solid #875ca9;background:#38214f;color:#fff;cursor:pointer}.favorite-remove-actions #favoriteRemoveYes{background:#a2269e;border-color:#df65d1}
+@media(max-width:550px){.favorites-toolbar{flex-wrap:wrap}.favorites-toolbar input{flex-basis:100%}#favoritesBackdrop .favorites-dialog{padding:16px!important}}
 </style></head>
 <body>
 <header class="top"><div class="wrap top-inner"><div class="brand-wrap"><a href="#" class="logo"><span class="brand-pad">💎</span> GEM<span>HUB</span></a><div class="sub">게임 거래와 서버 홍보의 모든 것</div></div>
@@ -598,8 +604,8 @@ box-shadow:inset 0 0 9px #ff45cb55,0 0 7px #e91bff88,0 0 8px #ffae3855!important
 <div class="gemhub-manage-backdrop" id="manageBackdrop" hidden><section class="gemhub-manage-dialog" role="dialog" aria-modal="true" aria-labelledby="manageHeading"><div class="gemhub-manage-head"><h2 id="manageHeading">📋 내 거래 글</h2><button type="button" id="manageClose" aria-label="닫기">×</button></div><div id="manageBody"></div></section></div>
 <div class="gemhub-manage-backdrop" id="settingsBackdrop" hidden><section class="gemhub-manage-dialog" role="dialog" aria-modal="true" aria-labelledby="settingsHeading"><div class="gemhub-manage-head"><h2 id="settingsHeading">⚙️ 계정 설정</h2><button type="button" id="settingsClose" aria-label="닫기">×</button></div><p>가입 이메일: <strong id="settingsEmail"></strong></p><form id="passwordChangeForm"><label for="newAccountPassword">새 비밀번호 (8자 이상)</label><input type="password" id="newAccountPassword" autocomplete="new-password" minlength="8" required placeholder="새 비밀번호"><label for="confirmAccountPassword">새 비밀번호 확인</label><input type="password" id="confirmAccountPassword" autocomplete="new-password" minlength="8" required placeholder="새 비밀번호 다시 입력"><button type="submit" class="btn primary" id="passwordChangeSave">비밀번호 변경</button><p id="passwordChangeMessage" role="status"></p></form><p class="gemhub-manage-help">닉네임과 캐릭터는 '내 프로필 · 닉네임'에서 변경할 수 있습니다.</p></section></div>
 <div class="detail-backdrop" id="detailBackdrop" aria-hidden="true"><div class="detail-dialog" role="dialog" aria-modal="true" aria-labelledby="detailTitle"><button class="detail-close" type="button" id="detailClose" aria-label="닫기">×</button><h2 id="detailTitle"></h2><div id="detailMeta" class="muted"></div> <p id="detailContent"></p><button type="button" id="detailFavorite" class="favorite-detail-btn">♡ 관심 등록</button></div>
-<div class="favorites-backdrop" id="favoritesBackdrop" hidden><section class="favorites-dialog" role="dialog" aria-modal="true" aria-labelledby="favoritesHeading"><div class="favorites-heading"><h2 id="favoritesHeading">💗 나만의 관심 거래함</h2><button type="button" id="favoritesClose" aria-label="닫기">×</button></div><p>내가 찜한 거래 글만 모았습니다. 상세 내용을 확인하고 문의 문구를 복사할 수 있습니다.</p><div id="favoritesList"></div><div id="favoritePreview" class="favorite-preview" hidden></div></section></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<div class="favorites-backdrop" id="favoritesBackdrop" hidden><section class="favorites-dialog" role="dialog" aria-modal="true" aria-labelledby="favoritesHeading"><div class="favorites-heading"><h2 id="favoritesHeading">💗 나만의 관심 거래함</h2><button type="button" id="favoritesClose" aria-label="닫기">×</button></div><p>내가 찜한 거래 글만 모았습니다. 상세 내용을 확인하고 문의 문구를 복사할 수 있습니다.</p><div class="favorites-toolbar"><input id="favoritesSearch" type="search" placeholder="관심 거래 검색" aria-label="관심 거래 검색"><select id="favoritesFilter" aria-label="거래 상태"><option value="all">전체</option><option value="active">거래중</option><option value="completed">거래완료</option></select></div><div id="favoritesList"></div><div id="favoritePreview" class="favorite-preview" hidden></div></section></div>
+<div class="favorite-remove-backdrop" id="favoriteRemoveBackdrop" hidden><section class="favorite-remove-dialog" role="alertdialog" aria-modal="true" aria-labelledby="favoriteRemoveTitle" aria-describedby="favoriteRemoveDescription"><h3 id="favoriteRemoveTitle">♥ 관심 거래 삭제</h3><p id="favoriteRemoveDescription">선택하신 거래글을 내 관심 목록에서 삭제하시겠습니까?<br>관심 목록에서만 삭제되며 원본 거래글은 삭제되지 않습니다.</p><div class="favorite-remove-actions"><button type="button" id="favoriteRemoveCancel">취소</button><button type="button" id="favoriteRemoveYes">관심 해제</button></div></section></div><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 const games=['전체','리니지 클래식','리니지W','아이온','뮤','메이플스토리','로스트아크','블레이드앤소울','바람의나라','렌2','기타게임','로블록스','마인크래프트','발로란트','리그오브레전드','FC온라인','서든어택','배틀그라운드','오버워치2','원신','스타크래프트','던전앤파이터','리니지M','디아블로','다크에덴','미르2','R2'];
 let listings=[]; // 실제 Supabase 거래 글만 표시합니다.
@@ -619,9 +625,10 @@ function updateFavoriteUI(){
 function makeFavoriteButton(post){
  const b=document.createElement('button');b.type='button';b.className='favorite-heart';b.dataset.favoriteId=String(post.id);
  const active=favoriteIds.has(String(post.id));b.textContent=active?'♥':'♡';b.classList.toggle('is-favorite',active);b.setAttribute('aria-label',active?'관심 해제':'관심 등록');b.setAttribute('aria-pressed',String(active));
- b.addEventListener('click',async e=>{e.stopPropagation();if(favoriteIds.has(String(post.id))&&!document.getElementById('favoritesBackdrop').hidden){const ok=window.confirm('선택하신 거래글을 내 관심 목록에서 삭제하시겠습니까?\n\n관심 목록에서만 삭제되며, 원본 거래글은 삭제되지 않습니다.');if(!ok)return;}await toggleFavorite(post,b)});
+ b.addEventListener('click',async e=>{e.stopPropagation();if(favoriteIds.has(String(post.id))&&!document.getElementById('favoritesBackdrop').hidden){const ok=await confirmFavoriteRemoval();if(!ok)return;}await toggleFavorite(post,b)});
  return b;
 }
+function confirmFavoriteRemoval(){return new Promise(resolve=>{const modal=document.getElementById('favoriteRemoveBackdrop'),yes=document.getElementById('favoriteRemoveYes'),no=document.getElementById('favoriteRemoveCancel');modal.hidden=false;no.focus();function done(value){modal.hidden=true;yes.removeEventListener('click',accept);no.removeEventListener('click',cancel);modal.removeEventListener('click',outside);document.removeEventListener('keydown',escape);resolve(value)}function accept(){done(true)}function cancel(){done(false)}function outside(e){if(e.target===modal)done(false)}function escape(e){if(e.key==='Escape'){e.stopImmediatePropagation();done(false)}}yes.addEventListener('click',accept);no.addEventListener('click',cancel);modal.addEventListener('click',outside);document.addEventListener('keydown',escape,true)})}
 async function toggleFavorite(post,button){
  if(!currentUser){showToast('관심 등록은 로그인 후 이용할 수 있습니다.');openAuth('signin');return}
  if(!authClient)return;
@@ -654,8 +661,8 @@ function previewFavorite(post){
 }
 function renderFavoriteList(){
  const target=document.getElementById('favoritesList');target.replaceChildren();
- const saved=Array.isArray(window.gemhubFavoritePosts)?window.gemhubFavoritePosts:listings.filter(x=>favoriteIds.has(String(x.id)));
- if(!saved.length){const p=document.createElement('p');p.className='favorite-empty';p.textContent=favoriteIds.size?'관심 글을 불러오지 못했거나 삭제된 글입니다.':'아직 관심 등록한 거래 물품이 없습니다.';target.appendChild(p);return}
+ const allSaved=Array.isArray(window.gemhubFavoritePosts)?window.gemhubFavoritePosts:listings.filter(x=>favoriteIds.has(String(x.id)));const term=(document.getElementById('favoritesSearch')?.value||'').trim().toLowerCase(),filter=document.getElementById('favoritesFilter')?.value||'all';const saved=allSaved.filter(p=>(!term||[p.title,p.game,p.server,p.content].some(v=>String(v||'').toLowerCase().includes(term)))&&(filter==='all'||(filter==='completed'?p.status==='completed':p.status!=='completed')));
+ if(!saved.length){const p=document.createElement('p');p.className='favorite-empty';p.textContent=allSaved.length?'검색 조건에 맞는 관심 거래가 없습니다.':favoriteIds.size?'관심 글을 불러오지 못했거나 삭제된 글입니다.':'아직 관심 등록한 거래 물품이 없습니다.';target.appendChild(p);return}
  saved.forEach(post=>{
   const item=document.createElement('div');item.className='favorite-item';
   const info=document.createElement('button');info.type='button';info.className='favorite-item-info';
@@ -685,7 +692,7 @@ async function openFavorites(){
 }
 function closeFavorites(){document.getElementById('favoritesBackdrop').hidden=true}
 
-document.getElementById('favoritesClose').addEventListener('click',closeFavorites);
+document.getElementById('favoritesSearch').addEventListener('input',renderFavoriteList);document.getElementById('favoritesFilter').addEventListener('change',renderFavoriteList);document.getElementById('favoritesClose').addEventListener('click',closeFavorites);
 document.getElementById('favoritesBackdrop').addEventListener('click',e=>{if(e.target.id==='favoritesBackdrop')closeFavorites()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeFavorites()});
 
