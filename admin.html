@@ -493,7 +493,7 @@ function bannerStageRender(){
    const label=document.createElement('span');label.textContent=b?('메인 '+i+'번 · '+b.title+' ✎'):('＋ 메인 '+i+'번');btn.appendChild(label);
    btn.addEventListener('click',()=>bannerOpen('main',b,i));main.appendChild(btn);
  }
- for(const [id,placement,count] of placements){const target=$(id);target.replaceChildren();for(let i=0;i<count;i++){if((placement==='left'||placement==='right')&&i===10)continue;target.appendChild(draw(placement,i))}}
+ for(const [id,placement,count] of placements){const target=$(id);target.replaceChildren();for(let i=0;i<count;i++){if((placement==='left'||placement==='right')&&i===10){const blank=document.createElement('div');blank.className='banner-slot';blank.style.cssText='visibility:hidden;pointer-events:none';blank.setAttribute('aria-hidden','true');target.appendChild(blank);continue;}target.appendChild(draw(placement,i))}}
 }
 function bannerClose(){$('bannerModalOverlay').hidden=true;$('bannerEditor').hidden=true;bannerReset()}
 $('bannerEditorClose').addEventListener('click',bannerClose);
