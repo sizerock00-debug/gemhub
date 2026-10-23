@@ -503,13 +503,21 @@ $('bannerForm').addEventListener('submit',async e=>{
 });
 scheduleSearchGames.forEach(g=>$('bannerGame').add(new Option(g,g)));
 
+/* 새로고침 시 관리자 화면의 스크롤 위치를 복원합니다. */
+const adminScrollKey='gemhub_admin_refresh_scroll';
+const adminIsReload=performance.getEntriesByType('navigation')[0]?.type==='reload';
+let adminSavedScroll=0;
+try{adminSavedScroll=adminIsReload?Math.max(0,Number(sessionStorage.getItem(adminScrollKey))||0):0;if(!adminIsReload)sessionStorage.removeItem(adminScrollKey)}catch(e){}
+if('scrollRestoration' in history)history.scrollRestoration='manual';
+window.addEventListener('pagehide',()=>{try{sessionStorage.setItem(adminScrollKey,String(window.scrollY))}catch(e){}});
+function adminRestoreScroll(){if(adminIsReload&&adminSavedScroll>0)window.scrollTo(0,adminSavedScroll)}
 async function boot(){
   try{
     const {data:{user},error}=await client.auth.getUser();
     if(error||!user){authMessage.textContent='관리자 로그인이 필요합니다. 홈페이지에서 로그인한 뒤 이 페이지를 다시 여세요.';return}
     const {data,error:adminError}=await client.from('gemhub_admins').select('user_id').eq('user_id',user.id).maybeSingle();
     if(adminError||!data){authMessage.textContent='이 계정에 관리자 권한이 없습니다.';return}
-    authMessage.textContent='관리자 인증 완료';app.hidden=false;await loadSchedules();await adminLoadOperations();await memberLoad();await bannerLoad();
+    authMessage.textContent='관리자 인증 완료';app.hidden=false;adminRestoreScroll();await loadSchedules();adminRestoreScroll();await adminLoadOperations();adminRestoreScroll();await memberLoad();adminRestoreScroll();await bannerLoad();adminRestoreScroll();requestAnimationFrame(()=>{adminRestoreScroll();setTimeout(adminRestoreScroll,300)});
   }catch(e){authMessage.textContent='관리자 인증 오류: '+(e?.message||'연결 설정을 확인하세요.')}
 }
 let adminPostsData=[],adminNoticesData=[];
