@@ -61,6 +61,12 @@ textarea{min-height:88px;resize:vertical}.twocol{display:grid;grid-template-colu
 .schedule-entry:hover{filter:brightness(1.15)!important;transform:translateY(-1px)}
 .schedule-date.today{outline:2px solid #ffdd56!important;background:#27204c!important}
 @media(max-width:750px){.schedule-grid{min-width:1015px!important}.schedule-entry{min-height:58px!important;font-size:13px!important}.schedule-date{min-height:170px!important}}
+
+/* Two consecutive seven-day calendar rows, with dates in column headers only */
+.schedule-grid{grid-template-columns:repeat(7,minmax(145px,1fr))!important;min-width:1050px!important;align-items:stretch!important}
+.schedule-day-name{background:#d5e6b8!important;color:#15230c!important;font-size:16px!important;padding:10px 4px!important}
+.schedule-date{min-height:210px!important;padding:8px 5px!important;align-self:stretch!important}
+.schedule-date .schedule-number{display:none!important}
 </style>
 </head>
 <body>
@@ -193,18 +199,16 @@ function startEdit(item){
 /* 홈페이지 서버 오픈 일정표와 같은 월요일 시작 달력 미리보기 */
 let adminPreviewOffset=0;
 function adminPreviewRender(){
- const now=new Date(),month=new Date(now.getFullYear(),now.getMonth()+adminPreviewOffset,1,12),year=month.getFullYear(),mi=month.getMonth();
- const start=new Date(year,mi,1,12);start.setDate(start.getDate()-(start.getDay()+6)%7);
- const end=new Date(year,mi+1,0,12),weeks=Math.ceil(((end-start)/86400000+1)/7);
- $('adminPreviewPeriod').textContent=year+'년 '+(mi+1)+'월';
+ const now=new Date(),start=new Date(now.getFullYear(),now.getMonth(),now.getDate(),12);
+ start.setDate(start.getDate()-(start.getDay()+6)%7+adminPreviewOffset*7);
+ const last=new Date(start);last.setDate(start.getDate()+13);
+ $('adminPreviewPeriod').textContent=(start.getMonth()+1)+'월 '+start.getDate()+'일 ~ '+(last.getMonth()+1)+'월 '+last.getDate()+'일';
  const grid=$('adminPreviewGrid');grid.replaceChildren();
- ['월','화','수','목','금','토','일'].forEach(name=>{const head=adminText('div',name);head.className='schedule-day-name';grid.append(head)});
  const today=calendarKey(now);let visible=0;
- for(let i=0;i<weeks*7;i++){
+ for(let i=0;i<14;i++){
+  if(i%7===0){for(let j=0;j<7;j++){const d=new Date(start);d.setDate(start.getDate()+i+j);const head=adminText('div',d.getDate()+'일('+['일','월','화','수','목','금','토'][d.getDay()]+')');head.className='schedule-day-name';grid.append(head)}}
   const day=new Date(start);day.setDate(start.getDate()+i);const iso=calendarKey(day);
-  if(day.getMonth()!==mi){const blank=adminText('div','');blank.className='schedule-outside-blank';grid.append(blank);continue}
   const cell=adminText('div','');cell.className='schedule-date'+(iso===today?' today':'');
-  const num=adminText('div',day.getDate()+'일');num.className='schedule-number';cell.append(num);
   const entries=cachedSchedules.filter(s=>s.opening_at&&calendarKey(new Date(s.opening_at))===iso&&(!s.expires_at||new Date(s.expires_at)>now));
   
   entries.forEach(s=>{visible++;const el=adminText('button','');const nm=adminText('strong',s.server_name||'이름 미등록');nm.className='gemhub-ad-name';el.append(nm);if(s.description){const sub=adminText('span',s.description.length>90?s.description.slice(0,90)+'…':s.description);sub.className='gemhub-ad-subtitle';el.append(sub)}el.type='button';el.className='schedule-entry '+({'premium':'ad-premium','red-yellow':'ad-red-yellow',sky:'ad-sky','black-white':'ad-black-white','blue-white':'ad-blue-white'}[s.ad_style]||'ad-sky');el.title='클릭하여 바로 수정: '+s.server_name;el.addEventListener('click',()=>startEdit(s));cell.append(el)});grid.append(cell)
