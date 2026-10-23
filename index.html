@@ -241,6 +241,12 @@ body{background:#050314;color:#f6eaff}
 #adsBottom.bottom-ads-grid{grid-template-columns:repeat(5,minmax(0,1fr))!important;grid-auto-flow:row!important;gap:8px!important}
 #adsBottom .ad-tile{aspect-ratio:338/138!important;height:auto!important;min-height:0!important;grid-column:auto!important;grid-row:auto!important}
 @media(max-width:650px){#adsBottom.bottom-ads-grid{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:3px!important}#adsBottom .gemhub-unassigned-ad{padding:2px!important;gap:1px!important}#adsBottom .gemhub-ad-slot-label{font-size:9px!important;padding:1px 3px!important}#adsBottom .gemhub-ad-slot-action{font-size:8px!important}#adsBottom .gemhub-ad-slot-help{font-size:7px!important}}
+
+/* 메인 배너 광고 모집 화면: 실제 광고가 등록되면 기존 광고 이미지로 전환 */
+#mainBannerCarousel[data-banner-theme="purple"] .hero-copy{text-shadow:0 2px 12px #10051f}
+#mainBannerCarousel .hero-copy #mainBannerTitle{letter-spacing:-.035em}
+#mainBannerCarousel #mainBannerLink[data-recruitment="yes"]{background:linear-gradient(110deg,#f8d57b,#f5a943)!important;color:#281137!important;font-weight:900!important;border:1px solid #fff0b4!important;box-shadow:0 0 15px #e7ad4c66!important}
+#mainBannerCarousel #mainBannerLink[data-recruitment="yes"]:hover{filter:brightness(1.1)}
 </style>
 <style>
 /* GEMHUB 확정 시안: 기능 유지형 메인화면 개편 */
@@ -1243,9 +1249,7 @@ function adNode(ad){
 /* 메인 광고 자동 슬라이더 - 향후 관리자 광고 데이터 연결용 */
 const MAIN_BANNER_INTERVAL_MS=5000;
 const mainBannerSlides=[
- {title:'GEMHUB',kicker:'게임을 더 즐겁게, 함께하는 공간',description:'게임 거래와 서버 홍보의 모든 것',tagline:'함께하는 게임, 더 큰 즐거움!',button:'지금 시작하기 →',href:'#market',theme:'purple'},
- {title:'서버 오픈 일정',kicker:'오늘 오픈하는 서버를 찾아보세요',description:'겜허브 서버 오픈 일정 달력',tagline:'새로운 서버를 한눈에!',button:'서버 일정 보기 →',href:'#scheduleTitle',theme:'blue'},
- {title:'실시간 인기 거래',kicker:'게임별 아이템과 계정 거래',description:'내가 찾는 게임 거래를 더 편리하게',tagline:'원하는 거래를 빠르게!',button:'거래 목록 보기 →',href:'#market',theme:'pink'}
+ {title:'메인 배너 광고 등록',kicker:'📢 GEMHUB · MAIN PREMIUM AD',description:'겜허브 메인 배너 광고주를 모집합니다',tagline:'메인 광고 자리 · 클릭하여 홍보글 및 배너 등록 상담',button:'💬 메인 배너 광고 등록 상담 →',href:'#gemhubAdModal',theme:'purple',recruitment:true}
 ];
 let mainBannerIndex=0,mainBannerPaused=false,mainBannerTimer=null;
 const bannerRoot=document.getElementById('mainBannerCarousel'),bannerDots=document.getElementById('bannerIndicators');
@@ -1260,6 +1264,7 @@ function renderMainBanner(){
  document.getElementById('mainBannerDescription').textContent=item.description;
  document.getElementById('mainBannerTagline').textContent=item.tagline;
  const link=document.getElementById('mainBannerLink');link.textContent=item.button;link.setAttribute('href',item.href);
+ link.dataset.recruitment=item.recruitment?'yes':'no';
  bannerDots.replaceChildren();
  mainBannerSlides.forEach((slide,i)=>{const dot=document.createElement('button');dot.type='button';dot.className='banner-dot'+(i===mainBannerIndex?' active':'');dot.setAttribute('aria-label',(i+1)+'번째 배너 보기');dot.setAttribute('aria-current',String(i===mainBannerIndex));dot.addEventListener('click',()=>{mainBannerIndex=i;renderMainBanner();restartMainBanner()});bannerDots.appendChild(dot)});
 }
@@ -1267,6 +1272,7 @@ function restartMainBanner(){
  if(mainBannerTimer)clearInterval(mainBannerTimer);
  if(!mainBannerPaused&&mainBannerSlides.length>1&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches)mainBannerTimer=setInterval(()=>{mainBannerIndex=(mainBannerIndex+1)%mainBannerSlides.length;renderMainBanner()},MAIN_BANNER_INTERVAL_MS);
 }
+document.getElementById('mainBannerLink').addEventListener('click',event=>{if(event.currentTarget.dataset.recruitment!=='yes')return;event.preventDefault();const modal=document.getElementById('gemhubAdModal');const slot=document.getElementById('gemhubAdSlotChoice');if(slot)slot.textContent='문의하실 광고 위치: 메인 배너 · 홍보글 및 배너 등록 상담';if(modal)modal.hidden=false});
 document.getElementById('bannerPrev').addEventListener('click',()=>{mainBannerIndex=(mainBannerIndex-1+mainBannerSlides.length)%mainBannerSlides.length;renderMainBanner();restartMainBanner()});
 document.getElementById('bannerNext').addEventListener('click',()=>{mainBannerIndex=(mainBannerIndex+1)%mainBannerSlides.length;renderMainBanner();restartMainBanner()});
 document.getElementById('bannerPause').addEventListener('click',e=>{mainBannerPaused=!mainBannerPaused;e.currentTarget.textContent=mainBannerPaused?'▶':'Ⅱ';e.currentTarget.setAttribute('aria-label',mainBannerPaused?'자동 넘김 재생':'자동 넘김 일시정지');restartMainBanner()});
