@@ -1229,7 +1229,7 @@ function renderSchedule(){
   'black-white': 'ad-black-white',
   'blue-white': 'ad-blue-white'
 }[item.adStyle] || 'ad-sky');
-if(item.demo){el.classList.add('gemhub-demo-entry');el.title='시연용 광고 · 실제 등록되지 않음'}const nameEl=document.createElement('strong');nameEl.className='gemhub-ad-name';nameEl.textContent=item.name||'이름 미등록';el.appendChild(nameEl);if(item.description){const sub=document.createElement('span');sub.className='gemhub-ad-subtitle';sub.textContent=item.description.length>90?item.description.slice(0,90)+'…':item.description;el.appendChild(sub)}if(item.demo){const badge=document.createElement('span');badge.className='gemhub-demo-label';badge.textContent='시연용';el.appendChild(badge)}if(valid&&!item.demo){el.href=item.url;el.target='_blank';el.rel='noopener noreferrer';el.title='서버 홈페이지 열기'}else{el.title='홈페이지 주소 미등록'}cell.appendChild(el)}
+if(item.adAnimation==='sparkle')el.classList.add('ad-sparkle');if(item.demo){el.classList.add('gemhub-demo-entry');el.title='시연용 광고 · 실제 등록되지 않음'}const nameEl=document.createElement('strong');nameEl.className='gemhub-ad-name';nameEl.textContent=item.name||'이름 미등록';el.appendChild(nameEl);if(item.description){const sub=document.createElement('span');sub.className='gemhub-ad-subtitle';sub.textContent=item.description.length>90?item.description.slice(0,90)+'…':item.description;el.appendChild(sub)}if(item.demo){const badge=document.createElement('span');badge.className='gemhub-demo-label';badge.textContent='시연용';el.appendChild(badge)}if(valid&&!item.demo){el.href=item.url;el.target='_blank';el.rel='noopener noreferrer';el.title='서버 홈페이지 열기'}else{el.title='홈페이지 주소 미등록'}cell.appendChild(el)}
   grid.appendChild(cell)
  }
 }
