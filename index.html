@@ -476,6 +476,28 @@ box-shadow:inset 0 0 9px #ff45cb55,0 0 7px #e91bff88,0 0 8px #ffae3855!important
 .signup-consents details p{line-height:1.6;font-size:12px;margin:8px 0}
 .signup-consent-note{font-size:12px;line-height:1.5;color:#cbb3dc;margin:10px 0 0}
 .signup-consents[hidden]{display:none!important}
+</style><style>
+.auth-dialog:has(.signup-agreement-step:not([hidden])){width:min(1050px,calc(100vw - 24px))!important;max-width:1050px!important;max-height:92vh;overflow-y:auto;padding:18px!important}
+.signup-agreement-step[hidden],#authForm[hidden],#authDescription[hidden]{display:none!important}
+.signup-agreement-step{font-size:14px;color:#f6f8ff;text-align:left}
+.signup-all-head{display:flex!important;gap:10px;align-items:center;justify-content:center;background:#ee8092;color:white;border-radius:4px;padding:14px 18px;margin:10px 0;font-weight:800;text-align:center}
+.signup-agreement-step input[type=checkbox]{width:18px!important;height:18px!important;accent-color:#347be9;flex:none;cursor:pointer}
+.signup-policy-panel{border:1px solid #c5cbd6;border-radius:4px;overflow:hidden;margin:12px 0}
+.signup-policy-title{display:flex!important;align-items:center;justify-content:space-between;padding:18px;background:#101a2b;font-weight:800;margin:0!important}
+.signup-policy-content{background:#121f33;padding:18px;line-height:1.65;min-height:130px}
+.signup-policy-content p{font-size:12px;color:#b7c5d9;margin-top:12px}
+.signup-policy-table{width:100%;border-collapse:collapse;font-size:13px;background:#f9fafc;color:#263246}
+.signup-policy-table th,.signup-policy-table td{border:1px solid #d7dce5;padding:12px;text-align:center;vertical-align:middle}
+.signup-policy-table th{background:#f0f2f6}
+.signup-all-bottom{display:flex!important;justify-content:center;align-items:center;position:relative;gap:12px;padding:15px 36px;background:#f3f5f9;color:#152035;border-radius:4px;margin:14px 0!important;font-weight:700}
+.signup-all-bottom input{position:absolute;right:16px}
+.signup-agreement-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.signup-agreement-actions button{border:0;border-radius:4px;padding:16px;cursor:pointer;font-weight:800;font-size:15px}
+#signupAgreementCancel{background:#f5f5f5;color:#111}
+#signupAgreementNext{background:#355d87;color:#fff}
+#signupAgreementNext:disabled{opacity:.55;cursor:not-allowed}
+#signupAgreementMessage{color:#ffc1c9;text-align:center;margin:8px 0 0}
+@media(max-width:600px){.signup-all-head{font-size:12px;padding:12px}.signup-policy-content{padding:10px}.signup-policy-table{font-size:11px}.signup-policy-table th,.signup-policy-table td{padding:6px}.signup-all-bottom{font-size:12px}}
 </style></head>
 <body>
 <header class="top"><div class="wrap top-inner"><div class="brand-wrap"><a href="#" class="logo"><span class="brand-pad">💎</span> GEM<span>HUB</span></a><div class="sub">게임 거래와 서버 홍보의 모든 것</div></div>
@@ -508,7 +530,13 @@ box-shadow:inset 0 0 9px #ff45cb55,0 0 7px #e91bff88,0 0 8px #ffae3855!important
 </main>
 <footer class="footer">© GEMHUB · 게임 거래와 서버 홍보의 모든 것</footer><div class="toast" id="toast" role="status"></div>
 <div class="trade-backdrop" id="tradeBackdrop" aria-hidden="true"><div class="trade-dialog" role="dialog" aria-modal="true" aria-labelledby="tradeTitle"><button class="trade-close" type="button" id="tradeClose" aria-label="닫기">×</button><h2 id="tradeTitle">🛒 거래 글 등록</h2><p>로그인한 회원만 글을 등록할 수 있습니다. 실제 개인정보, 비밀번호, 현금 거래 정보는 올리지 마세요.</p><form id="tradeForm"><label for="tradeGame">게임</label><select id="tradeGame" required></select><label for="tradeServer">서버 이름</label><input id="tradeServer" maxlength="80" required placeholder="예: 서버 A"><label for="tradeCategory">거래 종류</label><select id="tradeCategory" required><option value="아이템">아이템 거래</option><option value="계정">계정 거래</option><option value="부주 구인">부주 구인</option></select><label for="tradePostTitle">거래 글 제목</label><input id="tradePostTitle" maxlength="120" required placeholder="예: 장비 판매합니다"><label for="tradePrice">가격 / 조건 (게임 내 재화)</label><input id="tradePrice" maxlength="80" required placeholder="예: 100만 아데나 / 협의"><label for="tradeContent">상세 설명</label><textarea id="tradeContent" maxlength="3000" required placeholder="아이템 정보와 거래 조건을 적어주세요."></textarea><div class="trade-actions"><button type="button" class="btn" id="tradeCancel">취소</button><button type="submit" class="btn primary" id="tradeSave">등록하기</button></div><div class="trade-message" id="tradeMessage" role="status"></div></form></div></div>
-<div class="auth-backdrop" id="authBackdrop" aria-hidden="true"><div class="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="authTitle"><button class="auth-close" id="authClose" type="button" aria-label="닫기">×</button><h2 id="authTitle">겜허브 회원가입</h2><p id="authDescription">이메일로 가입한 후 받은 인증 메일을 확인해주세요.</p><form id="authForm"><label for="authEmail">이메일</label><input id="authEmail" type="email" autocomplete="email" required placeholder="example@email.com"><label for="authPassword">비밀번호 (8자 이상)</label><input id="authPassword" type="password" autocomplete="current-password" minlength="8" required placeholder="비밀번호 입력"><div id="signupConsents" class="signup-consents">
+<div class="auth-backdrop" id="authBackdrop" aria-hidden="true"><div class="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="authTitle"><button class="auth-close" id="authClose" type="button" aria-label="닫기">×</button><h2 id="authTitle">겜허브 회원가입</h2><p id="authDescription">이메일로 가입한 후 받은 인증 메일을 확인해주세요.</p><section id="signupAgreementStep" class="signup-agreement-step" hidden aria-label="회원가입 약관 동의">
+<label class="signup-all-head"><input id="agreeAll" type="checkbox"> <span>회원가입약관 및 개인정보처리방침안내의 내용에 동의하셔야 회원가입 하실 수 있습니다.</span></label>
+<div class="signup-policy-panel"><label class="signup-policy-title" for="agreeTermsStep">회원가입약관 <input id="agreeTermsStep" type="checkbox"></label><div class="signup-policy-content">겜허브는 게임 거래 정보 및 서버 홍보를 위한 게시 공간을 제공합니다. 회원은 허위 거래, 불법 게시물, 타인의 권리를 침해하는 내용을 등록할 수 없습니다. 회원 간 거래 조건 및 위험은 거래 전에 직접 확인해야 합니다. 신고된 게시물은 운영 정책에 따라 제한될 수 있습니다.<p>※ 본 내용은 운영 정책 초안으로 정식 서비스 전 검토·고지 예정입니다.</p></div></div>
+<div class="signup-policy-panel"><label class="signup-policy-title" for="agreePrivacyStep">개인정보처리방침안내 <input id="agreePrivacyStep" type="checkbox"></label><div class="signup-policy-content"><table class="signup-policy-table"><thead><tr><th>목적</th><th>항목</th><th>보유기간</th></tr></thead><tbody><tr><td>회원가입 및 계정 인증</td><td>이메일 주소, 인증 관련 정보</td><td>회원 탈퇴 시까지 (법령상 보존 의무가 있는 경우 제외)</td></tr><tr><td>회원 프로필 관리</td><td>닉네임, 선택한 캐릭터</td><td>회원 탈퇴 시까지 (법령상 보존 의무가 있는 경우 제외)</td></tr></tbody></table><p>※ 실제 처리 항목·보유기간을 확인하여 정식 개인정보 처리방침으로 확정해야 합니다.</p></div></div>
+<label class="signup-all-bottom"><span>회원가입 약관에 모두 동의합니다</span><input id="agreeAllBottom" type="checkbox"></label>
+<div class="signup-agreement-actions"><button id="signupAgreementCancel" type="button">취소</button><button id="signupAgreementNext" type="button">회원가입</button></div>
+<p id="signupAgreementMessage" role="status" aria-live="polite"></p></section><form id="authForm"><label for="authEmail">이메일</label><input id="authEmail" type="email" autocomplete="email" required placeholder="example@email.com"><label for="authPassword">비밀번호 (8자 이상)</label><input id="authPassword" type="password" autocomplete="current-password" minlength="8" required placeholder="비밀번호 입력"><div id="signupConsents" class="signup-consents">
 <label class="signup-consent-line"><input type="checkbox" id="agreeTerms"> <span><strong>[필수] 이용약관 동의</strong></span></label>
 <details><summary>이용약관 주요 내용 보기 (운영 정책 초안)</summary><p>겜허브는 게임 관련 거래 정보 게시 및 서버 홍보 공간을 제공합니다. 회원은 허위·불법 게시물, 타인의 권리를 침해하는 콘텐츠를 등록해서는 안 됩니다. 거래 당사자 간 조건과 위험을 직접 확인해야 하며, 운영자는 신고된 게시물에 대해 운영 정책에 따라 조치할 수 있습니다. 정식 약관은 운영 전 별도 검토·고지해야 합니다.</p></details>
 <label class="signup-consent-line"><input type="checkbox" id="agreePrivacy"> <span><strong>[필수] 개인정보 수집·이용 동의</strong></span></label>
