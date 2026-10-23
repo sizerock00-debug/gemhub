@@ -195,6 +195,9 @@ body{background:#050314;color:#f6eaff}
 .schedule-count{font-size:11px;color:#f6cbff;font-weight:800;margin:0 0 4px}
 /* 하단 배너 제목 문구 숨김 */
 .bottom-ads::before{content:none!important;display:none!important}
+
+/* 광고 미등록 위치는 홈페이지에서 완전히 숨기고, 등록된 칸의 순서는 유지 */
+.gemhub-unassigned-ad{visibility:hidden!important;border:0!important;background:none!important;box-shadow:none!important;pointer-events:none!important}
 </style>
 <style>
 /* GEMHUB 확정 시안: 기능 유지형 메인화면 개편 */
@@ -1243,7 +1246,11 @@ function renderAds(){
     target.replaceChildren();
     const placement={adsLeft:'left',adsRight:'right',adsBottom:'bottom'}[id];
     const placed=relevant.filter(a=>a.placement===placement);
-    for(let i=0;i<count;i++){target.appendChild(adNode(placed.find(a=>Number(a.slotIndex)===i+1)))}
+    for(let i=0;i<count;i++){
+      const ad=placed.find(a=>Number(a.slotIndex)===i+1);
+      if(ad)target.appendChild(adNode(ad));
+      else{const empty=document.createElement('div');empty.className='ad-tile gemhub-unassigned-ad';empty.setAttribute('aria-hidden','true');target.appendChild(empty)}
+    }
   }
 }
 
