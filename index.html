@@ -721,7 +721,7 @@ body.gh-notice-open{overflow:hidden}
   #adsLeft .ad-tile, #adsRight .ad-tile { aspect-ratio:auto !important; height:138px !important; min-height:0 !important; }
 }
 </style>
-<style id="gemhub-calendar-banner-space-style">.gemhub-calendar-banner-space{width:100%;height:clamp(90px,10vw,138px);min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;text-align:center;border-top:1px solid #7945ac;border-bottom:1px solid #7945ac;background:linear-gradient(120deg,#120923,#25103e,#120923);color:#e8c9ff;box-sizing:border-box}.gemhub-calendar-banner-space span{font-size:clamp(14px,1.3vw,19px);font-weight:900}.gemhub-calendar-banner-space small{font-size:12px;color:#bb9dd8}@media(max-width:650px){.gemhub-calendar-banner-space{height:96px}}</style>
+<style id="gemhub-calendar-banner-space-style">.gemhub-calendar-banner-space{width:100%;height:clamp(90px,10vw,138px);min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;text-align:center;border-top:1px solid #7945ac;border-bottom:1px solid #7945ac;background:linear-gradient(120deg,#120923,#25103e,#120923);color:#e8c9ff;box-sizing:border-box}.gemhub-calendar-banner-space{text-decoration:none;cursor:pointer}.gemhub-calendar-banner-space:hover{filter:brightness(1.2)}.gemhub-calendar-banner-space span{font-size:clamp(14px,1.3vw,19px);font-weight:900}.gemhub-calendar-banner-space small{font-size:12px;color:#bb9dd8}@media(max-width:650px){.gemhub-calendar-banner-space{height:96px}}</style>
 </head>
 <body>
 <header class="top"><div class="wrap top-inner"><div class="brand-wrap"><a href="#" class="logo"><span class="brand-pad">💎</span> GEM<span>HUB</span></a><div class="sub">게임 거래와 서버 홍보의 모든 것</div></div>
@@ -758,7 +758,7 @@ body.gh-notice-open{overflow:hidden}
 
 <section class="schedule-panel" aria-label="게임별 한 달 서버 일정표">
 <div class="schedule-head"><h2 id="scheduleTitle">📅 서버 오픈 일정</h2><div class="schedule-controls"><button type="button" id="schedulePrev" aria-label="이전 달">◀</button><span id="schedulePeriod" class="schedule-period"></span><button type="button" id="scheduleNext" aria-label="다음 달">▶</button><button type="button" id="scheduleToday">이번 달</button><button type="button" data-demo="광고 문의">+ 일정 문의</button></div></div>
-<div class="gemhub-calendar-banner-space" aria-label="서버 오픈 일정 상단 광고 배너 영역"><span>📢 서버 오픈 일정 상단 배너 광고</span><small>배너 광고 등록 문의</small></div><div class="schedule-scroll"><div class="schedule-grid" id="scheduleGrid"></div></div>
+<a class="gemhub-calendar-banner-space" href="https://t.me/GemHubHelp" target="_blank" rel="noopener noreferrer" aria-label="텔레그램에서 서버 오픈 일정 상단 배너 광고 문의"><span>📢 서버 오픈 일정 상단 배너 광고</span><small>클릭하여 텔레그램으로 광고 등록 문의</small></a><div class="schedule-scroll"><div class="schedule-grid" id="scheduleGrid"></div></div>
 <div class="schedule-foot">서버 이름을 누르면 등록된 공식 홈페이지가 새 창으로 열립니다. 등록된 일정이 없으면 빈칸으로 표시됩니다.</div>
 </section>
 </div>
@@ -1249,7 +1249,7 @@ function adNode(ad){
 }
 /* 메인 광고 자동 슬라이더 - 향후 관리자 광고 데이터 연결용 */
 const MAIN_BANNER_INTERVAL_MS=5000;
-const mainBannerSlides=Array.from({length:10},(_,i)=>({title:'메인 배너 광고 등록',kicker:'📢 GEMHUB · MAIN PREMIUM AD · '+(i+1)+'번',description:'겜허브 메인 '+(i+1)+'번 배너 광고주를 모집합니다',tagline:'메인 '+(i+1)+'번 · 클릭하여 홍보글 및 배너 등록 상담',button:'💬 메인 '+(i+1)+'번 광고 등록 상담 →',href:'#gemhubAdModal',theme:'purple',recruitment:true,slotIndex:i+1}));
+const mainBannerSlides=Array.from({length:10},(_,i)=>({title:'메인 배너 광고 등록',kicker:'📢 GEMHUB · MAIN PREMIUM AD · '+(i+1)+'번',description:'겜허브 메인 '+(i+1)+'번 배너 광고주를 모집합니다',tagline:'메인 '+(i+1)+'번 · 클릭하여 홍보글 및 배너 등록 상담',button:'💬 메인 '+(i+1)+'번 광고 등록 상담 →',href:'https://t.me/GemHubHelp',theme:'purple',recruitment:true,slotIndex:i+1}));
 let mainBannerIndex=0,mainBannerPaused=false,mainBannerTimer=null;
 const bannerRoot=document.getElementById('mainBannerCarousel'),bannerDots=document.getElementById('bannerIndicators');
 function renderMainBanner(){
@@ -1271,7 +1271,7 @@ function restartMainBanner(){
  if(mainBannerTimer)clearInterval(mainBannerTimer);
  if(!mainBannerPaused&&mainBannerSlides.length>1&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches)mainBannerTimer=setInterval(()=>{mainBannerIndex=(mainBannerIndex+1)%mainBannerSlides.length;renderMainBanner()},MAIN_BANNER_INTERVAL_MS);
 }
-document.getElementById('mainBannerLink').addEventListener('click',event=>{if(event.currentTarget.dataset.recruitment!=='yes')return;event.preventDefault();const modal=document.getElementById('gemhubAdModal');const slot=document.getElementById('gemhubAdSlotChoice');if(slot)slot.textContent='문의하실 광고 위치: 메인 '+(mainBannerSlides[mainBannerIndex]?.slotIndex||1)+'번 · 홍보글 및 배너 등록 상담';if(modal)modal.hidden=false});
+document.getElementById('mainBannerLink').addEventListener('click',event=>{if(event.currentTarget.dataset.recruitment!=='yes')return;event.currentTarget.target='_blank';event.currentTarget.rel='noopener noreferrer';});
 document.getElementById('bannerPrev').addEventListener('click',()=>{mainBannerIndex=(mainBannerIndex-1+mainBannerSlides.length)%mainBannerSlides.length;renderMainBanner();restartMainBanner()});
 document.getElementById('bannerNext').addEventListener('click',()=>{mainBannerIndex=(mainBannerIndex+1)%mainBannerSlides.length;renderMainBanner();restartMainBanner()});
 document.getElementById('bannerPause').addEventListener('click',e=>{mainBannerPaused=!mainBannerPaused;e.currentTarget.textContent=mainBannerPaused?'▶':'Ⅱ';e.currentTarget.setAttribute('aria-label',mainBannerPaused?'자동 넘김 재생':'자동 넘김 일시정지');restartMainBanner()});
@@ -1284,7 +1284,7 @@ function gemhubUpdateMainForGame(){
  const registeredMain=window.gemhubRegisteredMainBanners||[];
  for(let i=0;i<10;i++){
   const b=registeredMain.find(ad=>Number(ad.slot_index)===i+1&&ad.game===selected)||registeredMain.find(ad=>Number(ad.slot_index)===i+1&&ad.game==='전체');
-  mainBannerSlides[i]=b?{title:b.title,kicker:'GEMHUB PREMIUM BANNER · '+(i+1)+'번',description:b.title,tagline:'겜허브 공식 배너 광고',button:'광고 바로가기 →',href:b.target_url,theme:'purple',image:b.image_url,slotIndex:i+1}:{title:'메인 배너 광고 등록',kicker:'📢 GEMHUB · MAIN PREMIUM AD · '+(i+1)+'번',description:'겜허브 메인 '+(i+1)+'번 배너 광고주를 모집합니다',tagline:'메인 '+(i+1)+'번 · 클릭하여 홍보글 및 배너 등록 상담',button:'💬 메인 '+(i+1)+'번 광고 등록 상담 →',href:'#gemhubAdModal',theme:'purple',recruitment:true,slotIndex:i+1};
+  mainBannerSlides[i]=b?{title:b.title,kicker:'GEMHUB PREMIUM BANNER · '+(i+1)+'번',description:b.title,tagline:'겜허브 공식 배너 광고',button:'광고 바로가기 →',href:b.target_url,theme:'purple',image:b.image_url,slotIndex:i+1}:{title:'메인 배너 광고 등록',kicker:'📢 GEMHUB · MAIN PREMIUM AD · '+(i+1)+'번',description:'겜허브 메인 '+(i+1)+'번 배너 광고주를 모집합니다',tagline:'메인 '+(i+1)+'번 · 클릭하여 홍보글 및 배너 등록 상담',button:'💬 메인 '+(i+1)+'번 광고 등록 상담 →',href:'https://t.me/GemHubHelp',theme:'purple',recruitment:true,slotIndex:i+1};
  }
  renderMainBanner();restartMainBanner();
 }
@@ -1315,12 +1315,7 @@ function renderAds(){
         const help=document.createElement('span');help.className='gemhub-ad-slot-help';help.textContent='클릭하여 홍보글 등록 상담';
         empty.append(number,action,help);
         empty.setAttribute('aria-label',label+' 배너 광고 등록 상담');
-        empty.addEventListener('click',()=>{
-          const modal=document.getElementById('gemhubAdModal');
-          const slot=document.getElementById('gemhubAdSlotChoice');
-          if(slot)slot.textContent='문의하실 광고 위치: '+label+' · 홍보글 및 배너 등록 상담';
-          if(modal)modal.hidden=false;
-        });
+        empty.addEventListener('click',()=>{window.open('https://t.me/GemHubHelp','_blank','noopener,noreferrer');});
         target.appendChild(empty)
       }
     }
@@ -1339,7 +1334,7 @@ async function gemhubLoadBanners(){
   const registeredMain=banners.filter(b=>b.placement==='main');
   for(let i=0;i<10;i++){
     const b=registeredMain.find(ad=>Number(ad.slot_index)===i+1&&ad.game===selected)||registeredMain.find(ad=>Number(ad.slot_index)===i+1&&ad.game==='전체');
-    mainBannerSlides[i]=b?{title:b.title,kicker:'GEMHUB PREMIUM BANNER · '+(i+1)+'번',description:b.title,tagline:'겜허브 공식 배너 광고',button:'광고 바로가기 →',href:b.target_url,theme:'purple',image:b.image_url,slotIndex:i+1}:{title:'메인 배너 광고 등록',kicker:'📢 GEMHUB · MAIN PREMIUM AD · '+(i+1)+'번',description:'겜허브 메인 '+(i+1)+'번 배너 광고주를 모집합니다',tagline:'메인 '+(i+1)+'번 · 클릭하여 홍보글 및 배너 등록 상담',button:'💬 메인 '+(i+1)+'번 광고 등록 상담 →',href:'#gemhubAdModal',theme:'purple',recruitment:true,slotIndex:i+1};
+    mainBannerSlides[i]=b?{title:b.title,kicker:'GEMHUB PREMIUM BANNER · '+(i+1)+'번',description:b.title,tagline:'겜허브 공식 배너 광고',button:'광고 바로가기 →',href:b.target_url,theme:'purple',image:b.image_url,slotIndex:i+1}:{title:'메인 배너 광고 등록',kicker:'📢 GEMHUB · MAIN PREMIUM AD · '+(i+1)+'번',description:'겜허브 메인 '+(i+1)+'번 배너 광고주를 모집합니다',tagline:'메인 '+(i+1)+'번 · 클릭하여 홍보글 및 배너 등록 상담',button:'💬 메인 '+(i+1)+'번 광고 등록 상담 →',href:'https://t.me/GemHubHelp',theme:'purple',recruitment:true,slotIndex:i+1};
   }
   mainBannerIndex=0;renderMainBanner();restartMainBanner();
   renderAds();
