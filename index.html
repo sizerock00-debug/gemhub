@@ -601,6 +601,11 @@ box-shadow:inset 0 0 9px #ff45cb55,0 0 7px #e91bff88,0 0 8px #ffae3855!important
 .schedule-grid .schedule-entry .gemhub-ad-subtitle{font-size:11px!important;line-height:1.35!important;display:block!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;max-width:100%!important}
 .schedule-grid .schedule-entry .gemhub-demo-label{font-size:9px!important;line-height:1!important;display:block!important}
 .schedule-grid .schedule-entry:hover{filter:brightness(1.12)!important;transform:none!important}
+</style><style>
+/* Optional independently selectable sparkle animation */
+@keyframes gemhubAdSparkle{0%,100%{filter:brightness(1);box-shadow:0 2px 6px #0004}50%{filter:brightness(1.32);box-shadow:0 0 13px 3px #fff9,0 0 21px #ffe86699}}
+.schedule-entry.ad-sparkle{animation:gemhubAdSparkle 1.6s ease-in-out infinite!important}
+@media(prefers-reduced-motion:reduce){.schedule-entry.ad-sparkle{animation:none!important}}
 </style></head>
 <body>
 <header class="top"><div class="wrap top-inner"><div class="brand-wrap"><a href="#" class="logo"><span class="brand-pad">💎</span> GEM<span>HUB</span></a><div class="sub">게임 거래와 서버 홍보의 모든 것</div></div>
@@ -1158,7 +1163,7 @@ async function loadServerSchedules(){
     
   const {data,error}=await authClient
   .from('server_schedules')
-  .select('game,server_name,opening_at,promotion_url,description,ad_amount,ad_style,ad_start_date,ad_end_date,expires_at')
+  .select('game,server_name,opening_at,promotion_url,description,ad_amount,ad_style,ad_animation,ad_start_date,ad_end_date,expires_at')
   
     .order('opening_at',{ascending:true});
 
@@ -1189,6 +1194,7 @@ async function loadServerSchedules(){
   url: item.promotion_url,
   adAmount: item.ad_amount || 0,
   adStyle: item.ad_style || 'sky',
+  adAnimation: item.ad_animation || 'none',
   adStartDate: item.ad_start_date || '',
   adEndDate: item.ad_end_date || ''
 });
