@@ -96,6 +96,14 @@ textarea{min-height:88px;resize:vertical}.twocol{display:grid;grid-template-colu
 .schedule-grid .schedule-entry.ad-sparkle::before{content:''!important;position:absolute!important;inset:0!important;z-index:-1!important;pointer-events:none!important;background:linear-gradient(110deg,transparent 22%,#ffffff00 34%,#ffffffb0 48%,#ffffff00 62%,transparent 78%)!important;background-size:240% 100%!important;animation:gemhubSparkleSweep 1.65s linear infinite!important}
 .schedule-grid .schedule-entry.ad-sparkle .gemhub-ad-name,.schedule-grid .schedule-entry.ad-sparkle .gemhub-ad-subtitle{position:relative!important;z-index:1!important}
 @media(prefers-reduced-motion:reduce){.schedule-grid .schedule-entry.ad-sparkle,.schedule-grid .schedule-entry.ad-sparkle::before{animation:none!important}.schedule-grid .schedule-entry.ad-sparkle{box-shadow:0 0 0 3px #fff,0 0 14px 5px #ffe500!important}}
+
+/* Visible in-card sparkle, including calendars with clipped outer glow */
+@keyframes gemhubVisiblePulse{0%,100%{box-shadow:inset 0 0 0 2px #fff7,inset 0 0 5px #fff4,0 0 3px #fff5}50%{box-shadow:inset 0 0 0 4px #fff,inset 0 0 20px 5px #ffffffa8,0 0 13px 5px #ffe600}}
+@keyframes gemhubVisibleSweep{0%{transform:translateX(-190%) skewX(-22deg)}100%{transform:translateX(330%) skewX(-22deg)}}
+.schedule-grid .schedule-date .schedule-entry.ad-sparkle{animation:gemhubVisiblePulse 1s ease-in-out infinite!important;position:relative!important;isolation:isolate!important;overflow:hidden!important}
+.schedule-grid .schedule-date .schedule-entry.ad-sparkle::after{content:''!important;position:absolute!important;z-index:2!important;top:0!important;bottom:0!important;left:0!important;width:40%!important;pointer-events:none!important;background:linear-gradient(90deg,transparent,#ffffffc9,transparent)!important;animation:gemhubVisibleSweep 1.35s ease-in-out infinite!important}
+.schedule-grid .schedule-date .schedule-entry.ad-sparkle .gemhub-ad-name,.schedule-grid .schedule-date .schedule-entry.ad-sparkle .gemhub-ad-subtitle{position:relative!important;z-index:3!important}
+@media(prefers-reduced-motion:reduce){.schedule-grid .schedule-date .schedule-entry.ad-sparkle,.schedule-grid .schedule-date .schedule-entry.ad-sparkle::after{animation:none!important}.schedule-grid .schedule-date .schedule-entry.ad-sparkle{box-shadow:inset 0 0 0 4px #fff,inset 0 0 17px #ffffffb0!important}}
 </style>
 </head>
 <body>
@@ -243,6 +251,8 @@ const demoStoreKey='gemhub_admin_demo_test_v1';
 function demoSeed(){return Object.entries(gemhubDemoDailyCounts).flatMap(([date,count])=>Array.from({length:count},(_,k)=>({id:'demo-'+date+'-'+k,game:'리니지 클래식',server_name:'2.0테더서버 비영리 반지제공',description:'안녕하세요',opening_at:date+'T14:00:00+09:00',expires_at:date+'T23:59:00+09:00',promotion_url:'https://example.com',ad_style:gemhubDemoColors[k%gemhubDemoColors.length],ad_animation:k===0?'sparkle':'none',demo:true})));}
 let demoSchedules=[];
 try{const saved=localStorage.getItem(demoStoreKey);demoSchedules=saved===null?demoSeed():JSON.parse(saved);if(!Array.isArray(demoSchedules))demoSchedules=demoSeed()}catch(e){demoSchedules=demoSeed()}
+/* Migrate older demo entries created before sparkle existed, without resetting edits. */
+try{if(localStorage.getItem('gemhub_demo_sparkle_migration_v1')!=='done'){demoSchedules.forEach(s=>{if(s.demo&&s.id&&String(s.id).endsWith('-0')&&(!s.ad_animation||s.ad_animation==='none'))s.ad_animation='sparkle'});localStorage.setItem(demoStoreKey,JSON.stringify(demoSchedules));localStorage.setItem('gemhub_demo_sparkle_migration_v1','done')}}catch(e){console.warn('시연 반짝임 설정 이전 실패',e)}
 function saveDemoSchedules(){try{localStorage.setItem(demoStoreKey,JSON.stringify(demoSchedules))}catch(e){console.warn('시연 데이터 저장 실패',e)}renderList();adminPreviewRender()}
 function resetDemoSchedules(){if(!confirm('시연용 광고 110개를 초기 상태로 복원할까요? 실제 등록된 광고에는 영향이 없습니다.'))return;demoSchedules=demoSeed();saveDemoSchedules()}
 let adminPreviewOffset=0;
