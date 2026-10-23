@@ -1303,7 +1303,7 @@ function renderAds(){
     const placement={adsLeft:'left',adsRight:'right',adsBottom:'bottom'}[id];
     const placed=relevant.filter(a=>a.placement===placement);
     for(let i=0;i<count;i++){
-      if((placement==='left'||placement==='right')&&i===10)continue; // 좌우 11번 슬롯 제외, 다른 번호 유지
+      if((placement==='left'||placement==='right')&&i===10){const blank=document.createElement('div');blank.className='ad-tile';blank.style.cssText='visibility:hidden;pointer-events:none;border:0;background:none;box-shadow:none';blank.setAttribute('aria-hidden','true');target.appendChild(blank);continue;} // 좌우 11번 자리만 빈칸으로 유지
       const ad=placed.find(a=>Number(a.slotIndex)===i+1&&a.game===selected)||placed.find(a=>Number(a.slotIndex)===i+1&&a.game==='전체');
       if(ad)target.appendChild(adNode(ad));
       else{
