@@ -119,7 +119,7 @@ textarea{min-height:88px;resize:vertical}.twocol{display:grid;grid-template-colu
   <p class="muted">텔레그램으로 상담한 서버 정보를 직접 등록합니다. 등록한 일정은 홈페이지 달력에 표시되며, 방문자가 서버명을 누르면 입력한 홈페이지로 이동합니다.</p>
   <div id="authMessage" class="status">관리자 권한을 확인하고 있습니다…</div>
   <div id="adminApp" hidden>
-<section class="schedule-panel" id="adminHomePreview" aria-label="실제 홈페이지와 동일한 서버 오픈 달력"><div class="schedule-head"><h2 id="adminPreviewTitle">📅 서버 오픈 일정 · 홈페이지 화면 미리보기</h2><div class="schedule-controls"><button type="button" id="adminPreviewPrev">◀</button><span id="adminPreviewPeriod" class="schedule-period"></span><button type="button" id="adminPreviewNext">▶</button><button type="button" id="adminPreviewToday">이번 달</button><a href="./index.html" target="_blank" rel="noopener noreferrer" style="color:#ffe57a;font-size:12px">실제 홈페이지 ↗</a></div></div><div class="gemhub-demo-notice">📌 시연용 광고는 실제 등록 데이터가 아닙니다. 실제 광고는 클릭해서 수정하고, 날짜별 + 등록으로 새 광고를 추가하세요.</div><div class="admin-preview-actions"><label><input type="checkbox" id="adminShowDemo" checked> 시연용 광고 표시</label><span id="adminPreviewHelp">시연용 광고도 아래 목록에서 수정·삭제 테스트 가능 (이 브라우저에만 저장)</span><button type="button" id="resetDemoSchedules" class="btn small">시연용 110개 초기화</button></div><div class="schedule-scroll"><div class="schedule-grid" id="adminPreviewGrid"></div></div><div class="schedule-foot">홈페이지와 같은 배치·색상으로 표시합니다. 서버 이름을 누르면 수정 양식이 열립니다. 실제 방문자 화면은 만료된 광고를 제외합니다.</div></section>
+<section class="schedule-panel" id="adminHomePreview" aria-label="실제 홈페이지와 동일한 서버 오픈 달력"><div class="schedule-head"><h2 id="adminPreviewTitle">📅 서버 오픈 일정 · 홈페이지 화면 미리보기</h2><div class="schedule-controls"><button type="button" id="adminPreviewPrev">◀</button><span id="adminPreviewPeriod" class="schedule-period"></span><button type="button" id="adminPreviewNext">▶</button><button type="button" id="adminPreviewToday">이번 달</button><button type="button" id="adminPreviewShowAll">전체 달력 보기</button><a href="./index.html" target="_blank" rel="noopener noreferrer" style="color:#ffe57a;font-size:12px">실제 홈페이지 ↗</a></div></div><div class="gemhub-demo-notice">📌 시연용 광고는 실제 등록 데이터가 아닙니다. 실제 광고는 클릭해서 수정하고, 날짜별 + 등록으로 새 광고를 추가하세요.</div><div class="admin-preview-actions"><label><input type="checkbox" id="adminShowDemo" checked> 시연용 광고 표시</label><span id="adminPreviewHelp">시연용 광고도 아래 목록에서 수정·삭제 테스트 가능 (이 브라우저에만 저장)</span><button type="button" id="resetDemoSchedules" class="btn small">시연용 110개 초기화</button></div><div class="schedule-scroll"><div class="schedule-grid" id="adminPreviewGrid"></div></div><div class="schedule-foot">홈페이지와 같은 배치·색상으로 표시합니다. 서버 이름을 누르면 수정 양식이 열립니다. 실제 방문자 화면은 만료된 광고를 제외합니다.</div></section>
 <section class="panel" style="margin-bottom:18px" id="adminCalendarPanel"><h2>🗓️ 서버 광고 운영 달력</h2><p class="muted">광고 신청이 들어오면 아래 달력에서 날짜별 일정을 바로 확인할 수 있습니다. 서버명을 누르면 왼쪽 등록 양식으로 불러와 즉시 수정할 수 있습니다.</p><div class="calendar-toolbar"><button type="button" class="btn small" id="calendarPrev" aria-label="이전 달">◀</button><span class="calendar-title" id="calendarTitle"></span><button type="button" class="btn small" id="calendarNext" aria-label="다음 달">▶</button><button type="button" class="btn small" id="calendarToday">이번 달</button><select id="calendarGameFilter" aria-label="게임별 달력 필터"><option value="">전체 게임</option></select><button type="button" class="btn small primary" id="calendarReload">새로고침</button></div><div class="calendar-grid" id="adminCalendar"></div><p class="calendar-hint" id="calendarSummary"></p></section>
     <div class="layout">
       <section class="panel" id="scheduleFormPanel" hidden>
@@ -127,9 +127,7 @@ textarea{min-height:88px;resize:vertical}.twocol{display:grid;grid-template-colu
         <form id="scheduleForm">
           <input type="hidden" id="scheduleId">
           <label>게임 선택 *
-            <select id="game" required>
-              <option value="리니지 클래식">리니지 클래식</option><option value="리니지W">리니지W</option><option value="리니지M">리니지M</option><option value="아이온">아이온</option><option value="뮤">뮤</option><option value="메이플스토리">메이플스토리</option><option value="R2">R2</option><option value="기타">기타</option>
-            </select>
+            <select id="game" required><option value="리니지 클래식">리니지 클래식</option><option value="리니지W">리니지W</option><option value="아이온">아이온</option><option value="뮤">뮤</option><option value="메이플스토리">메이플스토리</option><option value="로스트아크">로스트아크</option><option value="블레이드앤소울">블레이드앤소울</option><option value="바람의나라">바람의나라</option><option value="렌2">렌2</option><option value="기타게임">기타게임</option><option value="로블록스">로블록스</option><option value="마인크래프트">마인크래프트</option><option value="발로란트">발로란트</option><option value="리그오브레전드">리그오브레전드</option><option value="FC온라인">FC온라인</option><option value="서든어택">서든어택</option><option value="배틀그라운드">배틀그라운드</option><option value="오버워치2">오버워치2</option><option value="원신">원신</option><option value="스타크래프트">스타크래프트</option><option value="던전앤파이터">던전앤파이터</option><option value="리니지M">리니지M</option><option value="디아블로">디아블로</option><option value="다크에덴">다크에덴</option><option value="미르2">미르2</option><option value="R2">R2</option></select>
           </label>
           <label>서버명 *
             <input id="serverName" required maxlength="100" placeholder="예: 아이온 클래식">
@@ -180,7 +178,7 @@ textarea{min-height:88px;resize:vertical}.twocol{display:grid;grid-template-colu
       <section class="panel">
         <h2>등록된 서버 일정 목록</h2>
         <p class="muted">게임을 선택하거나 서버명을 검색하면 결과가 나타납니다. 서버명을 클릭하면 해당 날짜의 관리자 달력으로 이동합니다.</p>
-        <div class="searchrow"><select id="listGameFilter" aria-label="검색할 게임 선택"><option value="">게임 선택 · 전체</option></select><input id="search" type="search" placeholder="서버명 검색"><button class="btn" id="reloadBtn" type="button">새로고침</button></div>
+        <form id="scheduleSearchForm" class="searchrow" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><select id="listGameFilter" aria-label="검색할 게임 선택" required style="min-width:170px;flex:1"><option value="">게임 선택</option></select><input id="search" type="search" required placeholder="서버명 입력 (예: 겜허브)" style="flex:3;min-width:260px;width:100%;max-width:none"><button class="btn primary" type="submit">검색</button><button class="btn" id="clearScheduleSearch" type="button">검색 초기화</button><button class="btn" id="reloadBtn" type="button">새로고침</button></form>
         <div class="message" id="listMessage" role="status"></div>
         <div class="table-wrap" id="scheduleResults" hidden><table><thead><tr><th>게임 / 서버</th><th>오픈</th><th>종료</th><th>관리</th></tr></thead><tbody id="scheduleRows"></tbody></table></div>
       </section>
@@ -270,9 +268,9 @@ function adminPreviewRender(){
   if(i%7===0){for(let j=0;j<7;j++){const d=new Date(start);d.setDate(start.getDate()+i+j);const head=adminText('div',d.getDate()+'일('+['일','월','화','수','목','금','토'][d.getDay()]+')');head.className='schedule-day-name';grid.append(head)}}
   const day=new Date(start);day.setDate(start.getDate()+i);const iso=calendarKey(day);
   const cell=adminText('div','');cell.className='schedule-date'+(iso===today?' today':'');
-  const entries=cachedSchedules.filter(s=>s.opening_at&&calendarKey(new Date(s.opening_at))===iso&&(!s.expires_at||new Date(s.expires_at)>now));
+  const entries=cachedSchedules.filter(s=>s.opening_at&&calendarKey(new Date(s.opening_at))===iso&&(!s.expires_at||new Date(s.expires_at)>now)&&(!calendarSearchTarget||String(s.id)===calendarSearchTarget));
   
-  if($('adminShowDemo').checked)entries.push(...demoSchedules.filter(s=>calendarKey(new Date(s.opening_at))===iso));
+  if($('adminShowDemo').checked)entries.push(...demoSchedules.filter(s=>calendarKey(new Date(s.opening_at))===iso&&(!calendarSearchTarget||String(s.id)===calendarSearchTarget)));
   entries.forEach(s=>{visible++;const el=adminText('button','');const nm=adminText('strong',s.server_name||'이름 미등록');nm.className='gemhub-ad-name';el.append(nm);if(s.description){const sub=adminText('span',s.description.length>90?s.description.slice(0,90)+'…':s.description);sub.className='gemhub-ad-subtitle';el.append(sub)}el.type='button';el.dataset.scheduleId=String(s.id||'');el.className='schedule-entry '+({'premium':'ad-premium','red-yellow':'ad-red-yellow',sky:'ad-sky','black-white':'ad-black-white','blue-white':'ad-blue-white'}[s.ad_style]||'ad-sky');if(s.ad_animation==='sparkle')el.classList.add('ad-sparkle');el.title=s.demo?'시연용 광고 · 실제 등록되지 않음':'클릭하여 바로 수정: '+s.server_name;if(s.demo){el.classList.add('gemhub-demo-entry');const badge=adminText('span','시연용');badge.className='gemhub-demo-label';el.append(badge);el.addEventListener('click',()=>startEdit(s))}else{el.addEventListener('click',()=>startEdit(s))}cell.append(el)});
   const add=adminText('button','＋ 이 날짜에 광고 등록');add.type='button';add.className='admin-date-add';add.addEventListener('click',()=>addScheduleOnDate(iso));cell.append(add);
   grid.append(cell)
@@ -283,7 +281,8 @@ $('adminShowDemo').addEventListener('change',adminPreviewRender);
 $('resetDemoSchedules').addEventListener('click',resetDemoSchedules);
 $('adminPreviewPrev').addEventListener('click',()=>{adminPreviewOffset--;adminPreviewRender()});
 $('adminPreviewNext').addEventListener('click',()=>{adminPreviewOffset++;adminPreviewRender()});
-$('adminPreviewToday').addEventListener('click',()=>{adminPreviewOffset=0;adminPreviewRender()});
+$('adminPreviewToday').addEventListener('click',()=>{adminPreviewOffset=0;calendarSearchTarget=null;adminPreviewRender()});
+$('adminPreviewShowAll').addEventListener('click',()=>{calendarSearchTarget=null;adminPreviewRender()});
 
 /* 서버 광고 달력: 등록된 일정에서 직접 렌더링하며, 기존 관리 양식과 연결 */
 let calendarMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);
@@ -326,7 +325,9 @@ async function loadSchedules(){
   if(error){$('listMessage').textContent='목록 조회 실패: '+error.message;return}
   cachedSchedules=data||[];renderList();calendarRefresh();adminPreviewRender();
 }
+let calendarSearchTarget=null;
 function jumpToSchedule(item){
+  calendarSearchTarget=String(item.id);
   const date=isoToLocalInput(item.opening_at).date;if(!date)return;
   const target=new Date(date+'T12:00:00');const monday=new Date(target);monday.setDate(target.getDate()-(target.getDay()+6)%7);
   const now=new Date(),currentMonday=new Date(now.getFullYear(),now.getMonth(),now.getDate(),12);currentMonday.setDate(currentMonday.getDate()-(currentMonday.getDay()+6)%7);
@@ -336,15 +337,17 @@ function jumpToSchedule(item){
   const grid=$('adminPreviewGrid');grid.querySelectorAll('.schedule-entry').forEach(el=>{if(el.dataset.scheduleId===String(item.id)){el.classList.add('admin-jump-highlight');el.scrollIntoView({behavior:'smooth',block:'center',inline:'center'});setTimeout(()=>el.classList.remove('admin-jump-highlight'),4000)}});
   $('adminHomePreview').scrollIntoView({behavior:'smooth',block:'start'});
 }
+const scheduleSearchGames=["리니지 클래식","리니지W","아이온","뮤","메이플스토리","로스트아크","블레이드앤소울","바람의나라","렌2","기타게임","로블록스","마인크래프트","발로란트","리그오브레전드","FC온라인","서든어택","배틀그라운드","오버워치2","원신","스타크래프트","던전앤파이터","리니지M","디아블로","다크에덴","미르2","R2"];
+let scheduleSearchSubmitted=false;
 function renderList(){
   const filter=$('listGameFilter'),selected=filter.value;
-  const games=[...new Set([...cachedSchedules,...demoSchedules].map(x=>x.game).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ko'));
-  filter.replaceChildren(new Option('게임 선택 · 전체',''));games.forEach(g=>filter.add(new Option(g,g)));filter.value=selected;
-  const q=$('search').value.trim().toLowerCase(),active=!!q||!!filter.value;
+  const games=[...new Set([...scheduleSearchGames,...cachedSchedules.map(x=>x.game),...demoSchedules.map(x=>x.game)].filter(Boolean))];
+  filter.replaceChildren(new Option('게임 선택',''));games.forEach(g=>filter.add(new Option(g,g)));filter.value=selected;
+  const q=$('search').value.trim().toLowerCase(),active=scheduleSearchSubmitted&&!!q&&!!filter.value;
   $('scheduleResults').hidden=!active;
-  const data=active?[...cachedSchedules,...demoSchedules].filter(x=>(!filter.value||x.game===filter.value)&&(!q||[x.server_name,x.description,x.game].some(v=>safeText(v).toLowerCase().includes(q)))):[];
+  const data=active?[...cachedSchedules,...demoSchedules].filter(x=>x.game===filter.value&&safeText(x.server_name).toLowerCase().includes(q)):[];
   const tbody=$('scheduleRows');tbody.replaceChildren();
-  $('listMessage').textContent=active?`검색 결과 ${data.length}건 (실제 ${cachedSchedules.length}건 · 시연용 ${demoSchedules.length}건)`:'게임을 선택하거나 서버명을 입력하면 목록이 표시됩니다.';
+  $('listMessage').textContent=active?`검색 결과 ${data.length}건 (실제 ${cachedSchedules.length}건 · 시연용 ${demoSchedules.length}건)`:'게임을 선택하고 서버명을 입력한 뒤 검색 또는 Enter를 누르세요.';
   if(!data.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=4;td.className='empty';td.textContent='등록된 일정이 없습니다.';tr.appendChild(td);tbody.appendChild(tr);return}
   data.forEach(item=>{
     const tr=document.createElement('tr');
@@ -391,8 +394,10 @@ form.addEventListener('submit',async event=>{
 $('cancelEdit').addEventListener('click',()=>{if(!$('scheduleEditModal').hidden)closeEditModal();else clearForm()});
 $('resetBtn').addEventListener('click',()=>setTimeout(clearForm,0));
 $('reloadBtn').addEventListener('click',loadSchedules);
-$('search').addEventListener('input',renderList);
-$('listGameFilter').addEventListener('change',renderList);
+$('scheduleSearchForm').addEventListener('submit',e=>{e.preventDefault();scheduleSearchSubmitted=true;renderList()});
+$('search').addEventListener('input',()=>{scheduleSearchSubmitted=false;renderList()});
+$('listGameFilter').addEventListener('change',()=>{scheduleSearchSubmitted=false;renderList()});
+$('clearScheduleSearch').addEventListener('click',()=>{$('search').value='';$('listGameFilter').value='';scheduleSearchSubmitted=false;calendarSearchTarget=null;renderList();adminPreviewRender()});
 $('logoutBtn').addEventListener('click',async()=>{await client.auth.signOut();location.href='index.html'});
 async function boot(){
   try{
