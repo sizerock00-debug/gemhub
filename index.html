@@ -651,7 +651,11 @@ body.gh-notice-open{overflow:hidden}
 .gh-notice-confirm:hover{filter:brightness(1.15)}
 @media(max-width:450px){.gh-notice-content{padding:12px 17px 20px}.gh-notice-footer{padding:14px;gap:8px}.gh-notice-today{font-size:12px}.gh-notice-confirm{padding:10px 15px}}
 </style>
-<style id="gemhub-demo-ad-style">#adsLeft>.gemhub-test-banner:first-child{aspect-ratio:auto;min-height:132px;padding:10px 7px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;border:1px solid #ffcd6b;border-radius:7px;background:radial-gradient(ellipse at 80% 10%,#b15bff99,transparent 60%),linear-gradient(125deg,#220c45,#6b239c 55%,#251046);box-shadow:0 0 12px #b15bff66;text-decoration:none}#adsLeft>.gemhub-test-banner .gemhub-test-small{font-size:9px;font-weight:800;color:#ffe5a4}#adsLeft>.gemhub-test-banner .gemhub-test-title{font-size:clamp(15px,1.5vw,21px);font-weight:900;color:#fff;text-shadow:0 2px 8px #0009}#adsLeft>.gemhub-test-banner .gemhub-test-cta{font-size:10px;font-weight:800;color:#ffe4ff}#adsLeft>.gemhub-test-banner:hover{filter:brightness(1.15)}</style></head>
+<style id="gemhub-demo-ad-style">#adsLeft>.gemhub-test-banner:first-child{aspect-ratio:auto;min-height:132px;padding:10px 7px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;border:1px solid #ffcd6b;border-radius:7px;background:radial-gradient(ellipse at 80% 10%,#b15bff99,transparent 60%),linear-gradient(125deg,#220c45,#6b239c 55%,#251046);box-shadow:0 0 12px #b15bff66;text-decoration:none}#adsLeft>.gemhub-test-banner .gemhub-test-small{font-size:9px;font-weight:800;color:#ffe5a4}#adsLeft>.gemhub-test-banner .gemhub-test-title{font-size:clamp(15px,1.5vw,21px);font-weight:900;color:#fff;text-shadow:0 2px 8px #0009}#adsLeft>.gemhub-test-banner .gemhub-test-cta{font-size:10px;font-weight:800;color:#ffe4ff}#adsLeft>.gemhub-test-banner:hover{filter:brightness(1.15)}
+/* 등록 이미지 배너 2배 크기 테스트 */
+.ad-sidebar .ad-tile-test-double{aspect-ratio:1.6/1!important}
+.bottom-ads-grid .ad-tile-test-double{grid-column:span 2;grid-row:span 2;aspect-ratio:auto!important;min-height:76px}
+</style></head>
 <body>
 <header class="top"><div class="wrap top-inner"><div class="brand-wrap"><a href="#" class="logo"><span class="brand-pad">💎</span> GEM<span>HUB</span></a><div class="sub">게임 거래와 서버 홍보의 모든 것</div></div>
 <div class="header-search"><input id="globalSearch" type="search" placeholder="게임, 아이템, 서버명, 길드명을 검색해보세요..." aria-label="통합 검색"></div>
@@ -1168,7 +1172,7 @@ let adPage=0;
 function adNode(ad){
   const validLink=ad?.url && /^https?:\/\//i.test(ad.url);
   const el=document.createElement(validLink?'a':'div');
-  el.className='ad-tile';
+  el.className='ad-tile'+(ad?.image?' ad-tile-test-double':'');
   if(validLink){el.href=ad.url;el.target='_blank';el.rel='noopener noreferrer'}
   if(ad?.image && /^https?:\/\//i.test(ad.image)){
     const img=document.createElement('img');img.src=ad.image;img.alt=ad.name||'서버 광고';img.loading='lazy';el.appendChild(img);
