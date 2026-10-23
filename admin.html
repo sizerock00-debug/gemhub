@@ -125,6 +125,13 @@ textarea{min-height:88px;resize:vertical}.twocol{display:grid;grid-template-colu
 .banner-editor{border:1px solid #8051aa;background:#110b21;border-radius:14px;padding:16px;margin:14px 0}
 .banner-editor[hidden]{display:none}
 @media(max-width:650px){.banner-layout{grid-template-columns:minmax(56px,1fr) minmax(0,3fr) minmax(56px,1fr);gap:5px}.banner-side{gap:4px}.banner-slot{padding:3px}.banner-slot span{font-size:9px}.banner-slot.main{min-height:120px}.banner-bottom{grid-template-columns:repeat(3,1fr)}}
+
+/* 관리자 하단 10칸: 홈페이지와 같은 338:138 배너 비율 */
+.banner-bottom{grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:8px}
+.banner-bottom .banner-slot{aspect-ratio:338/138;min-height:0;padding:8px}
+.banner-bottom .banner-slot span{font-size:13px}
+@media(max-width:650px){.banner-bottom{grid-template-columns:repeat(2,minmax(0,1fr))}.banner-bottom .banner-slot span{font-size:11px}}
+@media(max-width:390px){.banner-bottom{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -461,7 +468,7 @@ function bannerOpen(placement,b,slotIndex){
 }
 function bannerStageRender(){
  const sideSlots=24; // 홈페이지의 확장된 좌우 광고 영역을 관리 배치도에 표시
- const placements=[['bannerSlotsLeft','left',sideSlots],['bannerSlotsRight','right',sideSlots],['bannerSlotsBottom','bottom',30]];
+ const placements=[['bannerSlotsLeft','left',sideSlots],['bannerSlotsRight','right',sideSlots],['bannerSlotsBottom','bottom',10]];
  const draw=(placement,index)=>{
   const b=bannerData.find(b=>b.placement===placement&&Number(b.slot_index)===index+1);
   const el=document.createElement('button');el.type='button';el.className='banner-slot'+(placement==='main'?' main':'');
