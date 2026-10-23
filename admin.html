@@ -120,7 +120,7 @@ textarea{min-height:88px;resize:vertical}.twocol{display:grid;grid-template-colu
   <div id="authMessage" class="status">관리자 권한을 확인하고 있습니다…</div>
   <div id="adminApp" hidden>
 <section class="schedule-panel" id="adminHomePreview" aria-label="실제 홈페이지와 동일한 서버 오픈 달력"><div class="schedule-head"><h2 id="adminPreviewTitle">📅 서버 오픈 일정 · 홈페이지 화면 미리보기</h2><div class="schedule-controls"><button type="button" id="adminPreviewPrev">◀</button><span id="adminPreviewPeriod" class="schedule-period"></span><button type="button" id="adminPreviewNext">▶</button><button type="button" id="adminPreviewToday">이번 달</button><button type="button" id="adminPreviewShowAll">전체 달력 보기</button><a href="./index.html" target="_blank" rel="noopener noreferrer" style="color:#ffe57a;font-size:12px">실제 홈페이지 ↗</a></div></div><div class="gemhub-demo-notice">📌 시연용 광고는 실제 등록 데이터가 아닙니다. 실제 광고는 클릭해서 수정하고, 날짜별 + 등록으로 새 광고를 추가하세요.</div><div class="admin-preview-actions"><label><input type="checkbox" id="adminShowDemo" checked> 시연용 광고 표시</label><span id="adminPreviewHelp">시연용 광고도 아래 목록에서 수정·삭제 테스트 가능 (이 브라우저에만 저장)</span><button type="button" id="resetDemoSchedules" class="btn small">시연용 110개 초기화</button></div><div class="schedule-scroll"><div class="schedule-grid" id="adminPreviewGrid"></div></div><div class="schedule-foot">홈페이지와 같은 배치·색상으로 표시합니다. 서버 이름을 누르면 수정 양식이 열립니다. 실제 방문자 화면은 만료된 광고를 제외합니다.</div></section>
-<section class="panel" style="margin-bottom:18px" id="adminCalendarPanel"><h2>🗓️ 서버 광고 운영 달력</h2><p class="muted">광고 신청이 들어오면 아래 달력에서 날짜별 일정을 바로 확인할 수 있습니다. 서버명을 누르면 왼쪽 등록 양식으로 불러와 즉시 수정할 수 있습니다.</p><div class="calendar-toolbar"><button type="button" class="btn small" id="calendarPrev" aria-label="이전 달">◀</button><span class="calendar-title" id="calendarTitle"></span><button type="button" class="btn small" id="calendarNext" aria-label="다음 달">▶</button><button type="button" class="btn small" id="calendarToday">이번 달</button><select id="calendarGameFilter" aria-label="게임별 달력 필터"><option value="">전체 게임</option></select><button type="button" class="btn small primary" id="calendarReload">새로고침</button></div><div class="calendar-grid" id="adminCalendar"></div><p class="calendar-hint" id="calendarSummary"></p></section>
+
     <div class="layout">
       <section class="panel" id="scheduleFormPanel" hidden>
         <h2 id="formTitle">새 서버 일정 등록</h2>
@@ -284,46 +284,12 @@ $('adminPreviewNext').addEventListener('click',()=>{adminPreviewOffset++;adminPr
 $('adminPreviewToday').addEventListener('click',()=>{adminPreviewOffset=0;calendarSearchTarget=null;adminPreviewRender()});
 $('adminPreviewShowAll').addEventListener('click',()=>{calendarSearchTarget=null;adminPreviewRender()});
 
-/* 서버 광고 달력: 등록된 일정에서 직접 렌더링하며, 기존 관리 양식과 연결 */
-let calendarMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);
 function calendarKey(d){return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}
-function calendarRefresh(){
- const filter=$('calendarGameFilter'),previous=filter.value;
- filter.replaceChildren(new Option('전체 게임',''));
- [...new Set(cachedSchedules.map(s=>s.game).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ko')).forEach(g=>filter.add(new Option(g,g)));
- filter.value=previous;
- const year=calendarMonth.getFullYear(),month=calendarMonth.getMonth();
- $('calendarTitle').textContent=year+'년 '+(month+1)+'월';
- const root=$('adminCalendar');root.replaceChildren();
- ['일','월','화','수','목','금','토'].forEach(w=>{const n=adminText('div',w);n.className='calendar-week';root.append(n)});
- const first=new Date(year,month,1),last=new Date(year,month+1,0),offset=first.getDay();
- const filtered=cachedSchedules.filter(s=>!filter.value||s.game===filter.value);
- const now=new Date(),today=calendarKey(now);let count=0;
- for(let slot=0;slot<Math.ceil((offset+last.getDate())/7)*7;slot++){
-   const d=new Date(year,month,slot-offset+1),key=calendarKey(d);
-   const day=document.createElement('div');day.className='calendar-day'+(d.getMonth()!==month?' other':'')+(key===today?' today':'');
-   const date=adminText('div',d.getDate());date.className='calendar-date';day.append(date);
-   filtered.filter(s=>s.opening_at&&calendarKey(new Date(s.opening_at))===key).forEach(s=>{
-      if(d.getMonth()===month)count++;
-      const btn=adminText('button',(s.game||'게임')+' · '+(s.server_name||'서버')+' '+new Date(s.opening_at).toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}));
-      btn.type='button';btn.className='calendar-entry '+(s.ad_style||'sky')+(s.expires_at&&new Date(s.expires_at)<now?' expired':'');
-      btn.title='클릭하여 수정: '+s.server_name+' / '+formatDate(s.opening_at);
-      btn.addEventListener('click',()=>startEdit(s));day.append(btn);
-   });root.append(day);
- }
- $('calendarSummary').textContent='이번 달 서버 오픈 일정 '+count+'건 · 색상은 광고 유형별로 표시 · 항목을 클릭하면 바로 수정 가능';
-}
-$('calendarPrev').addEventListener('click',()=>{calendarMonth=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth()-1,1);calendarRefresh()});
-$('calendarNext').addEventListener('click',()=>{calendarMonth=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth()+1,1);calendarRefresh()});
-$('calendarToday').addEventListener('click',()=>{calendarMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);calendarRefresh()});
-$('calendarGameFilter').addEventListener('change',calendarRefresh);
-$('calendarReload').addEventListener('click',()=>loadSchedules());
-
 async function loadSchedules(){
   $('listMessage').textContent='목록을 불러오는 중입니다…';
   const {data,error}=await client.from('server_schedules').select('id,game,server_name,opening_at,expires_at,promotion_url,description,ad_style,ad_animation').order('opening_at',{ascending:true});
   if(error){$('listMessage').textContent='목록 조회 실패: '+error.message;return}
-  cachedSchedules=data||[];renderList();calendarRefresh();adminPreviewRender();
+  cachedSchedules=data||[];renderList();adminPreviewRender();
 }
 let calendarSearchTarget=null;
 function jumpToSchedule(item){
