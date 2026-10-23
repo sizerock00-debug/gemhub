@@ -722,6 +722,7 @@ body.gh-notice-open{overflow:hidden}
 }
 </style>
 <style id="gemhub-calendar-banner-space-style">.gemhub-calendar-banner-space{width:100%;height:clamp(90px,10vw,138px);min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;text-align:center;border-top:1px solid #7945ac;border-bottom:1px solid #7945ac;background:linear-gradient(120deg,#120923,#25103e,#120923);color:#e8c9ff;box-sizing:border-box}.gemhub-calendar-banner-space span{font-size:clamp(14px,1.3vw,19px);font-weight:900}.gemhub-calendar-banner-space small{font-size:12px;color:#bb9dd8}@media(max-width:650px){.gemhub-calendar-banner-space{height:96px}}</style>
+<style id="gemhub-calendar-week-banner-style">.schedule-grid>.gemhub-calendar-week-banner{grid-column:1/-1;width:100%;height:clamp(90px,10vw,138px);min-height:90px;box-sizing:border-box;margin:0}@media(max-width:650px){.schedule-grid>.gemhub-calendar-week-banner{height:96px}}</style>
 </head>
 <body>
 <header class="top"><div class="wrap top-inner"><div class="brand-wrap"><a href="#" class="logo"><span class="brand-pad">💎</span> GEM<span>HUB</span></a><div class="sub">게임 거래와 서버 홍보의 모든 것</div></div>
@@ -1437,6 +1438,7 @@ function renderSchedule(){
  const grid=document.getElementById('scheduleGrid');grid.replaceChildren();
  const today=scheduleISO(now);
  for(let i=0;i<14;i++){
+  if(i===7){const weekBanner=document.createElement('div');weekBanner.className='gemhub-calendar-banner-space gemhub-calendar-week-banner';weekBanner.setAttribute('aria-label','두 번째 주 날짜 위 광고 배너 영역');weekBanner.innerHTML='<span>📢 두 번째 주 상단 배너 광고</span><small>배너 광고 등록 문의</small>';grid.appendChild(weekBanner)}
   if(i%7===0){for(let j=0;j<7;j++){const d=new Date(start);d.setDate(start.getDate()+i+j);const head=document.createElement('div');head.className='schedule-day-name';head.textContent=d.getDate()+'일('+['일','월','화','수','목','금','토'][d.getDay()]+')';grid.appendChild(head)}}
   const day=new Date(start);day.setDate(start.getDate()+i);const iso=scheduleISO(day);
   const cell=document.createElement('div');cell.className='schedule-date'+(iso===today?' today':'');
