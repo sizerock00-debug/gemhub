@@ -393,6 +393,33 @@ body{background:#03020b!important}
 .table-scroll th:last-child,.table-scroll td:last-child{text-align:center;min-width:50px}
 @media(max-width:1420px){.top .actions{flex-wrap:wrap!important}.favorites-nav-btn{margin-left:auto}}
 @media(max-width:780px){.favorites-nav-btn{margin-left:0}.top .actions{justify-content:flex-start!important}}
+</style><style>
+/* 확정 거래 게시판 시안 - 네온 보라 테이블 */
+.trade-neon-table{width:100%;min-width:760px!important;border-collapse:collapse!important;font-family:'Noto Sans KR','Malgun Gothic',sans-serif!important;table-layout:auto}
+.trade-neon-table thead th{background:#0b1025!important;color:#e8e4f5!important;font-size:11px!important;font-weight:900!important;white-space:nowrap;padding:11px 8px!important;text-align:left!important;border-bottom:1px solid #35215b!important}
+.trade-neon-table tbody tr{background:#080c1a!important;border-bottom:1px solid #28213c!important;transition:background .16s ease}
+.trade-neon-table tbody tr:nth-child(even){background:#0b1021!important}
+.trade-neon-table tbody tr:hover{background:#191332!important}
+.trade-neon-table tbody td{color:#f3efff!important;font-size:12px!important;font-weight:750!important;padding:10px 8px!important;vertical-align:middle!important;border:0!important}
+.trade-neon-table .trade-no{color:#d8d0ec!important;width:34px;text-align:center!important;font-size:12px!important}
+.trade-neon-table .trade-game{min-width:115px;white-space:nowrap}
+.trade-game-icon{display:inline-flex;align-items:center;justify-content:center;width:26px;height:25px;margin-right:7px;font-size:20px;vertical-align:middle;filter:drop-shadow(0 0 5px #a64cff)}
+.trade-neon-table .trade-server{min-width:75px;color:#d7d0eb!important;white-space:nowrap}
+.trade-neon-table .trade-title{width:42%;min-width:175px;font-weight:850!important;color:#fff!important;line-height:1.4;cursor:pointer}
+.trade-neon-table .trade-kind{white-space:nowrap;text-align:center!important}
+.trade-kind-tag{display:inline-block;min-width:42px;text-align:center;border-radius:6px;padding:4px 9px;background:linear-gradient(110deg,#047cfe,#0054c7);box-shadow:0 0 7px #047cfe55;color:#fff;font-size:11px;font-weight:900}
+.trade-kind-tag.is-buy{background:linear-gradient(110deg,#ff364b,#cf143f);box-shadow:0 0 7px #fa305555}
+.trade-kind-tag.is-item{background:linear-gradient(110deg,#6735a1,#492475);box-shadow:0 0 7px #b026fa44}
+.trade-neon-table .trade-price{color:#ff22c6!important;font-size:13px!important;font-weight:950!important;white-space:nowrap;text-shadow:0 0 5px #f3009d44}
+.trade-neon-table .trade-time{color:#e6dff5!important;white-space:nowrap;font-size:11px!important}
+.trade-neon-table .trade-favorite{text-align:center!important;min-width:60px}
+.trade-neon-table .favorite-heart{font-size:22px!important;color:#bda8d4!important;filter:drop-shadow(0 0 4px #d025b644)}
+.trade-neon-table .favorite-heart:hover,.trade-neon-table .favorite-heart.is-favorite{color:#ff2db7!important;text-shadow:0 0 7px #ff19ac}
+.trade-more-wrap{display:flex;justify-content:flex-end;background:#080a1b;border-top:1px solid #2a184b;padding:6px 12px}
+.trade-more-btn{background:transparent;color:#e84cff;border:0;font-weight:900;font-size:12px;cursor:pointer;padding:5px 7px}
+.trade-more-btn[hidden]{display:none!important}
+.trade-more-btn:hover{text-decoration:underline}
+@media(max-width:850px){.trade-neon-table{min-width:760px!important}.trade-neon-table tbody td{padding:9px 6px!important}}
 </style></head>
 <body>
 <header class="top"><div class="wrap top-inner"><div class="brand-wrap"><a href="#" class="logo"><span class="brand-pad">💎</span> GEM<span>HUB</span></a><div class="sub">게임 거래와 서버 홍보의 모든 것</div></div>
@@ -410,7 +437,7 @@ body{background:#03020b!important}
 <div class="market-game-tabs" id="marketGameTabs" aria-label="거래 게임 필터"></div><div class="trade-register-row"><button class="btn primary trade-register-wide" id="boardRegister" type="button">✏️ 거래물품등록</button></div>
 <div class="board-tabs" hidden><button class="board-tab active" type="button" data-filter="전체">🎮 플레이할게임클릭</button><button class="board-tab" type="button" data-filter="계정">💜 계정</button><button class="board-tab" type="button" data-filter="아이템">📦 아이템</button></div>
 <select id="kind" aria-label="거래 종류" style="display:none"><option value="전체">전체</option><option value="계정">계정</option><option value="아이템">아이템</option></select>
-<div class="board-status" id="boardStatus" role="status">거래 글을 불러오는 중입니다...</div><div class="table-scroll"><table><thead><tr><th>게임</th><th>서버명</th><th>거래 유형</th><th>아이템명</th><th>등록 시간</th><th>가격</th><th>관심</th></tr></thead><tbody id="rows"></tbody></table></div><div class="empty" id="empty" hidden>조건에 맞는 거래 글이 없습니다.</div></div></section></div>
+<div class="board-status" id="boardStatus" role="status">거래 글을 불러오는 중입니다...</div><div class="table-scroll"><table class="trade-neon-table"><thead><tr><th>번호</th><th>게임</th><th>서버</th><th>제목</th><th>거래종류</th><th>가격</th><th>등록시간</th><th>관심</th></tr></thead><tbody id="rows"></tbody></table></div><div class="empty" id="empty" hidden>조건에 맞는 거래 글이 없습니다.</div><div class="trade-more-wrap"><button type="button" id="tradeMore" class="trade-more-btn" hidden>더보기 ❯</button></div></div></section></div>
 
 <section class="schedule-panel" aria-label="게임별 한 달 서버 일정표">
 <div class="schedule-head"><h2 id="scheduleTitle">📅 서버 오픈 일정</h2><div class="schedule-controls"><button type="button" id="schedulePrev" aria-label="이전 달">◀</button><span id="schedulePeriod" class="schedule-period"></span><button type="button" id="scheduleNext" aria-label="다음 달">▶</button><button type="button" id="scheduleToday">이번 달</button><button type="button" data-demo="광고 문의">+ 일정 문의</button></div></div>
@@ -509,7 +536,45 @@ function renderGames(){
  });
 }
 function formatPostTime(value){if(!value)return "-";const d=new Date(value);if(Number.isNaN(d.getTime()))return "-";return new Intl.DateTimeFormat("ko-KR",{timeZone:"Asia/Seoul",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).format(d)}
-function renderRows(){syncServerFilter();const serverChoice=document.getElementById('serverFilter').value;const kind=document.getElementById('kind').value;const query=document.getElementById('search').value.trim().toLowerCase();const data=listings.filter(x=>(selected==='전체'||x.game===selected)&&(serverChoice==='전체'||x.server===serverChoice)&&(kind==='전체'||(kind==='완료'?x.status==='completed':x.kind===kind))&&[x.game,x.server,x.title,x.price].some(v=>String(v||'').toLowerCase().includes(query)));rows.replaceChildren();data.forEach(x=>{const tr=document.createElement('tr');tr.className='clickable-row';tr.tabIndex=0;tr.setAttribute('role','button');tr.setAttribute('aria-label',x.title+' 상세보기');[x.game,x.server,x.kind,x.title,formatPostTime(x.created_at),x.price].forEach((value,i)=>{const td=document.createElement('td');td.textContent=value;if(i===2){const tag=document.createElement('span');tag.className='pill';tag.textContent=value;td.replaceChildren(tag)}if(i===5)td.className='price';tr.appendChild(td)});const td=document.createElement('td');td.appendChild(makeFavoriteButton(x));tr.appendChild(td);tr.addEventListener('click',()=>openDetail(x));tr.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target===tr)openDetail(x)});rows.appendChild(tr)});empty.hidden=data.length!==0}
+let tradeExpanded=false;
+function relativeTradeTime(value){
+ if(!value)return '-';const d=new Date(value);if(Number.isNaN(d.getTime()))return '-';
+ const sec=Math.max(0,Math.floor((Date.now()-d.getTime())/1000));
+ if(sec<60)return '방금 전';if(sec<3600)return Math.floor(sec/60)+'분 전';
+ if(sec<86400)return Math.floor(sec/3600)+'시간 전';
+ if(sec<604800)return Math.floor(sec/86400)+'일 전';
+ return formatPostTime(value);
+}
+function formatTradePrice(value){
+ const str=String(value??'').trim();
+ if(!str)return '가격 협의';
+ if(/^\\d[\\d,]*$/.test(str))return Number(str.replaceAll(',','')).toLocaleString('ko-KR')+'원';
+ return str;
+}
+function renderRows(){
+ syncServerFilter();
+ const serverChoice=document.getElementById('serverFilter').value,kind=document.getElementById('kind').value,query=document.getElementById('search').value.trim().toLowerCase();
+ const data=listings.filter(x=>(selected==='전체'||x.game===selected)&&(serverChoice==='전체'||x.server===serverChoice)&&(kind==='전체'||(kind==='완료'?x.status==='completed':x.kind===kind))&&[x.game,x.server,x.title,x.price].some(v=>String(v||'').toLowerCase().includes(query)));
+ const shown=tradeExpanded?data:data.slice(0,5);
+ rows.replaceChildren();
+ shown.forEach((x,index)=>{
+  const tr=document.createElement('tr');tr.className='trade-neon-row clickable-row';tr.tabIndex=0;tr.setAttribute('role','button');tr.setAttribute('aria-label',x.title+' 상세보기');
+  const cell=(value,cls)=>{const td=document.createElement('td');td.textContent=value;if(cls)td.className=cls;tr.appendChild(td);return td};
+  cell(String(index+1),'trade-no');
+  const gameTd=document.createElement('td');gameTd.className='trade-game';const gameIcon=document.createElement('span');gameIcon.className='trade-game-icon';gameIcon.textContent=gameIcons[x.game]||'🎮';const gameName=document.createElement('span');gameName.textContent=x.game||'-';gameTd.append(gameIcon,gameName);tr.appendChild(gameTd);
+  cell(x.server||'-','trade-server');
+  cell(x.title||'-','trade-title');
+  const kindTd=document.createElement('td');kindTd.className='trade-kind';const tag=document.createElement('span');tag.className='trade-kind-tag '+(/구매|삽니다/.test(x.kind||'')?'is-buy':/판매|팝니다/.test(x.kind||'')?'is-sell':'is-item');tag.textContent=x.kind||'거래';kindTd.appendChild(tag);tr.appendChild(kindTd);
+  cell(formatTradePrice(x.price),'trade-price');
+  const timeTd=cell(relativeTradeTime(x.created_at),'trade-time');timeTd.title=formatPostTime(x.created_at);
+  const favTd=document.createElement('td');favTd.className='trade-favorite';favTd.appendChild(makeFavoriteButton(x));tr.appendChild(favTd);
+  tr.addEventListener('click',()=>openDetail(x));tr.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target===tr)openDetail(x)});
+  rows.appendChild(tr);
+ });
+ empty.hidden=data.length!==0;
+ const more=document.getElementById('tradeMore');more.hidden=data.length<=5;more.textContent=tradeExpanded?'접기 ⌃':'더보기 ❯ ('+(data.length-5)+'개)';
+}
+document.getElementById('tradeMore').addEventListener('click',()=>{tradeExpanded=!tradeExpanded;renderRows()});
 function syncServerFilter(){const filter=document.getElementById('serverFilter');const previous=filter.value;const servers=[...new Set(listings.filter(x=>selected==='전체'||x.game===selected).map(x=>x.server).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ko'));filter.replaceChildren();for(const value of ['전체',...servers]){const o=document.createElement('option');o.value=value;o.textContent=value==='전체'?'전체 서버':value;filter.appendChild(o)}filter.value=servers.includes(previous)?previous:'전체'}
 document.getElementById('serverFilter').addEventListener('change',renderRows);
 document.getElementById('globalSearch').addEventListener('input',e=>{document.getElementById('search').value=e.target.value;renderRows()});
