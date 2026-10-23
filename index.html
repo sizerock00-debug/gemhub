@@ -588,7 +588,13 @@ box-shadow:inset 0 0 9px #ff45cb55,0 0 7px #e91bff88,0 0 8px #ffae3855!important
 .schedule-date.today{outline:2px solid #ffdd56!important;background:#27204c!important}
 @media(max-width:750px){.schedule-grid{min-width:1015px!important}.schedule-entry{min-height:58px!important;font-size:13px!important}.schedule-date{min-height:170px!important}}
 </style>
-</head>
+<style>
+/* Two consecutive seven-day calendar rows, with dates in column headers only */
+.schedule-grid{grid-template-columns:repeat(7,minmax(145px,1fr))!important;min-width:1050px!important;align-items:stretch!important}
+.schedule-day-name{background:#d5e6b8!important;color:#15230c!important;font-size:16px!important;padding:10px 4px!important}
+.schedule-date{min-height:210px!important;padding:8px 5px!important;align-self:stretch!important}
+.schedule-date .schedule-number{display:none!important}
+</style></head>
 <body>
 <header class="top"><div class="wrap top-inner"><div class="brand-wrap"><a href="#" class="logo"><span class="brand-pad">💎</span> GEM<span>HUB</span></a><div class="sub">게임 거래와 서버 홍보의 모든 것</div></div>
 <div class="header-search"><input id="globalSearch" type="search" placeholder="게임, 아이템, 서버명, 길드명을 검색해보세요..." aria-label="통합 검색"></div>
@@ -1184,26 +1190,21 @@ async function loadServerSchedules(){
   renderSchedule();
 }
 
-let scheduleMonthOffset=0;
+let scheduleWeekOffset=0;
 function scheduleISO(d){return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}
 function renderSchedule(){
  const now=new Date();
- const month=new Date(now.getFullYear(),now.getMonth()+scheduleMonthOffset,1,12);
- const year=month.getFullYear(),monthIndex=month.getMonth();
- const start=new Date(year,monthIndex,1,12);
- start.setDate(start.getDate()-(start.getDay()+6)%7);
- const end=new Date(year,monthIndex+1,0,12);
- const weekCount=Math.ceil(((end-start)/86400000+1)/7);
+ const start=new Date(now.getFullYear(),now.getMonth(),now.getDate(),12);
+ start.setDate(start.getDate()-(start.getDay()+6)%7+scheduleWeekOffset*7);
+ const last=new Date(start);last.setDate(start.getDate()+13);
  document.getElementById('scheduleTitle').textContent='📅 서버 오픈 일정'+(selected==='전체'?'':' · '+selected);
- document.getElementById('schedulePeriod').textContent=`${year}년 ${monthIndex+1}월`;
+ document.getElementById('schedulePeriod').textContent=`${start.getMonth()+1}월 ${start.getDate()}일 ~ ${last.getMonth()+1}월 ${last.getDate()}일`;
  const grid=document.getElementById('scheduleGrid');grid.replaceChildren();
- for(const name of ['월','화','수','목','금','토','일']){const head=document.createElement('div');head.className='schedule-day-name';head.textContent=name;grid.appendChild(head)}
  const today=scheduleISO(now);
- for(let i=0;i<weekCount*7;i++){
+ for(let i=0;i<14;i++){
+  if(i%7===0){for(let j=0;j<7;j++){const d=new Date(start);d.setDate(start.getDate()+i+j);const head=document.createElement('div');head.className='schedule-day-name';head.textContent=d.getDate()+'일('+['일','월','화','수','목','금','토'][d.getDay()]+')';grid.appendChild(head)}}
   const day=new Date(start);day.setDate(start.getDate()+i);const iso=scheduleISO(day);
-  if(day.getMonth()!==monthIndex){const blank=document.createElement('div');blank.className='schedule-outside-blank';blank.setAttribute('aria-hidden','true');grid.appendChild(blank);continue;}
   const cell=document.createElement('div');cell.className='schedule-date'+(iso===today?' today':'');
-  const number=document.createElement('div');number.className='schedule-number';number.textContent=day.getDate()+'일';cell.appendChild(number);
   const entries=serverSchedules.filter(x=>x.date===iso&&(selected==='전체'||x.game===selected));
   for(const item of entries){const valid=typeof item.url==='string'&&/^https:\/\/[^\s]+$/i.test(item.url);const el=document.createElement(valid?'a':'div');el.className = 'schedule-entry ' + ({
   premium: 'ad-premium',
@@ -1216,9 +1217,9 @@ const nameEl=document.createElement('strong');nameEl.className='gemhub-ad-name';
   grid.appendChild(cell)
  }
 }
-document.getElementById('schedulePrev').addEventListener('click',()=>{scheduleMonthOffset--;renderSchedule()});
-document.getElementById('scheduleNext').addEventListener('click',()=>{scheduleMonthOffset++;renderSchedule()});
-document.getElementById('scheduleToday').addEventListener('click',()=>{scheduleMonthOffset=0;renderSchedule()});
+document.getElementById('schedulePrev').addEventListener('click',()=>{scheduleWeekOffset--;renderSchedule()});
+document.getElementById('scheduleNext').addEventListener('click',()=>{scheduleWeekOffset++;renderSchedule()});
+document.getElementById('scheduleToday').addEventListener('click',()=>{scheduleWeekOffset=0;renderSchedule()});
 
 renderAds();
 
