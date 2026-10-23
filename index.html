@@ -1225,7 +1225,7 @@ function renderAds(){
     const placement={adsLeft:'left',adsRight:'right',adsBottom:'bottom'}[id];
     const placed=relevant.filter(a=>a.placement===placement);
     const group=placed.length?placed:visible.slice(offset,offset+count);
-    for(let i=0;i<count;i++){if(id==='adsLeft'&&i===0){const demo=document.createElement('a');demo.className='ad-tile gemhub-test-banner';demo.href='https://t.me/GemHubHelp';demo.target='_blank';demo.rel='noopener noreferrer';demo.setAttribute('aria-label','겜허브 테스트 광고 배너');const top=document.createElement('span');top.className='gemhub-test-small';top.textContent='✦ GEMHUB · TEST AD ✦';const title=document.createElement('strong');title.className='gemhub-test-title';title.textContent='🎮 겜허브 홍보';const bottom=document.createElement('span');bottom.className='gemhub-test-cta';bottom.textContent='서버 · 게임 광고 문의 ↗';demo.append(top,title,bottom);target.appendChild(demo)}else target.appendChild(adNode(group[i]))}
+    for(let i=0;i<count;i++)target.appendChild(adNode(group[i]));
   }
 }
 
