@@ -1248,9 +1248,7 @@ function adNode(ad){
 }
 /* 메인 광고 자동 슬라이더 - 향후 관리자 광고 데이터 연결용 */
 const MAIN_BANNER_INTERVAL_MS=5000;
-const mainBannerSlides=[
- {title:'메인 배너 광고 등록',kicker:'📢 GEMHUB · MAIN PREMIUM AD',description:'겜허브 메인 배너 광고주를 모집합니다',tagline:'메인 광고 자리 · 클릭하여 홍보글 및 배너 등록 상담',button:'💬 메인 배너 광고 등록 상담 →',href:'#gemhubAdModal',theme:'purple',recruitment:true}
-];
+const mainBannerSlides=Array.from({length:10},(_,i)=>({title:'메인 배너 광고 등록',kicker:'📢 GEMHUB · MAIN PREMIUM AD · '+(i+1)+'번',description:'겜허브 메인 '+(i+1)+'번 배너 광고주를 모집합니다',tagline:'메인 '+(i+1)+'번 · 클릭하여 홍보글 및 배너 등록 상담',button:'💬 메인 '+(i+1)+'번 광고 등록 상담 →',href:'#gemhubAdModal',theme:'purple',recruitment:true,slotIndex:i+1}));
 let mainBannerIndex=0,mainBannerPaused=false,mainBannerTimer=null;
 const bannerRoot=document.getElementById('mainBannerCarousel'),bannerDots=document.getElementById('bannerIndicators');
 function renderMainBanner(){
@@ -1272,7 +1270,7 @@ function restartMainBanner(){
  if(mainBannerTimer)clearInterval(mainBannerTimer);
  if(!mainBannerPaused&&mainBannerSlides.length>1&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches)mainBannerTimer=setInterval(()=>{mainBannerIndex=(mainBannerIndex+1)%mainBannerSlides.length;renderMainBanner()},MAIN_BANNER_INTERVAL_MS);
 }
-document.getElementById('mainBannerLink').addEventListener('click',event=>{if(event.currentTarget.dataset.recruitment!=='yes')return;event.preventDefault();const modal=document.getElementById('gemhubAdModal');const slot=document.getElementById('gemhubAdSlotChoice');if(slot)slot.textContent='문의하실 광고 위치: 메인 배너 · 홍보글 및 배너 등록 상담';if(modal)modal.hidden=false});
+document.getElementById('mainBannerLink').addEventListener('click',event=>{if(event.currentTarget.dataset.recruitment!=='yes')return;event.preventDefault();const modal=document.getElementById('gemhubAdModal');const slot=document.getElementById('gemhubAdSlotChoice');if(slot)slot.textContent='문의하실 광고 위치: 메인 '+(mainBannerSlides[mainBannerIndex]?.slotIndex||1)+'번 · 홍보글 및 배너 등록 상담';if(modal)modal.hidden=false});
 document.getElementById('bannerPrev').addEventListener('click',()=>{mainBannerIndex=(mainBannerIndex-1+mainBannerSlides.length)%mainBannerSlides.length;renderMainBanner();restartMainBanner()});
 document.getElementById('bannerNext').addEventListener('click',()=>{mainBannerIndex=(mainBannerIndex+1)%mainBannerSlides.length;renderMainBanner();restartMainBanner()});
 document.getElementById('bannerPause').addEventListener('click',e=>{mainBannerPaused=!mainBannerPaused;e.currentTarget.textContent=mainBannerPaused?'▶':'Ⅱ';e.currentTarget.setAttribute('aria-label',mainBannerPaused?'자동 넘김 재생':'자동 넘김 일시정지');restartMainBanner()});
@@ -1326,8 +1324,12 @@ async function gemhubLoadBanners(){
   if(error)throw error;
   const banners=(data||[]).filter(b=>/^https:\/\//i.test(b.image_url)&&/^https:\/\//i.test(b.target_url));
   paidAds=banners.filter(b=>b.placement!=='main').map(b=>({name:b.title,image:b.image_url,url:b.target_url,game:b.game,placement:b.placement,slotIndex:b.slot_index}));
-  const slides=banners.filter(b=>b.placement==='main').map(b=>({title:b.title,kicker:'GEMHUB PREMIUM BANNER',description:b.title,tagline:'겜허브 공식 배너 광고',button:'광고 바로가기 →',href:b.target_url,theme:'purple',image:b.image_url}));
-  if(slides.length){mainBannerSlides.splice(0,mainBannerSlides.length,...slides);mainBannerIndex=0;renderMainBanner();restartMainBanner()}
+  const registeredMain=banners.filter(b=>b.placement==='main');
+  for(let i=0;i<10;i++){
+    const b=registeredMain.find(ad=>Number(ad.slot_index)===i+1);
+    mainBannerSlides[i]=b?{title:b.title,kicker:'GEMHUB PREMIUM BANNER · '+(i+1)+'번',description:b.title,tagline:'겜허브 공식 배너 광고',button:'광고 바로가기 →',href:b.target_url,theme:'purple',image:b.image_url,slotIndex:i+1}:{title:'메인 배너 광고 등록',kicker:'📢 GEMHUB · MAIN PREMIUM AD · '+(i+1)+'번',description:'겜허브 메인 '+(i+1)+'번 배너 광고주를 모집합니다',tagline:'메인 '+(i+1)+'번 · 클릭하여 홍보글 및 배너 등록 상담',button:'💬 메인 '+(i+1)+'번 광고 등록 상담 →',href:'#gemhubAdModal',theme:'purple',recruitment:true,slotIndex:i+1};
+  }
+  mainBannerIndex=0;renderMainBanner();restartMainBanner();
   renderAds();
  }catch(e){console.warn('배너 광고 조회 오류',e)}
 }
