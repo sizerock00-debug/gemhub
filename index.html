@@ -629,7 +629,29 @@ box-shadow:inset 0 0 9px #ff45cb55,0 0 7px #e91bff88,0 0 8px #ffae3855!important
 .schedule-grid .schedule-date .schedule-entry.ad-sparkle::after{content:''!important;position:absolute!important;z-index:2!important;top:0!important;bottom:0!important;left:0!important;width:40%!important;pointer-events:none!important;background:linear-gradient(90deg,transparent,#ffffffc9,transparent)!important;animation:gemhubVisibleSweep 1.35s ease-in-out infinite!important}
 .schedule-grid .schedule-date .schedule-entry.ad-sparkle .gemhub-ad-name,.schedule-grid .schedule-date .schedule-entry.ad-sparkle .gemhub-ad-subtitle{position:relative!important;z-index:3!important}
 @media(prefers-reduced-motion:reduce){.schedule-grid .schedule-date .schedule-entry.ad-sparkle,.schedule-grid .schedule-date .schedule-entry.ad-sparkle::after{animation:none!important}.schedule-grid .schedule-date .schedule-entry.ad-sparkle{box-shadow:inset 0 0 0 4px #fff,inset 0 0 17px #ffffffb0!important}}
-</style></head>
+</style><style>
+.gh-notice-backdrop[hidden]{display:none!important}
+.gh-notice-backdrop{position:fixed;inset:0;z-index:12000;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(4,3,13,.82);backdrop-filter:blur(9px)}
+body.gh-notice-open{overflow:hidden}
+.gh-notice-dialog{width:min(100%,490px);max-height:min(88vh,740px);display:flex;flex-direction:column;overflow:hidden;border:1px solid rgba(177,111,255,.65);border-radius:22px;background:radial-gradient(ellipse at 50% 0%,#352052 0%,#1c122f 46%,#100b1d 100%);box-shadow:0 28px 90px #000c,0 0 55px #7427e22b;color:#f9f4ff;font-family:inherit;animation:ghNoticeEnter .28s ease-out}
+@keyframes ghNoticeEnter{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+.gh-notice-top{display:flex;justify-content:space-between;align-items:center;padding:19px 22px 0;gap:10px}
+.gh-notice-eyebrow{font-size:10px;letter-spacing:2px;font-weight:800;color:#d8b4ff}.gh-notice-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#ae66ff;box-shadow:0 0 10px #a352ff;margin-right:7px}
+.gh-notice-x{background:#ffffff0b;border:1px solid #ffffff25;color:#e9d6ff;border-radius:10px;width:32px;height:32px;cursor:pointer;font-size:14px}
+.gh-notice-content{overflow-y:auto;text-align:center;padding:16px 30px 27px}
+.gh-notice-symbol{font-size:36px;color:#b879ff;text-shadow:0 0 28px #a13bff;margin-bottom:9px}
+.gh-notice-label{font-size:12px;letter-spacing:2px;color:#cba5ff;font-weight:700}
+#ghNoticeTitle{font-size:clamp(22px,5vw,30px);line-height:1.3;margin:15px 0 17px;color:white;overflow-wrap:anywhere}
+.gh-notice-body{text-align:left;white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px;line-height:1.85;color:#e5d9f3;padding:19px 21px;border:1px solid #8054b044;border-radius:13px;background:#09061277;max-height:42vh;overflow-y:auto}
+.gh-notice-page{margin-top:14px;font-size:12px;color:#b59ccf}
+.gh-notice-footer{border-top:1px solid #8c5ac33d;padding:17px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.gh-notice-today{display:flex;align-items:center;gap:8px;font-size:13px;color:#d5c5e9;cursor:pointer;white-space:nowrap}
+.gh-notice-today input{accent-color:#a754ff;width:16px;height:16px}
+.gh-notice-confirm{border:1px solid #b876ff;border-radius:11px;padding:11px 27px;background:linear-gradient(135deg,#9b4fff,#6223bb);box-shadow:0 5px 24px #792add66;color:#fff;font-weight:800;cursor:pointer;white-space:nowrap}
+.gh-notice-confirm:hover{filter:brightness(1.15)}
+@media(max-width:450px){.gh-notice-content{padding:12px 17px 20px}.gh-notice-footer{padding:14px;gap:8px}.gh-notice-today{font-size:12px}.gh-notice-confirm{padding:10px 15px}}
+</style>
+</head>
 <body>
 <header class="top"><div class="wrap top-inner"><div class="brand-wrap"><a href="#" class="logo"><span class="brand-pad">💎</span> GEM<span>HUB</span></a><div class="sub">게임 거래와 서버 홍보의 모든 것</div></div>
 <div class="header-search"><input id="globalSearch" type="search" placeholder="게임, 아이템, 서버명, 길드명을 검색해보세요..." aria-label="통합 검색"></div>
@@ -642,7 +664,13 @@ box-shadow:inset 0 0 9px #ff45cb55,0 0 7px #e91bff88,0 0 8px #ffae3855!important
 <button class="account-link" type="button" id="editProfile"><span class="account-menu-icon">👤</span><span class="account-menu-label"><strong>내 프로필 · 닉네임</strong><small>프로필과 닉네임 수정</small></span><em>수정</em></button>
 <button class="account-link" type="button" id="myPageSettings"><span class="account-menu-icon">⚙️</span><span class="account-menu-label"><strong>계정 설정</strong><small>회원 계정 정보 관리</small></span><em>설정</em></button>
 <button class="account-link logout" type="button" id="menuLogout"><span class="account-menu-icon">🚪</span><span class="account-menu-label"><strong>로그아웃</strong><small>현재 계정에서 나가기</small></span></button></div></div></div></div></div></header>
-<section id="gemhubNoticeStrip" hidden style="max-width:1180px;margin:12px auto;padding:14px 18px;border:1px solid #7645a8;border-radius:12px;background:#21142e;color:#f1e4ff"><strong>📢 겜허브 공지사항</strong><div id="gemhubNoticeItems" style="margin-top:6px"></div></section>
+<div id="gemhubNoticeBackdrop" class="gh-notice-backdrop" hidden role="presentation">
+  <section class="gh-notice-dialog" role="dialog" aria-modal="true" aria-labelledby="ghNoticeTitle" aria-describedby="ghNoticeBody">
+    <div class="gh-notice-top"><span class="gh-notice-eyebrow"><span class="gh-notice-dot"></span> GEMHUB OFFICIAL NOTICE</span><button id="ghNoticeClose" class="gh-notice-x" type="button" aria-label="공지 닫기">✕</button></div>
+    <div class="gh-notice-content"><div class="gh-notice-symbol">✦</div><div class="gh-notice-label">겜허브 공식 공지사항</div><h2 id="ghNoticeTitle"></h2><div id="ghNoticeBody" class="gh-notice-body"></div><div id="ghNoticePage" class="gh-notice-page"></div></div>
+    <div class="gh-notice-footer"><label class="gh-notice-today"><input id="ghNoticeHideToday" type="checkbox"> 오늘 하루 보지 않기</label><button id="ghNoticeNext" class="gh-notice-confirm" type="button">확인</button></div>
+  </section>
+</div>
 <main class="wrap">
 <div class="layout-grid">
 <aside class="ad-sidebar" id="adsLeft" aria-label="왼쪽 서버 광고"></aside>
@@ -861,7 +889,39 @@ const SUPABASE_PUBLISHABLE_KEY='sb_publishable_D5cYjFWB8Yd7UJ22ldJYPg_eEAUMtBa';
 let authClient=null;
 try {if(window.supabase?.createClient)authClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);}catch(e){console.error('Supabase 초기화 오류',e)}
 
-async function gemhubLoadPublicNotices(){try{if(!authClient)return;const {data,error}=await authClient.from('gemhub_announcements').select('title,body,created_at').eq('published',true).order('created_at',{ascending:false}).limit(3);if(error||!data?.length)return;const area=document.getElementById('gemhubNoticeItems');area.replaceChildren();data.forEach(n=>{const row=document.createElement('div');row.style.cssText='padding:5px 0;border-top:1px solid #493059';const title=document.createElement('strong');title.textContent=n.title;const body=document.createElement('div');body.style.cssText='white-space:pre-wrap;font-size:13px;color:#d9c9e8';body.textContent=n.body;row.append(title,body);area.appendChild(row)});document.getElementById('gemhubNoticeStrip').hidden=false}catch(e){console.warn('공지사항 로딩 오류',e)}}
+const ghNoticeBackdrop=document.getElementById('gemhubNoticeBackdrop');
+let ghNoticeQueue=[],ghNoticeIndex=0,ghNoticePreviousFocus=null;
+function ghNoticeDay(){const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}
+function ghNoticeDismissed(id){try{return localStorage.getItem('gemhub_notice_hide_'+id)===ghNoticeDay()}catch(e){return false}}
+function ghNoticeShow(){
+ const n=ghNoticeQueue[ghNoticeIndex];
+ if(!n){ghNoticeBackdrop.hidden=true;document.body.classList.remove('gh-notice-open');ghNoticePreviousFocus?.focus?.();return}
+ document.getElementById('ghNoticeTitle').textContent=n.title||'겜허브 공지사항';
+ document.getElementById('ghNoticeBody').textContent=n.body||'';
+ document.getElementById('ghNoticePage').textContent=ghNoticeQueue.length>1?(ghNoticeIndex+1)+' / '+ghNoticeQueue.length:'';
+ document.getElementById('ghNoticeHideToday').checked=false;
+ document.getElementById('ghNoticeNext').textContent=ghNoticeIndex<ghNoticeQueue.length-1?'다음 공지':'확인';
+ if(ghNoticeBackdrop.hidden)ghNoticePreviousFocus=document.activeElement;
+ ghNoticeBackdrop.hidden=false;document.body.classList.add('gh-notice-open');document.getElementById('ghNoticeClose').focus();
+}
+function ghNoticeClose(){
+ const n=ghNoticeQueue[ghNoticeIndex];
+ if(n&&document.getElementById('ghNoticeHideToday').checked){try{localStorage.setItem('gemhub_notice_hide_'+n.id,ghNoticeDay())}catch(e){}}
+ ghNoticeIndex++;ghNoticeShow();
+}
+document.getElementById('ghNoticeClose').addEventListener('click',ghNoticeClose);
+document.getElementById('ghNoticeNext').addEventListener('click',ghNoticeClose);
+ghNoticeBackdrop.addEventListener('click',e=>{if(e.target===ghNoticeBackdrop)ghNoticeClose()});
+document.addEventListener('keydown',e=>{if(ghNoticeBackdrop.hidden)return;if(e.key==='Escape'){e.preventDefault();ghNoticeClose()}});
+async function gemhubLoadPublicNotices(){
+ try{
+  if(!authClient)return;
+  const {data,error}=await authClient.from('gemhub_announcements').select('id,title,body,created_at').eq('published',true).order('created_at',{ascending:false}).limit(10);
+  if(error){console.warn('공지사항 조회 실패',error);return}
+  ghNoticeQueue=(data||[]).filter(n=>!ghNoticeDismissed(n.id));
+  ghNoticeIndex=0;if(ghNoticeQueue.length)ghNoticeShow();
+ }catch(e){console.warn('공지사항 로딩 오류',e)}
+}
 gemhubLoadPublicNotices();
 let toastTimer;
 function showToast(message){const toast=document.getElementById('toast');toast.textContent=message;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),3500)}
