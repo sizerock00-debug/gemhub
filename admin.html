@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>겜허브 | 서버 일정 관리</title>
+<title>겜허브 | 통합 관리자 센터</title>
 <style>
 :root{color-scheme:dark;--bg:#090713;--panel:#171125;--panel2:#211630;--line:#563777;--purple:#8b2cff;--light:#d9b8ff;--text:#f7f2ff;--muted:#c3b5d2}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#26103e 0,transparent 45%),var(--bg);color:var(--text);font-family:system-ui,"Malgun Gothic",sans-serif}
@@ -25,11 +25,11 @@ textarea{min-height:88px;resize:vertical}.twocol{display:grid;grid-template-colu
 </head>
 <body>
 <header class="top">
-  <div class="logo">🎮 GEM<span>HUB</span> <small style="font-size:13px;color:#d9b8ff">관리자 · 서버 일정</small></div>
+  <div class="logo">🎮 GEM<span>HUB</span> <small style="font-size:13px;color:#d9b8ff">통합 관리자 센터</small></div>
   <div class="actions"><a class="btn" href="index.html">홈페이지 보기 ↗</a><button class="btn" id="logoutBtn" type="button">로그아웃</button></div>
 </header>
 <main class="wrap">
-  <h1>📅 서버 일정 등록 · 수정</h1>
+  <h1>💎 겜허브 통합 관리자 센터</h1>
   <p class="muted">텔레그램으로 상담한 서버 정보를 직접 등록합니다. 등록한 일정은 홈페이지 달력에 표시되며, 방문자가 서버명을 누르면 입력한 홈페이지로 이동합니다.</p>
   <div id="authMessage" class="status">관리자 권한을 확인하고 있습니다…</div>
   <div id="adminApp" hidden>
@@ -94,6 +94,10 @@ textarea{min-height:88px;resize:vertical}.twocol{display:grid;grid-template-colu
         <div class="table-wrap"><table><thead><tr><th>게임 / 서버</th><th>오픈</th><th>종료</th><th>관리</th></tr></thead><tbody id="scheduleRows"></tbody></table></div>
       </section>
     </div>
+<section class="panel" style="margin-top:18px"><h2>📊 통합 운영 현황</h2><div id="adminStats" class="actions"></div><p class="muted">거래 게시글 · 서버 일정 신청 · 공지사항을 함께 관리합니다. 회원의 개인 대화 내용은 열람하지 않습니다.</p><button type="button" class="btn" id="refreshOperations">운영 현황 새로고침</button></section>
+<section class="panel" style="margin-top:18px"><h2>🛍 거래 게시글 관리</h2><div class="searchrow"><input id="adminPostSearch" placeholder="거래글 제목·게임 검색"><select id="adminPostFilter"><option value="">전체 상태</option><option value="active">거래중</option><option value="completed">완료</option><option value="hidden">숨김</option></select></div><div id="adminPosts" class="message"></div></section>
+<section class="panel" style="margin-top:18px"><h2>📨 서버 일정 신청 승인·반려</h2><p class="muted">승인 시 공개 서버 달력에 등록됩니다. 동일한 서버명·오픈일의 중복 등록은 방지합니다.</p><div id="adminRequests" class="message"></div></section>
+<section class="panel" style="margin-top:18px"><h2>📢 홈페이지 공지사항 관리</h2><form id="adminNoticeForm"><input type="hidden" id="adminNoticeId"><label>공지 제목<input id="adminNoticeTitle" required maxlength="160"></label><label>공지 내용<textarea id="adminNoticeBody" required maxlength="5000"></textarea></label><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="adminNoticePublished" style="width:auto">홈페이지에 공개</label><div class="actions"><button class="btn primary" type="submit">공지 저장</button><button class="btn" type="button" id="adminNoticeReset">초기화</button></div></form><div id="adminNotices" class="message" style="margin-top:12px"></div></section>
   </div>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -198,9 +202,33 @@ async function boot(){
     if(error||!user){authMessage.textContent='관리자 로그인이 필요합니다. 홈페이지에서 로그인한 뒤 이 페이지를 다시 여세요.';return}
     const {data,error:adminError}=await client.from('gemhub_admins').select('user_id').eq('user_id',user.id).maybeSingle();
     if(adminError||!data){authMessage.textContent='이 계정에 관리자 권한이 없습니다.';return}
-    authMessage.textContent='관리자 인증 완료';app.hidden=false;await loadSchedules();
+    authMessage.textContent='관리자 인증 완료';app.hidden=false;await loadSchedules();await adminLoadOperations();
   }catch(e){authMessage.textContent='관리자 인증 오류: '+(e?.message||'연결 설정을 확인하세요.')}
 }
+let adminPostsData=[],adminRequestsData=[],adminNoticesData=[];
+function adminText(tag,text){const n=document.createElement(tag);n.textContent=String(text??'');return n}
+function adminAction(parent,label,fn,kind){const b=adminText('button',label);b.type='button';b.className='btn small '+(kind||'');b.addEventListener('click',fn);parent.appendChild(b)}
+function adminRow(target,title,detail,actions){const row=document.createElement('div');row.style.cssText='padding:14px 0;border-bottom:1px solid #38234d';const strong=adminText('strong',title);row.appendChild(strong);const p=adminText('p',detail);p.className='muted';row.appendChild(p);const buttons=document.createElement('div');buttons.className='actions';for(const [name,fn,kind] of actions)adminAction(buttons,name,fn,kind);row.appendChild(buttons);target.appendChild(row)}
+async function adminLoadOperations(){
+ const jobs=[['trade_posts','created_at'],['server_schedule_requests','created_at'],['gemhub_announcements','created_at']];
+ const results=await Promise.all(jobs.map(async ([table,order])=>{const r=await client.from(table).select('*').order(order,{ascending:false}).limit(500);if(r.error)throw r.error;return r.data||[]}));
+ [adminPostsData,adminRequestsData,adminNoticesData]=results;
+ const stats=$('adminStats');stats.replaceChildren();
+ [['거래글',adminPostsData.length],['승인 대기',adminRequestsData.filter(x=>x.status==='pending').length],['서버 일정',cachedSchedules.length],['공개 공지',adminNoticesData.filter(x=>x.published).length]].forEach(([k,v])=>{const s=adminText('span',k+' '+v+'건');s.className='tag';stats.appendChild(s)});
+ adminRenderPosts();adminRenderRequests();adminRenderNotices();
+}
+function adminRenderPosts(){const target=$('adminPosts');target.replaceChildren();const q=$('adminPostSearch').value.toLowerCase(),filter=$('adminPostFilter').value;const data=adminPostsData.filter(x=>(!filter||x.status===filter)&&[x.title,x.game,x.server].join(' ').toLowerCase().includes(q));if(!data.length)target.textContent='조건에 맞는 거래글이 없습니다.';data.forEach(x=>adminRow(target,'#'+x.id+' · '+(x.title||'제목 없음'),[x.game,x.server,x.price,x.status].filter(Boolean).join(' · '),[['거래중',()=>adminModerate(x,'active')],['완료',()=>adminModerate(x,'completed')],['숨김',()=>adminModerate(x,'hidden'),'danger']]))}
+async function adminModerate(x,status){if(!confirm('거래글 #'+x.id+'의 상태를 '+status+'(으)로 변경할까요?'))return;const r=await client.from('trade_posts').update({status}).eq('id',x.id).select('id');if(r.error||!r.data?.length){alert('변경 실패: '+(r.error?.message||'권한을 확인하세요'));return}await adminLoadOperations()}
+function adminRenderRequests(){const target=$('adminRequests');target.replaceChildren();if(!adminRequestsData.length)target.textContent='일정 신청이 없습니다.';adminRequestsData.forEach(x=>adminRow(target,'#'+x.id+' · '+x.game+' / '+x.server_name,'오픈 '+formatDate(x.opening_at)+' · '+x.status+' · '+(x.description||''),[['승인·달력 등록',()=>adminApprove(x)],['반려',()=>adminReject(x),'danger']]))}
+async function adminApprove(x){if(!confirm(x.server_name+' 서버 일정을 승인하고 달력에 등록할까요?'))return;try{const existing=await client.from('server_schedules').select('id').eq('game',x.game).eq('server_name',x.server_name).eq('opening_at',x.opening_at).limit(1);if(existing.error)throw existing.error;if(!existing.data.length){const r=await client.from('server_schedules').insert({game:x.game,server_name:x.server_name,opening_at:x.opening_at,promotion_url:x.promotion_url||null,description:x.description||null,status:'approved'});if(r.error)throw r.error}const r=await client.from('server_schedule_requests').update({status:'approved'}).eq('id',x.id).select('id');if(r.error||!r.data.length)throw r.error||Error('승인 상태 변경 실패');await loadSchedules();await adminLoadOperations();alert('승인 및 달력 등록 완료')}catch(e){alert('승인 실패: '+e.message)}}
+async function adminReject(x){if(!confirm('신청 #'+x.id+'을 반려할까요?'))return;const r=await client.from('server_schedule_requests').update({status:'rejected'}).eq('id',x.id).select('id');if(r.error||!r.data?.length){alert('반려 실패: '+(r.error?.message||'권한 확인'));return}await adminLoadOperations()}
+function adminRenderNotices(){const target=$('adminNotices');target.replaceChildren();if(!adminNoticesData.length)target.textContent='등록된 공지사항이 없습니다.';adminNoticesData.forEach(x=>adminRow(target,'#'+x.id+' · '+x.title+' ('+(x.published?'공개':'비공개')+')',x.body,[['수정',()=>{$('adminNoticeId').value=x.id;$('adminNoticeTitle').value=x.title;$('adminNoticeBody').value=x.body;$('adminNoticePublished').checked=x.published;$('adminNoticeForm').scrollIntoView({behavior:'smooth'})}],['삭제',()=>adminDeleteNotice(x),'danger']]))}
+$('adminNoticeForm').addEventListener('submit',async e=>{e.preventDefault();const id=$('adminNoticeId').value,payload={title:$('adminNoticeTitle').value.trim(),body:$('adminNoticeBody').value.trim(),published:$('adminNoticePublished').checked,updated_at:new Date().toISOString()};const q=id?client.from('gemhub_announcements').update(payload).eq('id',id):client.from('gemhub_announcements').insert(payload);const r=await q.select('id');if(r.error||!r.data?.length){alert('공지 저장 실패: '+(r.error?.message||'권한 확인'));return}$('adminNoticeForm').reset();$('adminNoticeId').value='';await adminLoadOperations();alert('공지 저장 완료')});
+$('adminNoticeReset').addEventListener('click',()=>{$('adminNoticeForm').reset();$('adminNoticeId').value=''});
+async function adminDeleteNotice(x){if(!confirm('공지사항을 삭제할까요?'))return;const r=await client.from('gemhub_announcements').delete().eq('id',x.id);if(r.error){alert('삭제 실패: '+r.error.message);return}await adminLoadOperations()}
+$('adminPostSearch').addEventListener('input',adminRenderPosts);$('adminPostFilter').addEventListener('change',adminRenderPosts);
+$('refreshOperations').addEventListener('click',()=>adminLoadOperations().catch(e=>alert(e.message)));
+
 boot();
 </script>
 </body>
