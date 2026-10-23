@@ -111,7 +111,7 @@ textarea{min-height:88px;resize:vertical}.twocol{display:grid;grid-template-colu
 .banner-stage{border:1px solid #68418f;border-radius:18px;background:radial-gradient(ellipse at 50% 0,#2d1750,#0c0818 65%);padding:16px;margin:14px 0 18px}
 .banner-stage-title{text-align:center;font-weight:850;color:#ebd7ff;margin-bottom:12px}
 .banner-layout{display:grid;grid-template-columns:minmax(80px,1fr) minmax(0,4fr) minmax(80px,1fr);gap:10px}
-.banner-side{display:grid;grid-template-rows:repeat(5,minmax(40px,1fr));gap:6px}
+.banner-side{display:grid;grid-template-rows:none;grid-auto-rows:minmax(44px,auto);gap:6px}
 .banner-center{min-width:0;display:flex;flex-direction:column;gap:10px}
 .banner-slot{position:relative;min-width:0;overflow:hidden;border:1px dashed #9061c0;border-radius:10px;background:linear-gradient(140deg,#241138,#0e0a1b);color:#ddc5ff;cursor:pointer;display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;min-height:44px;transition:border-color .18s,box-shadow .18s,transform .18s}
 .banner-slot:hover,.banner-slot:focus-visible{border-color:#d6a5ff;box-shadow:0 0 0 2px #7d36bd88,0 0 18px #792fc744;transform:translateY(-1px)}
@@ -459,7 +459,8 @@ function bannerOpen(placement,b){
  $('bannerEditor').scrollIntoView({behavior:'smooth',block:'center'});
 }
 function bannerStageRender(){
- const placements=[['bannerSlotsLeft','left',10],['bannerSlotsRight','right',10],['bannerSlotsBottom','bottom',30]];
+ const sideSlots=24; // 홈페이지의 확장된 좌우 광고 영역을 관리 배치도에 표시
+ const placements=[['bannerSlotsLeft','left',sideSlots],['bannerSlotsRight','right',sideSlots],['bannerSlotsBottom','bottom',30]];
  const draw=(placement,index)=>{
   const matches=bannerData.filter(b=>b.placement===placement);
   const b=matches[index];
