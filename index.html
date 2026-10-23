@@ -619,7 +619,7 @@ function updateFavoriteUI(){
 function makeFavoriteButton(post){
  const b=document.createElement('button');b.type='button';b.className='favorite-heart';b.dataset.favoriteId=String(post.id);
  const active=favoriteIds.has(String(post.id));b.textContent=active?'♥':'♡';b.classList.toggle('is-favorite',active);b.setAttribute('aria-label',active?'관심 해제':'관심 등록');b.setAttribute('aria-pressed',String(active));
- b.addEventListener('click',e=>{e.stopPropagation();toggleFavorite(post,b)});
+ b.addEventListener('click',async e=>{e.stopPropagation();if(favoriteIds.has(String(post.id))&&!document.getElementById('favoritesBackdrop').hidden){const ok=window.confirm('선택하신 거래글을 내 관심 목록에서 삭제하시겠습니까?\n\n관심 목록에서만 삭제되며, 원본 거래글은 삭제되지 않습니다.');if(!ok)return;}await toggleFavorite(post,b)});
  return b;
 }
 async function toggleFavorite(post,button){
@@ -631,7 +631,7 @@ async function toggleFavorite(post,button){
  try{
   if(had){const {error}=await authClient.from('trade_favorites').delete().eq('user_id',currentUser.id).eq('trade_post_id',post.id);if(error)throw error;favoriteIds.delete(key)}
   else{const {error}=await authClient.from('trade_favorites').insert({user_id:currentUser.id,trade_post_id:post.id});if(error)throw error;favoriteIds.add(key)}
-  updateFavoriteUI();if(!document.getElementById('favoritesBackdrop').hidden)await openFavorites();
+  updateFavoriteUI();if(!document.getElementById('favoritesBackdrop').hidden)await openFavorites();if(had)showToast('관심 목록에서 삭제되었습니다.');
  }catch(err){console.error('관심 등록 오류',err);showToast('관심 저장에 실패했습니다. 잠시 후 다시 시도해 주세요.')}
  finally{if(button)button.disabled=false}
 }
