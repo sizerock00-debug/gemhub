@@ -193,6 +193,19 @@ textarea{min-height:88px;resize:vertical}.twocol{display:grid;grid-template-colu
 
 <section class="panel" style="margin-top:18px"><h2>🛍 거래 게시글 관리</h2><form id="adminPostSearchForm" class="searchrow" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><select id="adminPostGame" required aria-label="거래글 게임 선택" style="min-width:165px;flex:1"><option value="">게임 선택</option></select><input id="adminPostSearch" type="search" required placeholder="서버명 또는 글제목 입력" aria-label="서버명 또는 글제목" style="min-width:230px;flex:3;max-width:none"><select id="adminPostFilter" aria-label="거래 상태"><option value="">전체 상태</option><option value="active">거래중</option><option value="completed">완료</option><option value="hidden">숨김</option></select><button class="btn primary" type="submit">검색</button><button class="btn" id="adminPostReset" type="button">초기화</button></form><div id="adminPostMessage" class="muted" style="margin:12px 0">게임을 선택하고 서버명 또는 글제목을 입력해 검색하세요.</div><div id="adminPosts" class="message" hidden></div></section>
 
+<section class="panel" id="bannerManagement" style="margin-top:18px">
+<h2>🎨 배너 광고 관리</h2><p class="muted">광고주와 직접 협의한 배너만 관리자가 등록합니다. 메인·왼쪽·오른쪽·하단 배너를 관리할 수 있습니다.</p>
+<form id="bannerForm" style="display:grid;gap:10px"><input type="hidden" id="bannerId">
+<div class="searchrow"><label>광고 위치<select id="bannerPlacement" required><option value="main">상단 메인 슬라이드</option><option value="left">왼쪽 배너</option><option value="right">오른쪽 배너</option><option value="bottom">하단 배너</option></select></label><label>게임 선택<select id="bannerGame"><option value="전체">전체 게임</option></select></label></div>
+<label>광고 이름<input id="bannerTitle" maxlength="120" required placeholder="광고주 또는 배너 이름"></label>
+<label>배너 이미지 URL<input id="bannerImage" type="url" required placeholder="https://.../banner.jpg"></label>
+<div id="bannerPreview" class="status" style="text-align:center">이미지 주소를 입력하면 미리보기가 표시됩니다.</div>
+<label>클릭 시 이동할 URL<input id="bannerUrl" type="url" required placeholder="https://..."></label>
+<div class="searchrow"><label>광고 시작일<input id="bannerStart" type="date" required></label><label>광고 종료일<input id="bannerEnd" type="date" required></label></div>
+<label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="bannerActive" checked style="width:auto">광고 활성화</label>
+<div class="actions"><button class="btn primary" type="submit">배너 저장</button><button class="btn" type="button" id="bannerReset">새 배너 등록</button><button class="btn" type="button" id="bannerRefresh">목록 새로고침</button></div>
+</form><div id="bannerMessage" class="muted" role="status" style="margin:12px 0"></div><div id="bannerList"></div>
+</section>
 <section class="panel" style="margin-top:18px"><h2>📢 홈페이지 공지사항 관리</h2><form id="adminNoticeForm"><input type="hidden" id="adminNoticeId"><label>공지 제목<input id="adminNoticeTitle" required maxlength="160"></label><label>공지 내용<textarea id="adminNoticeBody" required maxlength="5000"></textarea></label><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="adminNoticePublished" style="width:auto">홈페이지에 공개</label><div class="actions"><button class="btn primary" type="submit">공지 저장</button><button class="btn" type="button" id="adminNoticeReset">초기화</button></div></form><div id="adminNotices" class="message" style="margin-top:12px"></div></section>
   </div>
 </main><div id="scheduleEditModal" class="edit-modal" hidden role="dialog" aria-modal="true" aria-labelledby="editModalHeading"><div class="edit-modal-dialog"><div class="edit-modal-top"><h2 id="editModalHeading">✏️ 서버 일정 수정</h2><button type="button" class="btn edit-modal-close" id="editModalClose" aria-label="닫기">✕</button></div><div id="editModalContent"></div></div></div>
@@ -413,13 +426,43 @@ function renderMembers(){
 $('memberSearch').addEventListener('input',renderMembers);
 $('memberReload').addEventListener('click',memberLoad);
 
+
+let bannerData=[];
+const bannerFields=['placement','title','image_url','target_url','game','start_date','end_date','active'];
+function bannerReset(){ $('bannerForm').reset();$('bannerId').value='';$('bannerActive').checked=true;$('bannerPreview').replaceChildren(document.createTextNode('이미지 주소를 입력하면 미리보기가 표시됩니다.'))}
+function bannerImagePreview(){const u=$('bannerImage').value.trim(),box=$('bannerPreview');box.replaceChildren();if(!/^https:\/\//i.test(u)){box.textContent='HTTPS 이미지 주소를 입력하세요.';return}const img=document.createElement('img');img.src=u;img.alt='배너 미리보기';img.style.cssText='max-width:100%;max-height:180px;object-fit:contain;border-radius:10px';img.onerror=()=>{box.textContent='이미지를 불러올 수 없습니다. 주소를 확인하세요.'};box.append(img)}
+async function bannerLoad(){const {data,error}=await client.from('gemhub_banners').select('*').order('created_at',{ascending:false}).limit(500);if(error){$('bannerMessage').textContent='배너 조회 실패: '+error.message;return}bannerData=data||[];bannerRender()}
+function bannerRender(){
+ const list=$('bannerList');list.replaceChildren();$('bannerMessage').textContent='등록된 배너 '+bannerData.length+'개';
+ if(!bannerData.length){list.textContent='등록된 배너가 없습니다.';return}
+ bannerData.forEach(b=>{const row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 0;border-top:1px solid #493059';
+ const img=document.createElement('img');img.src=b.image_url;img.alt=b.title;img.style.cssText='width:115px;height:64px;object-fit:contain;background:#080611;border-radius:9px';
+ const desc=document.createElement('div');desc.style.cssText='flex:1;min-width:180px;overflow-wrap:anywhere';const name=document.createElement('strong');name.textContent=b.title;const info=document.createElement('div');info.className='muted';info.textContent=({main:'메인',left:'왼쪽',right:'오른쪽',bottom:'하단'}[b.placement]||b.placement)+' · '+b.game+' · '+b.start_date+' ~ '+b.end_date+' · '+(b.active?'활성':'비활성');desc.append(name,info);
+ const actions=document.createElement('div');actions.className='actions';
+ adminAction(actions,'수정',()=>{const map={bannerPlacement:'placement',bannerTitle:'title',bannerImage:'image_url',bannerUrl:'target_url',bannerGame:'game',bannerStart:'start_date',bannerEnd:'end_date'};Object.entries(map).forEach(([id,key])=>$(id).value=b[key]||'');$('bannerId').value=b.id;$('bannerActive').checked=b.active;bannerImagePreview();$('bannerManagement').scrollIntoView({behavior:'smooth',block:'start'})});
+ adminAction(actions,'삭제',async()=>{if(!confirm(b.title+' 배너를 삭제할까요?'))return;const {error}=await client.from('gemhub_banners').delete().eq('id',b.id);if(error)alert(error.message);else await bannerLoad()},'danger');
+ row.append(img,desc,actions);list.append(row)})
+}
+$('bannerImage').addEventListener('input',bannerImagePreview);
+$('bannerReset').addEventListener('click',bannerReset);
+$('bannerRefresh').addEventListener('click',bannerLoad);
+$('bannerForm').addEventListener('submit',async e=>{
+ e.preventDefault();
+ const obj={placement:$('bannerPlacement').value,title:$('bannerTitle').value.trim(),image_url:$('bannerImage').value.trim(),target_url:$('bannerUrl').value.trim(),game:$('bannerGame').value,start_date:$('bannerStart').value,end_date:$('bannerEnd').value,active:$('bannerActive').checked};
+ if(![obj.image_url,obj.target_url].every(x=>/^https:\/\//i.test(x))){alert('이미지 및 이동 주소는 HTTPS URL을 사용하세요.');return}
+ if(obj.end_date<obj.start_date){alert('종료일은 시작일보다 빠를 수 없습니다.');return}
+ const id=$('bannerId').value,btn=$('bannerForm').querySelector('[type=submit]');btn.disabled=true;
+ try{const q=id?client.from('gemhub_banners').update(obj).eq('id',id):client.from('gemhub_banners').insert(obj);const {error}=await q;if(error)throw error;bannerReset();await bannerLoad();$('bannerMessage').textContent='배너가 저장되었습니다.'}catch(err){alert('배너 저장 실패: '+err.message)}finally{btn.disabled=false}
+});
+scheduleSearchGames.forEach(g=>$('bannerGame').add(new Option(g,g)));
+
 async function boot(){
   try{
     const {data:{user},error}=await client.auth.getUser();
     if(error||!user){authMessage.textContent='관리자 로그인이 필요합니다. 홈페이지에서 로그인한 뒤 이 페이지를 다시 여세요.';return}
     const {data,error:adminError}=await client.from('gemhub_admins').select('user_id').eq('user_id',user.id).maybeSingle();
     if(adminError||!data){authMessage.textContent='이 계정에 관리자 권한이 없습니다.';return}
-    authMessage.textContent='관리자 인증 완료';app.hidden=false;await loadSchedules();await adminLoadOperations();await memberLoad();
+    authMessage.textContent='관리자 인증 완료';app.hidden=false;await loadSchedules();await adminLoadOperations();await memberLoad();await bannerLoad();
   }catch(e){authMessage.textContent='관리자 인증 오류: '+(e?.message||'연결 설정을 확인하세요.')}
 }
 let adminPostsData=[],adminNoticesData=[];
