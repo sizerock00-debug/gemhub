@@ -520,6 +520,19 @@ box-shadow:inset 0 0 9px #ff45cb55,0 0 7px #e91bff88,0 0 8px #ffae3855!important
 .trade-is-completed .trade-price{opacity:.65}
 .trade-is-completed{background:rgba(120,93,124,.09)!important}
 .gemhub-post-row>.gemhub-trade-state{margin-top:9px}
+</style><style>
+#favoritesBackdrop.favorites-backdrop{position:fixed!important;inset:0!important;z-index:2147483000!important;display:flex!important;align-items:center!important;justify-content:center!important;background:rgba(4,2,15,.87)!important;padding:14px!important}
+#favoritesBackdrop[hidden]{display:none!important}
+#favoritesBackdrop .favorites-dialog{width:min(760px,100%)!important;max-height:88dvh!important;overflow-y:auto!important;background:linear-gradient(145deg,#231235,#100b1f)!important;border:1px solid #a75be5!important;border-radius:18px!important;padding:24px!important;box-shadow:0 24px 80px #000c!important}
+#favoritesBackdrop .favorite-item{background:#1b1230;border:1px solid #46305d;border-radius:12px;margin:10px 0;padding:13px;gap:12px;flex-wrap:wrap}
+#favoritesBackdrop .favorite-item-info{min-width:180px}
+.favorite-item-actions{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.favorite-item-actions button:not(.favorite-heart){background:#5c3287;border:1px solid #9161b5;border-radius:9px;padding:8px 11px;color:#fff;cursor:pointer;font-size:12px}
+.favorite-preview[hidden]{display:none!important}
+.favorite-preview{margin-top:16px;padding:16px;border:1px solid #8654a9;border-radius:12px;background:#120c20}
+.favorite-preview h3{font-size:16px;margin:0 0 10px}
+.favorite-preview p{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.65}
+.favorite-preview button{border:1px solid #9867c0;background:#513073;color:white;padding:10px 13px;border-radius:9px;cursor:pointer}
 </style></head>
 <body>
 <header class="top"><div class="wrap top-inner"><div class="brand-wrap"><a href="#" class="logo"><span class="brand-pad">💎</span> GEM<span>HUB</span></a><div class="sub">게임 거래와 서버 홍보의 모든 것</div></div>
@@ -585,7 +598,7 @@ box-shadow:inset 0 0 9px #ff45cb55,0 0 7px #e91bff88,0 0 8px #ffae3855!important
 <div class="gemhub-manage-backdrop" id="manageBackdrop" hidden><section class="gemhub-manage-dialog" role="dialog" aria-modal="true" aria-labelledby="manageHeading"><div class="gemhub-manage-head"><h2 id="manageHeading">📋 내 거래 글</h2><button type="button" id="manageClose" aria-label="닫기">×</button></div><div id="manageBody"></div></section></div>
 <div class="gemhub-manage-backdrop" id="settingsBackdrop" hidden><section class="gemhub-manage-dialog" role="dialog" aria-modal="true" aria-labelledby="settingsHeading"><div class="gemhub-manage-head"><h2 id="settingsHeading">⚙️ 계정 설정</h2><button type="button" id="settingsClose" aria-label="닫기">×</button></div><p>가입 이메일: <strong id="settingsEmail"></strong></p><form id="passwordChangeForm"><label for="newAccountPassword">새 비밀번호 (8자 이상)</label><input type="password" id="newAccountPassword" autocomplete="new-password" minlength="8" required placeholder="새 비밀번호"><label for="confirmAccountPassword">새 비밀번호 확인</label><input type="password" id="confirmAccountPassword" autocomplete="new-password" minlength="8" required placeholder="새 비밀번호 다시 입력"><button type="submit" class="btn primary" id="passwordChangeSave">비밀번호 변경</button><p id="passwordChangeMessage" role="status"></p></form><p class="gemhub-manage-help">닉네임과 캐릭터는 '내 프로필 · 닉네임'에서 변경할 수 있습니다.</p></section></div>
 <div class="detail-backdrop" id="detailBackdrop" aria-hidden="true"><div class="detail-dialog" role="dialog" aria-modal="true" aria-labelledby="detailTitle"><button class="detail-close" type="button" id="detailClose" aria-label="닫기">×</button><h2 id="detailTitle"></h2><div id="detailMeta" class="muted"></div> <p id="detailContent"></p><button type="button" id="detailFavorite" class="favorite-detail-btn">♡ 관심 등록</button></div>
-<div class="favorites-backdrop" id="favoritesBackdrop" hidden><section class="favorites-dialog" role="dialog" aria-modal="true" aria-labelledby="favoritesHeading"><div class="favorites-heading"><h2 id="favoritesHeading">💗 내 관심 거래</h2><button type="button" id="favoritesClose" aria-label="닫기">×</button></div><p>관심 등록한 거래 물품을 다시 확인할 수 있습니다.</p><div id="favoritesList"></div></section></div>
+<div class="favorites-backdrop" id="favoritesBackdrop" hidden><section class="favorites-dialog" role="dialog" aria-modal="true" aria-labelledby="favoritesHeading"><div class="favorites-heading"><h2 id="favoritesHeading">💗 나만의 관심 거래함</h2><button type="button" id="favoritesClose" aria-label="닫기">×</button></div><p>내가 찜한 거래 글만 모았습니다. 상세 내용을 확인하고 문의 문구를 복사할 수 있습니다.</p><div id="favoritesList"></div><div id="favoritePreview" class="favorite-preview" hidden></div></section></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 const games=['전체','리니지 클래식','리니지W','아이온','뮤','메이플스토리','로스트아크','블레이드앤소울','바람의나라','렌2','기타게임','로블록스','마인크래프트','발로란트','리그오브레전드','FC온라인','서든어택','배틀그라운드','오버워치2','원신','스타크래프트','던전앤파이터','리니지M','디아블로','다크에덴','미르2','R2'];
