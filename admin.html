@@ -67,7 +67,7 @@ textarea{min-height:88px;resize:vertical}.twocol{display:grid;grid-template-colu
 .schedule-day-name{background:#d5e6b8!important;color:#15230c!important;font-size:16px!important;padding:10px 4px!important}
 .schedule-date{min-height:210px!important;padding:8px 5px!important;align-self:stretch!important}
 .schedule-date .schedule-number{display:none!important}
-</style>
+.gemhub-demo-entry{position:relative!important;border-style:dashed!important}.gemhub-demo-label{font-size:10px!important;font-weight:800!important;opacity:.8!important}.gemhub-demo-notice{font-size:13px;font-weight:800;color:#ffe777;background:#30213e;border:1px solid #9062c0;padding:9px 12px;text-align:center}</style>
 </head>
 <body>
 <header class="top">
@@ -79,7 +79,7 @@ textarea{min-height:88px;resize:vertical}.twocol{display:grid;grid-template-colu
   <p class="muted">텔레그램으로 상담한 서버 정보를 직접 등록합니다. 등록한 일정은 홈페이지 달력에 표시되며, 방문자가 서버명을 누르면 입력한 홈페이지로 이동합니다.</p>
   <div id="authMessage" class="status">관리자 권한을 확인하고 있습니다…</div>
   <div id="adminApp" hidden>
-<section class="schedule-panel" id="adminHomePreview" aria-label="실제 홈페이지와 동일한 서버 오픈 달력"><div class="schedule-head"><h2 id="adminPreviewTitle">📅 서버 오픈 일정 · 홈페이지 화면 미리보기</h2><div class="schedule-controls"><button type="button" id="adminPreviewPrev">◀</button><span id="adminPreviewPeriod" class="schedule-period"></span><button type="button" id="adminPreviewNext">▶</button><button type="button" id="adminPreviewToday">이번 달</button><a href="./index.html" target="_blank" rel="noopener noreferrer" style="color:#ffe57a;font-size:12px">실제 홈페이지 ↗</a></div></div><div class="schedule-scroll"><div class="schedule-grid" id="adminPreviewGrid"></div></div><div class="schedule-foot">홈페이지와 같은 배치·색상으로 표시합니다. 서버 이름을 누르면 수정 양식이 열립니다. 실제 방문자 화면은 만료된 광고를 제외합니다.</div></section>
+<section class="schedule-panel" id="adminHomePreview" aria-label="실제 홈페이지와 동일한 서버 오픈 달력"><div class="schedule-head"><h2 id="adminPreviewTitle">📅 서버 오픈 일정 · 홈페이지 화면 미리보기</h2><div class="schedule-controls"><button type="button" id="adminPreviewPrev">◀</button><span id="adminPreviewPeriod" class="schedule-period"></span><button type="button" id="adminPreviewNext">▶</button><button type="button" id="adminPreviewToday">이번 달</button><a href="./index.html" target="_blank" rel="noopener noreferrer" style="color:#ffe57a;font-size:12px">실제 홈페이지 ↗</a></div></div><div class="gemhub-demo-notice">📌 달력 배치 확인용 광고 9개가 포함되어 있습니다. ‘시연용’은 수정·저장되지 않은 예시입니다.</div><div class="schedule-scroll"><div class="schedule-grid" id="adminPreviewGrid"></div></div><div class="schedule-foot">홈페이지와 같은 배치·색상으로 표시합니다. 서버 이름을 누르면 수정 양식이 열립니다. 실제 방문자 화면은 만료된 광고를 제외합니다.</div></section>
 <section class="panel" style="margin-bottom:18px" id="adminCalendarPanel"><h2>🗓️ 서버 광고 운영 달력</h2><p class="muted">광고 신청이 들어오면 아래 달력에서 날짜별 일정을 바로 확인할 수 있습니다. 서버명을 누르면 왼쪽 등록 양식으로 불러와 즉시 수정할 수 있습니다.</p><div class="calendar-toolbar"><button type="button" class="btn small" id="calendarPrev" aria-label="이전 달">◀</button><span class="calendar-title" id="calendarTitle"></span><button type="button" class="btn small" id="calendarNext" aria-label="다음 달">▶</button><button type="button" class="btn small" id="calendarToday">이번 달</button><select id="calendarGameFilter" aria-label="게임별 달력 필터"><option value="">전체 게임</option></select><button type="button" class="btn small primary" id="calendarReload">새로고침</button></div><div class="calendar-grid" id="adminCalendar"></div><p class="calendar-hint" id="calendarSummary"></p></section>
     <div class="layout">
       <section class="panel">
@@ -197,6 +197,7 @@ function startEdit(item){
 
 
 /* 홈페이지 서버 오픈 일정표와 같은 월요일 시작 달력 미리보기 */
+const gemhubAdminDemoDates=["2026-10-19","2026-10-20","2026-10-21","2026-10-22","2026-10-25","2026-10-27","2026-10-29","2026-10-31","2026-11-01"];
 let adminPreviewOffset=0;
 function adminPreviewRender(){
  const now=new Date(),start=new Date(now.getFullYear(),now.getMonth(),now.getDate(),12);
@@ -211,7 +212,8 @@ function adminPreviewRender(){
   const cell=adminText('div','');cell.className='schedule-date'+(iso===today?' today':'');
   const entries=cachedSchedules.filter(s=>s.opening_at&&calendarKey(new Date(s.opening_at))===iso&&(!s.expires_at||new Date(s.expires_at)>now));
   
-  entries.forEach(s=>{visible++;const el=adminText('button','');const nm=adminText('strong',s.server_name||'이름 미등록');nm.className='gemhub-ad-name';el.append(nm);if(s.description){const sub=adminText('span',s.description.length>90?s.description.slice(0,90)+'…':s.description);sub.className='gemhub-ad-subtitle';el.append(sub)}el.type='button';el.className='schedule-entry '+({'premium':'ad-premium','red-yellow':'ad-red-yellow',sky:'ad-sky','black-white':'ad-black-white','blue-white':'ad-blue-white'}[s.ad_style]||'ad-sky');el.title='클릭하여 바로 수정: '+s.server_name;el.addEventListener('click',()=>startEdit(s));cell.append(el)});grid.append(cell)
+  if(gemhubAdminDemoDates.includes(iso)){entries.push({server_name:'2.0테더서버 비영리 반지제공',description:'안녕하세요',ad_style:['red-yellow','sky','premium','blue-white','black-white'][gemhubAdminDemoDates.indexOf(iso)%5],demo:true})}
+  entries.forEach(s=>{visible++;const el=adminText('button','');const nm=adminText('strong',s.server_name||'이름 미등록');nm.className='gemhub-ad-name';el.append(nm);if(s.description){const sub=adminText('span',s.description.length>90?s.description.slice(0,90)+'…':s.description);sub.className='gemhub-ad-subtitle';el.append(sub)}el.type='button';el.className='schedule-entry '+({'premium':'ad-premium','red-yellow':'ad-red-yellow',sky:'ad-sky','black-white':'ad-black-white','blue-white':'ad-blue-white'}[s.ad_style]||'ad-sky');el.title=s.demo?'시연용 광고 · 실제 등록되지 않음':'클릭하여 바로 수정: '+s.server_name;if(s.demo){el.classList.add('gemhub-demo-entry');const badge=adminText('span','시연용');badge.className='gemhub-demo-label';el.append(badge);el.disabled=true}else{el.addEventListener('click',()=>startEdit(s))}cell.append(el)});grid.append(cell)
  }
  $('adminPreviewTitle').textContent='📅 서버 오픈 일정 · 홈페이지 화면 미리보기 ('+visible+'건)';
 }
