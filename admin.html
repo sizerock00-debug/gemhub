@@ -38,6 +38,7 @@ textarea{min-height:88px;resize:vertical}.twocol{display:grid;grid-template-colu
 
 /* 관리자용 월간 광고 달력 */
 .calendar-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:14px 0}.calendar-toolbar select{max-width:220px}.calendar-toolbar button{flex-shrink:0}.calendar-title{font-size:19px;font-weight:800;color:#ead1ff;min-width:120px;text-align:center}.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.calendar-week{text-align:center;color:#c8b5d9;font-size:12px;padding:9px 0}.calendar-day{border:1px solid #50346b;border-radius:10px;background:#110c1c;min-height:112px;padding:7px;min-width:0}.calendar-day.other{opacity:.3}.calendar-day.today{border-color:#b86aff;box-shadow:inset 0 0 0 1px #b86aff}.calendar-date{font-size:12px;font-weight:750;margin-bottom:6px}.calendar-entry{width:100%;display:block;text-align:left;border:1px solid #ffffff22;border-radius:6px;padding:5px;margin:4px 0;color:white;font-size:11px;overflow-wrap:anywhere;background:#427b9d}.calendar-entry.premium{background:#a33342}.calendar-entry.red-yellow{background:linear-gradient(90deg,#8c202e,#9d7826)}.calendar-entry.black-white{background:#33333d}.calendar-entry.blue-white{background:#2a58a4}.calendar-entry.expired{opacity:.5}.calendar-hint{font-size:12px;color:#d0bddf;margin:10px 0}@media(max-width:650px){.calendar-grid{gap:2px}.calendar-day{min-height:76px;padding:3px}.calendar-entry{font-size:9px;padding:3px}.calendar-title{min-width:100px;font-size:15px}.calendar-toolbar select{max-width:140px}}
+.edit-modal{position:fixed;inset:0;z-index:9999;background:#080411e8;display:flex;align-items:center;justify-content:center;padding:16px}.edit-modal[hidden]{display:none!important}.edit-modal-dialog{width:min(600px,100%);max-height:92vh;overflow-y:auto;background:#1a102c;border:2px solid #a55cf0;border-radius:17px;padding:22px;box-shadow:0 20px 80px #000b}.edit-modal-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:15px}.edit-modal-top h2{margin:0}.edit-modal-close{font-size:20px}.edit-modal-dialog form{margin-top:12px}body.edit-modal-open{overflow:hidden}
 </style>
 </head>
 <body>
@@ -118,7 +119,7 @@ textarea{min-height:88px;resize:vertical}.twocol{display:grid;grid-template-colu
 <section class="panel" style="margin-top:18px"><h2>📨 서버 일정 신청 승인·반려</h2><p class="muted">승인 시 공개 서버 달력에 등록됩니다. 동일한 서버명·오픈일의 중복 등록은 방지합니다.</p><div id="adminRequests" class="message"></div></section>
 <section class="panel" style="margin-top:18px"><h2>📢 홈페이지 공지사항 관리</h2><form id="adminNoticeForm"><input type="hidden" id="adminNoticeId"><label>공지 제목<input id="adminNoticeTitle" required maxlength="160"></label><label>공지 내용<textarea id="adminNoticeBody" required maxlength="5000"></textarea></label><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="adminNoticePublished" style="width:auto">홈페이지에 공개</label><div class="actions"><button class="btn primary" type="submit">공지 저장</button><button class="btn" type="button" id="adminNoticeReset">초기화</button></div></form><div id="adminNotices" class="message" style="margin-top:12px"></div></section>
   </div>
-</main>
+</main><div id="scheduleEditModal" class="edit-modal" hidden role="dialog" aria-modal="true" aria-labelledby="editModalHeading"><div class="edit-modal-dialog"><div class="edit-modal-top"><h2 id="editModalHeading">✏️ 서버 일정 수정</h2><button type="button" class="btn edit-modal-close" id="editModalClose" aria-label="닫기">✕</button></div><div id="editModalContent"></div></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 const SUPABASE_URL='https://scivlgypxtuzsgfbxgdf.supabase.co';
@@ -150,13 +151,20 @@ function clearForm(){
   form.reset();$('scheduleId').value='';$('openingTime').value='14:00';$('expiryTime').value='23:59';
   $('formTitle').textContent='새 서버 일정 등록';$('saveBtn').textContent='등록하기';$('cancelEdit').hidden=true;$('formMessage').textContent='';
 }
+const editFormParent=form.parentElement;
+const editFormNext=form.nextSibling;
+function closeEditModal(){if($('scheduleEditModal').hidden)return;editFormParent.insertBefore(form,editFormNext);$('scheduleEditModal').hidden=true;document.body.classList.remove('edit-modal-open');clearForm()}
+function openEditModal(){ $('editModalContent').appendChild(form);$('scheduleEditModal').hidden=false;document.body.classList.add('edit-modal-open');$('serverName').focus() }
+$('editModalClose').addEventListener('click',closeEditModal);
+$('scheduleEditModal').addEventListener('click',e=>{if(e.target===$('scheduleEditModal'))closeEditModal()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('scheduleEditModal').hidden)closeEditModal()});
 function startEdit(item){
   $('scheduleId').value=item.id;$('game').value=item.game||'기타';$('serverName').value=item.server_name||'';
   const start=isoToLocalInput(item.opening_at);$('openingDate').value=start.date;$('openingTime').value=start.time||'14:00';
   const end=isoToLocalInput(item.expires_at);$('expiryDate').value=end.date;$('expiryTime').value=end.time||'23:59';
   $('description').value=item.description||'';$('promotionUrl').value=item.promotion_url||'';setStyle(item.ad_style||'sky');
   $('formTitle').textContent='서버 일정 수정';$('saveBtn').textContent='수정 저장';$('cancelEdit').hidden=false;$('formMessage').textContent='수정할 내용을 변경한 뒤 저장하세요.';
-  window.scrollTo({top:0,behavior:'smooth'});
+  openEditModal();
 }
 
 
@@ -176,7 +184,7 @@ function adminPreviewRender(){
   const cell=adminText('div','');cell.className='schedule-date'+(iso===today?' today':'');
   const num=adminText('div',day.getDate()+'일');num.className='schedule-number';cell.append(num);
   const entries=cachedSchedules.filter(s=>s.opening_at&&calendarKey(new Date(s.opening_at))===iso&&(!s.expires_at||new Date(s.expires_at)>now));
-  if(entries.length){const count=adminText('div','서버 '+entries.length+'개');count.className='schedule-count';cell.append(count)}
+  
   entries.forEach(s=>{visible++;const el=adminText('button',s.server_name||'이름 미등록');el.type='button';el.className='schedule-entry '+({'premium':'ad-premium','red-yellow':'ad-red-yellow',sky:'ad-sky','black-white':'ad-black-white','blue-white':'ad-blue-white'}[s.ad_style]||'ad-sky');el.title='클릭하여 바로 수정: '+s.server_name;el.addEventListener('click',()=>startEdit(s));cell.append(el)});grid.append(cell)
  }
  $('adminPreviewTitle').textContent='📅 서버 오픈 일정 · 홈페이지 화면 미리보기 ('+visible+'건)';
@@ -268,11 +276,11 @@ form.addEventListener('submit',async event=>{
     else{result=await client.from('server_schedules').insert(payload)}
     if(result.error)throw result.error;
     $('formMessage').textContent=$('scheduleId').value?'일정을 수정했습니다.':'일정을 등록했습니다.';
-    clearForm();await loadSchedules();
+    if(!$('scheduleEditModal').hidden)closeEditModal();else clearForm();await loadSchedules();
   }catch(err){$('formMessage').textContent='저장 실패: '+(err?.message||'Supabase 설정을 확인하세요.')}
   finally{$('saveBtn').disabled=false}
 });
-$('cancelEdit').addEventListener('click',clearForm);
+$('cancelEdit').addEventListener('click',()=>{if(!$('scheduleEditModal').hidden)closeEditModal();else clearForm()});
 $('resetBtn').addEventListener('click',()=>setTimeout(clearForm,0));
 $('reloadBtn').addEventListener('click',loadSchedules);
 $('search').addEventListener('input',renderList);
