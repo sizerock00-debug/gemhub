@@ -190,7 +190,7 @@ textarea{min-height:88px;resize:vertical}.twocol{display:grid;grid-template-colu
         <div class="table-wrap"><table><thead><tr><th>회원 이메일</th><th>가입일 / 상태</th><th>관리</th></tr></thead><tbody id="memberRows"></tbody></table></div>
       </section>
     </div>
-<section class="panel" style="margin-top:18px"><h2>📊 통합 운영 현황</h2><div id="adminStats" class="actions"></div><p class="muted">거래 게시글 · 서버 광고 · 공지사항을 함께 관리합니다. 회원의 개인 대화 내용은 열람하지 않습니다.</p><button type="button" class="btn" id="refreshOperations">운영 현황 새로고침</button></section>
+
 <section class="panel" style="margin-top:18px"><h2>🛍 거래 게시글 관리</h2><div class="searchrow"><input id="adminPostSearch" placeholder="거래글 제목·게임 검색"><select id="adminPostFilter"><option value="">전체 상태</option><option value="active">거래중</option><option value="completed">완료</option><option value="hidden">숨김</option></select></div><div id="adminPosts" class="message"></div></section>
 
 <section class="panel" style="margin-top:18px"><h2>📢 홈페이지 공지사항 관리</h2><form id="adminNoticeForm"><input type="hidden" id="adminNoticeId"><label>공지 제목<input id="adminNoticeTitle" required maxlength="160"></label><label>공지 내용<textarea id="adminNoticeBody" required maxlength="5000"></textarea></label><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="adminNoticePublished" style="width:auto">홈페이지에 공개</label><div class="actions"><button class="btn primary" type="submit">공지 저장</button><button class="btn" type="button" id="adminNoticeReset">초기화</button></div></form><div id="adminNotices" class="message" style="margin-top:12px"></div></section>
@@ -430,8 +430,6 @@ async function adminLoadOperations(){
  const jobs=[['trade_posts','created_at'],['gemhub_announcements','created_at']];
  const results=await Promise.all(jobs.map(async ([table,order])=>{const r=await client.from(table).select('*').order(order,{ascending:false}).limit(500);if(r.error)throw r.error;return r.data||[]}));
  [adminPostsData,adminNoticesData]=results;
- const stats=$('adminStats');stats.replaceChildren();
- [['거래글',adminPostsData.length],['서버 일정',cachedSchedules.length],['공개 공지',adminNoticesData.filter(x=>x.published).length]].forEach(([k,v])=>{const s=adminText('span',k+' '+v+'건');s.className='tag';stats.appendChild(s)});
  adminRenderPosts();adminRenderNotices();
 }
 function adminRenderPosts(){const target=$('adminPosts');target.replaceChildren();const q=$('adminPostSearch').value.toLowerCase(),filter=$('adminPostFilter').value;const data=adminPostsData.filter(x=>(!filter||x.status===filter)&&[x.title,x.game,x.server].join(' ').toLowerCase().includes(q));if(!data.length)target.textContent='조건에 맞는 거래글이 없습니다.';data.forEach(x=>adminRow(target,'#'+x.id+' · '+(x.title||'제목 없음'),[x.game,x.server,x.price,x.status].filter(Boolean).join(' · '),[['거래중',()=>adminModerate(x,'active')],['완료',()=>adminModerate(x,'completed')],['숨김',()=>adminModerate(x,'hidden'),'danger']]))}
@@ -441,7 +439,7 @@ $('adminNoticeForm').addEventListener('submit',async e=>{e.preventDefault();cons
 $('adminNoticeReset').addEventListener('click',()=>{$('adminNoticeForm').reset();$('adminNoticeId').value=''});
 async function adminDeleteNotice(x){if(!confirm('공지사항을 삭제할까요?'))return;const r=await client.from('gemhub_announcements').delete().eq('id',x.id);if(r.error){alert('삭제 실패: '+r.error.message);return}await adminLoadOperations()}
 $('adminPostSearch').addEventListener('input',adminRenderPosts);$('adminPostFilter').addEventListener('change',adminRenderPosts);
-$('refreshOperations').addEventListener('click',()=>adminLoadOperations().catch(e=>alert(e.message)));
+
 
 boot();
 </script>
