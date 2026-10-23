@@ -81,6 +81,13 @@ textarea{min-height:88px;resize:vertical}.twocol{display:grid;grid-template-colu
 @keyframes gemhubAdSparkle{0%,100%{filter:brightness(1);box-shadow:0 2px 6px #0004}50%{filter:brightness(1.32);box-shadow:0 0 13px 3px #fff9,0 0 21px #ffe86699}}
 .schedule-entry.ad-sparkle{animation:gemhubAdSparkle 1.6s ease-in-out infinite!important}
 @media(prefers-reduced-motion:reduce){.schedule-entry.ad-sparkle{animation:none!important}}
+
+/* Strong ad glow: illuminate border and card, never dim or blink text */
+@keyframes gemhubStrongGlow{0%,100%{box-shadow:0 0 0 1px #ffffff66,0 0 6px 1px #ffe90055, inset 0 0 0 1px #ffffff55;outline-color:#ffffff88}45%{box-shadow:0 0 0 2px #fff,0 0 13px 5px #fff,0 0 28px 9px #ffe600, inset 0 0 13px 2px #ffffff77;outline-color:#fff}65%{box-shadow:0 0 0 2px #fff,0 0 19px 7px #fff,0 0 35px 11px #ffdb00, inset 0 0 12px 2px #ffffff66;outline-color:#fff}}
+.schedule-grid .schedule-entry.ad-sparkle{animation:gemhubStrongGlow 1.25s ease-in-out infinite!important;position:relative!important;z-index:1!important;filter:none!important;outline:1px solid #ffffff88!important;outline-offset:-2px!important}
+.schedule-grid .schedule-entry.ad-sparkle:hover{filter:none!important}
+.schedule-grid .schedule-entry.ad-sparkle .gemhub-ad-name,.schedule-grid .schedule-entry.ad-sparkle .gemhub-ad-subtitle{animation:none!important;opacity:1!important;filter:none!important;text-shadow:none!important}
+@media(prefers-reduced-motion:reduce){.schedule-grid .schedule-entry.ad-sparkle{animation:none!important;box-shadow:0 0 0 2px #fff,0 0 12px 4px #ffe600!important}}
 </style>
 </head>
 <body>
