@@ -650,7 +650,7 @@ document.getElementById('detailFavorite').addEventListener('click',e=>{if(curren
 function previewFavorite(post){
  const box=document.getElementById('favoritePreview');box.replaceChildren();box.hidden=false;
  const heading=document.createElement('h3');heading.textContent=post.title||'거래 글';
- const meta=document.createElement('small');meta.textContent=[post.status==='completed'?'✓ 거래완료':'● 거래중',post.game,post.server,post.category,post.price].filter(Boolean).join(' · ');
+ const meta=document.createElement('small');meta.textContent=[post.status==='completed'?'✓ 거래완료':post.status==='pending'?'◷ 거래대기':'● 거래중',post.game,post.server,post.category,post.price].filter(Boolean).join(' · ');
  const desc=document.createElement('p');desc.textContent=post.content||'상세 설명이 없습니다.';
  const copy=document.createElement('button');copy.type='button';copy.textContent='📋 거래 문의 문구 복사';
  copy.addEventListener('click',async()=>{
@@ -667,7 +667,7 @@ function renderFavoriteList(){
   const item=document.createElement('div');item.className='favorite-item';
   const info=document.createElement('button');info.type='button';info.className='favorite-item-info';
   const name=document.createElement('strong');name.textContent=post.title||'거래 물품';
-  const meta=document.createElement('small');meta.textContent=[post.game,post.server,post.price,post.status==='completed'?'✓ 거래완료':'● 거래중'].filter(Boolean).join(' · ');
+  const meta=document.createElement('small');meta.textContent=[post.game,post.server,post.price,post.status==='completed'?'✓ 거래완료':post.status==='pending'?'◷ 거래대기':'● 거래중'].filter(Boolean).join(' · ');
   info.append(name,meta);info.addEventListener('click',()=>previewFavorite(post));
   const actions=document.createElement('div');actions.className='favorite-item-actions';
   const view=document.createElement('button');view.type='button';view.textContent='상세·문의';view.addEventListener('click',()=>previewFavorite(post));
@@ -739,7 +739,7 @@ function renderRows(){
   cell(String(index+1),'trade-no');
   const gameTd=document.createElement('td');gameTd.className='trade-game';const gameIcon=document.createElement('span');gameIcon.className='trade-game-icon';gameIcon.textContent=gameIcons[x.game]||'🎮';const gameName=document.createElement('span');gameName.textContent=x.game||'-';gameTd.append(gameIcon,gameName);tr.appendChild(gameTd);
   cell(x.server||'-','trade-server');
-  const titleTd=cell(x.title||'-','trade-title');if(x.status==='completed'){const badge=document.createElement('span');badge.className='gemhub-trade-state is-complete';badge.textContent='✓ 거래완료';titleTd.prepend(badge)}else{const badge=document.createElement('span');badge.className='gemhub-trade-state is-active';badge.textContent='● 거래중';titleTd.prepend(badge)}
+  const titleTd=cell(x.title||'-','trade-title');if(x.status==='completed'){const badge=document.createElement('span');badge.className='gemhub-trade-state is-complete';badge.textContent='✓ 거래완료';titleTd.prepend(badge)}else{const badge=document.createElement('span');badge.className='gemhub-trade-state is-active';badge.textContent=x.status==='pending'?'◷ 거래대기':'● 거래중';titleTd.prepend(badge)}
   const kindTd=document.createElement('td');kindTd.className='trade-kind';const tag=document.createElement('span');tag.className='trade-kind-tag '+(/구매|삽니다/.test(x.kind||'')?'is-buy':/판매|팝니다/.test(x.kind||'')?'is-sell':'is-item');tag.textContent=x.kind||'거래';kindTd.appendChild(tag);tr.appendChild(kindTd);
   cell(formatTradePrice(x.price),'trade-price');
   const timeTd=cell(relativeTradeTime(x.created_at),'trade-time');timeTd.title=formatPostTime(x.created_at);
@@ -890,18 +890,22 @@ async function openMyPosts(){
   data.forEach(post=>{
    const row=document.createElement('article');row.className='gemhub-post-row';
    const title=document.createElement('strong');title.textContent=post.title||'제목 없음';row.appendChild(title);
-   const state=document.createElement('span');state.className='gemhub-trade-state '+(post.status==='completed'?'is-complete':'is-active');state.textContent=post.status==='completed'?'✓ 거래완료':'● 거래중';row.appendChild(state);const meta=document.createElement('small');meta.textContent=[post.game,post.server,post.category,post.price,new Date(post.created_at).toLocaleDateString('ko-KR')].filter(Boolean).join(' · ');row.appendChild(meta);
+   const labels={pending:'거래대기',active:'거래중',completed:'거래완료'};
+   const currentStatus=labels[post.status]?post.status:'active';
+   const state=document.createElement('span');state.className='gemhub-trade-state '+(currentStatus==='completed'?'is-complete':'is-active');state.textContent=({pending:'◷ ',active:'● ',completed:'✓ '})[currentStatus]+labels[currentStatus];row.appendChild(state);
+   const meta=document.createElement('small');meta.textContent=[post.game,post.server,post.category,post.price,new Date(post.created_at).toLocaleDateString('ko-KR')].filter(Boolean).join(' · ');row.appendChild(meta);
    const actions=document.createElement('div');actions.className='gemhub-post-actions';
    const view=document.createElement('button');view.type='button';view.textContent='상세 보기';view.addEventListener('click',()=>{closeManage();openDetail(post)});actions.appendChild(view);
-   const status=document.createElement('button');status.type='button';status.textContent=post.status==='completed'?'↩ 거래중으로 다시 변경':'✓ 거래완료로 변경';
-   status.addEventListener('click',async()=>{
-    const next=post.status==='completed'?'active':'completed';
-    if(!confirm(next==='completed'?'이 거래 글을 거래완료로 표시하시겠습니까? 홈페이지에도 거래완료로 표시됩니다.':'이 거래 글을 다시 거래중으로 표시하시겠습니까?'))return;
+   const statusLabel=document.createElement('label');statusLabel.textContent='거래 상태 ';statusLabel.style.cssText='display:inline-flex;align-items:center;gap:8px;color:#e4c9ff;font-size:13px';
+   const status=document.createElement('select');status.setAttribute('aria-label','거래 상태 변경: '+(post.title||'거래글'));status.style.cssText='background:#1e1032;color:#fff;border:1px solid #9a60d1;border-radius:8px;padding:9px;cursor:pointer';
+   Object.entries(labels).forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;status.appendChild(option)});status.value=currentStatus;
+   status.addEventListener('change',async()=>{
+    const next=status.value;if(next===currentStatus)return;
+    if(!confirm('거래 상태를 '+labels[next]+'(으)로 변경하시겠습니까? 홈페이지에도 반영됩니다.')){status.value=currentStatus;return}
     status.disabled=true;
-    const {error}=await authClient.from('trade_posts').update({status:next}).eq('id',post.id).eq('user_id',currentUser.id);
-    if(error){showToast('상태 변경 실패: '+error.message);status.disabled=false;return}
-    await loadTradePosts();await openMyPosts();showToast(next==='completed'?'거래완료로 표시했습니다.':'거래중으로 변경했습니다.');
-   });actions.appendChild(status);
+    try{const {data:updated,error}=await authClient.from('trade_posts').update({status:next}).eq('id',post.id).eq('user_id',currentUser.id).select('id,status');if(error)throw error;if(!updated?.length)throw new Error('변경 권한 또는 대상 거래글을 확인해 주세요.');await loadTradePosts();await openMyPosts();showToast('거래 상태가 '+labels[next]+'(으)로 변경되었습니다.')}
+    catch(err){status.value=currentStatus;status.disabled=false;showToast('상태 변경 실패: '+(err?.message||'다시 시도해 주세요.'))}
+   });statusLabel.appendChild(status);actions.appendChild(statusLabel);
    const del=document.createElement('button');del.type='button';del.textContent='삭제';
    del.addEventListener('click',async()=>{
     if(!confirm('이 거래 글을 영구 삭제하시겠습니까? 복구할 수 없습니다.'))return;
@@ -1004,7 +1008,7 @@ function renderAds(){
 setInterval(()=>{adPage++;renderAds()},10000);
 document.querySelectorAll('.board-tab').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.board-tab').forEach(x=>x.classList.toggle('active',x===button));document.getElementById('kind').value=button.dataset.filter;renderRows()}));
 document.getElementById('reloadPosts').addEventListener('click',loadTradePosts);
-let currentDetailPost=null;function openDetail(post){currentDetailPost=post;updateDetailFavorite();document.getElementById('detailTitle').textContent=post.title||'거래 글';document.getElementById('detailMeta').textContent=[post.status==='completed'?'✓ 거래완료':'● 거래중',post.game,post.server,post.category,post.price].filter(Boolean).join(' · ');document.getElementById('detailContent').textContent=post.content||'상세 설명이 없습니다.';document.getElementById('detailBackdrop').classList.add('open');document.getElementById('detailBackdrop').setAttribute('aria-hidden','false')}
+let currentDetailPost=null;function openDetail(post){currentDetailPost=post;updateDetailFavorite();document.getElementById('detailTitle').textContent=post.title||'거래 글';document.getElementById('detailMeta').textContent=[post.status==='completed'?'✓ 거래완료':post.status==='pending'?'◷ 거래대기':'● 거래중',post.game,post.server,post.category,post.price].filter(Boolean).join(' · ');document.getElementById('detailContent').textContent=post.content||'상세 설명이 없습니다.';document.getElementById('detailBackdrop').classList.add('open');document.getElementById('detailBackdrop').setAttribute('aria-hidden','false')}
 function closeDetail(){document.getElementById('detailBackdrop').classList.remove('open');document.getElementById('detailBackdrop').setAttribute('aria-hidden','true')}
 document.getElementById('detailClose').addEventListener('click',closeDetail);
 
