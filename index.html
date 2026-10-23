@@ -197,7 +197,13 @@ body{background:#050314;color:#f6eaff}
 .bottom-ads::before{content:none!important;display:none!important}
 
 /* 광고 미등록 위치는 홈페이지에서 완전히 숨기고, 등록된 칸의 순서는 유지 */
-.gemhub-unassigned-ad{visibility:hidden!important;border:0!important;background:none!important;box-shadow:none!important;pointer-events:none!important}
+.gemhub-unassigned-ad{visibility:visible!important;display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-align:center;cursor:pointer!important;color:#e8c7ff!important;background:linear-gradient(140deg,#160b29,#291143)!important;border:1px dashed #9844cf!important;box-shadow:inset 0 0 12px #7c32b82b!important;padding:5px!important;font-family:inherit}
+.gemhub-unassigned-ad:hover{background:linear-gradient(140deg,#28103f,#421968)!important;border-color:#e9a5ff!important}
+.gemhub-ad-slot-label{font-size:clamp(10px,.82vw,13px);font-weight:800;color:#f2dcff}
+.gemhub-ad-slot-action{font-size:clamp(9px,.74vw,12px);font-weight:700}
+.gemhub-ad-slot-help{font-size:clamp(8px,.65vw,11px);color:#d5b3ef}
+.bottom-ads-grid .gemhub-unassigned-ad{gap:1px!important;padding:2px!important}
+.bottom-ads-grid .gemhub-ad-slot-label,.bottom-ads-grid .gemhub-ad-slot-action,.bottom-ads-grid .gemhub-ad-slot-help{font-size:9px!important;line-height:1.15}
 </style>
 <style>
 /* GEMHUB 확정 시안: 기능 유지형 메인화면 개편 */
@@ -1249,7 +1255,22 @@ function renderAds(){
     for(let i=0;i<count;i++){
       const ad=placed.find(a=>Number(a.slotIndex)===i+1);
       if(ad)target.appendChild(adNode(ad));
-      else{const empty=document.createElement('div');empty.className='ad-tile gemhub-unassigned-ad';empty.setAttribute('aria-hidden','true');target.appendChild(empty)}
+      else{
+        const empty=document.createElement('button');empty.type='button';empty.className='ad-tile gemhub-unassigned-ad';
+        const label=({left:'좌측',right:'우측',bottom:'하단'}[placement]||placement)+' '+(i+1)+'번';
+        const number=document.createElement('span');number.className='gemhub-ad-slot-label';number.textContent=label;
+        const action=document.createElement('span');action.className='gemhub-ad-slot-action';action.textContent='📢 배너 광고 등록';
+        const help=document.createElement('span');help.className='gemhub-ad-slot-help';help.textContent='클릭하여 홍보글 등록 상담';
+        empty.append(number,action,help);
+        empty.setAttribute('aria-label',label+' 배너 광고 등록 상담');
+        empty.addEventListener('click',()=>{
+          const modal=document.getElementById('gemhubAdModal');
+          const slot=document.getElementById('gemhubAdSlotChoice');
+          if(slot)slot.textContent='문의하실 광고 위치: '+label+' · 홍보글 및 배너 등록 상담';
+          if(modal)modal.hidden=false;
+        });
+        target.appendChild(empty)
+      }
     }
   }
 }
@@ -1518,6 +1539,7 @@ color: #111111 !important;
     <h2 id="gemhubAdTitle">📢 겜허브 광고 문의</h2>
 
     <p>서버 오픈 일정 등록 및 배너 광고는 운영자와 상담 후 진행됩니다.</p>
+    <p id="gemhubAdSlotChoice" style="font-weight:800;color:#e8b5ff"></p>
 
     <p>📅 <strong>서버 오픈 일정 등록</strong><br>
     서버명, 오픈 예정일 및 홈페이지 등록 상담</p>
