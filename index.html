@@ -815,6 +815,66 @@ document.getElementById('myPageTrade').addEventListener('click',()=>{setMenuOpen
 document.getElementById('myPageFavorites').addEventListener('click',()=>{setMenuOpen(false);openFavorites()});
 document.getElementById('editProfile').addEventListener('click',openProfile);
 document.getElementById('menuLogout').addEventListener('click',logout);
+const manageBackdrop=document.getElementById('manageBackdrop'),manageBody=document.getElementById('manageBody');
+const settingsBackdrop=document.getElementById('settingsBackdrop');
+function closeManage(){manageBackdrop.hidden=true}
+function closeSettings(){settingsBackdrop.hidden=true;document.getElementById('passwordChangeForm').reset()}
+document.getElementById('manageClose').addEventListener('click',closeManage);
+document.getElementById('settingsClose').addEventListener('click',closeSettings);
+manageBackdrop.addEventListener('click',e=>{if(e.target===manageBackdrop)closeManage()});
+settingsBackdrop.addEventListener('click',e=>{if(e.target===settingsBackdrop)closeSettings()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeManage();closeSettings()}});
+async function openMyPosts(){
+ if(!currentUser){openAuth('signin');return}
+ setMenuOpen(false);manageBackdrop.hidden=false;
+ manageBody.textContent='내 거래 글을 불러오는 중입니다...';
+ try{
+  const {data,error}=await authClient.from('trade_posts').select('id,created_at,game,server,category,title,price,status,content').eq('user_id',currentUser.id).order('created_at',{ascending:false}).limit(100);
+  if(error)throw error;
+  manageBody.replaceChildren();
+  if(!data?.length){manageBody.textContent='등록한 거래 글이 없습니다. 거래 게시판에서 첫 글을 등록해보세요.';return}
+  data.forEach(post=>{
+   const row=document.createElement('article');row.className='gemhub-post-row';
+   const title=document.createElement('strong');title.textContent=post.title||'제목 없음';row.appendChild(title);
+   const meta=document.createElement('small');meta.textContent=[post.game,post.server,post.category,post.price,post.status==='active'?'거래 중':'거래 완료',new Date(post.created_at).toLocaleDateString('ko-KR')].filter(Boolean).join(' · ');row.appendChild(meta);
+   const actions=document.createElement('div');actions.className='gemhub-post-actions';
+   const view=document.createElement('button');view.type='button';view.textContent='상세 보기';view.addEventListener('click',()=>{closeManage();openDetail(post)});actions.appendChild(view);
+   const status=document.createElement('button');status.type='button';status.textContent=post.status==='active'?'거래 완료 처리':'거래 중으로 변경';
+   status.addEventListener('click',async()=>{
+    const next=post.status==='active'?'completed':'active';
+    if(!confirm('이 게시글의 상태를 변경하시겠습니까?'))return;
+    status.disabled=true;
+    const {error}=await authClient.from('trade_posts').update({status:next}).eq('id',post.id).eq('user_id',currentUser.id);
+    if(error){showToast('상태 변경 실패: '+error.message);status.disabled=false;return}
+    await loadTradePosts();await openMyPosts();showToast('거래 상태를 변경했습니다.');
+   });actions.appendChild(status);
+   const del=document.createElement('button');del.type='button';del.textContent='삭제';
+   del.addEventListener('click',async()=>{
+    if(!confirm('이 거래 글을 영구 삭제하시겠습니까? 복구할 수 없습니다.'))return;
+    del.disabled=true;
+    const {error}=await authClient.from('trade_posts').delete().eq('id',post.id).eq('user_id',currentUser.id);
+    if(error){showToast('삭제 실패: '+error.message);del.disabled=false;return}
+    await loadTradePosts();await openMyPosts();showToast('거래 글이 삭제되었습니다.');
+   });actions.appendChild(del);
+   row.appendChild(actions);manageBody.appendChild(row);
+  });
+ }catch(err){manageBody.textContent='내 거래 글을 불러오지 못했습니다: '+(err?.message||'잠시 후 다시 시도해주세요.')}
+}
+document.getElementById('myPagePosts').addEventListener('click',openMyPosts);
+document.getElementById('myPageSettings').addEventListener('click',()=>{
+ if(!currentUser){openAuth('signin');return}
+ setMenuOpen(false);document.getElementById('settingsEmail').textContent=currentUser.email||'';document.getElementById('passwordChangeMessage').textContent='';settingsBackdrop.hidden=false;
+});
+document.getElementById('passwordChangeForm').addEventListener('submit',async e=>{
+ e.preventDefault();
+ const message=document.getElementById('passwordChangeMessage'),password=document.getElementById('newAccountPassword').value,confirmPassword=document.getElementById('confirmAccountPassword').value,button=document.getElementById('passwordChangeSave');
+ if(password!==confirmPassword){message.textContent='비밀번호 확인이 일치하지 않습니다.';return}
+ if(password.length<8){message.textContent='비밀번호는 8자 이상 입력해주세요.';return}
+ button.disabled=true;message.textContent='변경 중입니다...';
+ try{const {error}=await authClient.auth.updateUser({password});if(error)throw error;message.textContent='비밀번호가 변경되었습니다.';document.getElementById('passwordChangeForm').reset();showToast('비밀번호 변경 완료')}
+ catch(err){message.textContent='변경 실패: '+(err?.message||'잠시 후 다시 시도해주세요.')}
+ finally{button.disabled=false}
+});
 document.querySelectorAll('[data-coming]').forEach(button=>button.addEventListener('click',()=>showToast(button.dataset.coming+' 기능은 다음 제작 단계에서 연결합니다.')));
 document.addEventListener('click',event=>{if(!accountShell.contains(event.target)&&!document.getElementById('myPageButton').contains(event.target))setMenuOpen(false)});
 document.getElementById('profileClose').addEventListener('click',closeProfile);
