@@ -758,7 +758,7 @@ body.gh-notice-open{overflow:hidden}
 
 <section class="schedule-panel" aria-label="게임별 한 달 서버 일정표">
 <div class="schedule-head"><h2 id="scheduleTitle">📅 서버 오픈 일정</h2><div class="schedule-controls"><button type="button" id="schedulePrev" aria-label="이전 달">◀</button><span id="schedulePeriod" class="schedule-period"></span><button type="button" id="scheduleNext" aria-label="다음 달">▶</button><button type="button" id="scheduleToday">이번 달</button><button type="button" data-demo="광고 문의">+ 일정 문의</button></div></div>
-<a class="gemhub-calendar-banner-space" href="https://t.me/GemHubHelp" target="_blank" rel="noopener noreferrer" aria-label="텔레그램에서 서버 오픈 일정 상단 배너 광고 문의"><span>📢 서버 오픈 일정 상단 배너 광고</span><small>클릭하여 텔레그램으로 광고 등록 문의</small></a><div class="schedule-scroll"><div class="schedule-grid" id="scheduleGrid"></div></div>
+<a id="gemhubCalendarTopBanner" class="gemhub-calendar-banner-space" href="https://t.me/GemHubHelp" target="_blank" rel="noopener noreferrer" aria-label="텔레그램에서 서버 오픈 일정 상단 배너 광고 문의"><span>📢 서버 오픈 일정 상단 배너 광고</span><small>클릭하여 텔레그램으로 광고 등록 문의</small></a><div class="schedule-scroll"><div class="schedule-grid" id="scheduleGrid"></div></div>
 <div class="schedule-foot">서버 이름을 누르면 등록된 공식 홈페이지가 새 창으로 열립니다. 등록된 일정이 없으면 빈칸으로 표시됩니다.</div>
 </section>
 </div>
@@ -1329,7 +1329,8 @@ async function gemhubLoadBanners(){
   const {data,error}=await authClient.from('gemhub_banners').select('id,placement,slot_index,title,image_url,target_url,game,start_date,end_date,active').eq('active',true).lte('start_date',new Date().toLocaleDateString('en-CA')).gte('end_date',new Date().toLocaleDateString('en-CA')).order('created_at',{ascending:false}).limit(500);
   if(error)throw error;
   const banners=(data||[]).filter(b=>/^https:\/\//i.test(b.image_url)&&/^https:\/\//i.test(b.target_url));
-  paidAds=banners.filter(b=>b.placement!=='main').map(b=>({name:b.title,image:b.image_url,url:b.target_url,game:b.game,placement:b.placement,slotIndex:b.slot_index}));
+  const calendarTop=banners.filter(b=>b.placement==='calendar_top').find(b=>Number(b.slot_index)===1&&b.game===selected)||banners.filter(b=>b.placement==='calendar_top').find(b=>Number(b.slot_index)===1&&b.game==='전체');const calendarEl=document.getElementById('gemhubCalendarTopBanner');if(calendarEl){if(calendarTop){calendarEl.href=calendarTop.target_url;calendarEl.style.backgroundImage='url('+JSON.stringify(calendarTop.image_url)+')';calendarEl.style.backgroundSize='cover';calendarEl.style.backgroundPosition='center';calendarEl.replaceChildren();calendarEl.setAttribute('aria-label',calendarTop.title+' 광고 바로가기')}else{calendarEl.href='https://t.me/GemHubHelp';calendarEl.style.backgroundImage='';calendarEl.replaceChildren();const title=document.createElement('span');title.textContent='📢 서버 오픈 일정 상단 배너 광고';const hint=document.createElement('small');hint.textContent='클릭하여 텔레그램으로 광고 등록 문의';calendarEl.append(title,hint)}}
+   paidAds=banners.filter(b=>b.placement!=='main'&&b.placement!=='calendar_top').map(b=>({name:b.title,image:b.image_url,url:b.target_url,game:b.game,placement:b.placement,slotIndex:b.slot_index}));
   window.gemhubRegisteredMainBanners=banners.filter(b=>b.placement==='main');
   const registeredMain=banners.filter(b=>b.placement==='main');
   for(let i=0;i<10;i++){
