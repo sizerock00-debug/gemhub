@@ -236,6 +236,11 @@ body{background:#050314;color:#f6eaff}
 .bottom-ads-grid .gemhub-ad-slot-help{font-size:clamp(10px,.8vw,12px)!important}
 @media(max-width:650px){.bottom-ads-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 @media(max-width:390px){.bottom-ads-grid{grid-template-columns:1fr!important}}
+
+/* 하단 광고: 관리자와 동일하게 5열 x 2행, 1~5번 윗줄 / 6~10번 아랫줄 */
+#adsBottom.bottom-ads-grid{grid-template-columns:repeat(5,minmax(0,1fr))!important;grid-auto-flow:row!important;gap:8px!important}
+#adsBottom .ad-tile{aspect-ratio:338/138!important;height:auto!important;min-height:0!important;grid-column:auto!important;grid-row:auto!important}
+@media(max-width:650px){#adsBottom.bottom-ads-grid{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:3px!important}#adsBottom .gemhub-unassigned-ad{padding:2px!important;gap:1px!important}#adsBottom .gemhub-ad-slot-label{font-size:9px!important;padding:1px 3px!important}#adsBottom .gemhub-ad-slot-action{font-size:8px!important}#adsBottom .gemhub-ad-slot-help{font-size:7px!important}}
 </style>
 <style>
 /* GEMHUB 확정 시안: 기능 유지형 메인화면 개편 */
