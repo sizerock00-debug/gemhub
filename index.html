@@ -1234,7 +1234,12 @@ function renderAds(){
   const pages=Math.max(1,Math.ceil(relevant.length/pageSize));
   const start=(adPage%pages)*pageSize;
   const visible=relevant.slice(start,start+pageSize);
-  for(const [id,offset,count] of [['adsLeft',0,10],['adsRight',10,10],['adsBottom',20,30]]){
+  // 중앙 달력 하단까지 좌우 광고 슬롯 자동 확장 (데스크톱 기준)
+  const center=document.querySelector('.layout-grid > .center-area');
+  const sideHeight=window.innerWidth>780 && center ? center.getBoundingClientRect().height : 0;
+  const sideGap=5, sideTileHeight=window.innerWidth>780 ? 138 : 0;
+  const sideCount=sideHeight ? Math.max(10,Math.floor((sideHeight+sideGap)/(sideTileHeight+sideGap))) : 10;
+  for(const [id,offset,count] of [['adsLeft',0,sideCount],['adsRight',10,sideCount],['adsBottom',20,30]]){
     const target=document.getElementById(id);
     if(!target)continue;
     target.replaceChildren();
@@ -1260,6 +1265,17 @@ async function gemhubLoadBanners(){
 }
 gemhubLoadBanners();
 
+// 중앙 콘텐츠(두 줄 달력 포함) 높이 변화에 맞춰 광고칸 수 갱신
+const sideAdsCenter=document.querySelector('.layout-grid > .center-area');
+if(sideAdsCenter && typeof ResizeObserver!=='undefined'){
+  let lastSideHeight=0;
+  const sideAdsObserver=new ResizeObserver(entries=>{
+    const height=Math.round(entries[0].contentRect.height);
+    if(height!==lastSideHeight){lastSideHeight=height;renderAds()}
+  });
+  sideAdsObserver.observe(sideAdsCenter);
+}
+window.addEventListener('resize',()=>renderAds());
 setInterval(()=>{adPage++;renderAds()},10000);
 document.querySelectorAll('.board-tab').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.board-tab').forEach(x=>x.classList.toggle('active',x===button));document.getElementById('kind').value=button.dataset.filter;renderRows()}));
 document.getElementById('reloadPosts').addEventListener('click',loadTradePosts);
