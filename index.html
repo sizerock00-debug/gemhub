@@ -624,7 +624,7 @@ box-shadow:inset 0 0 9px #ff45cb55,0 0 7px #e91bff88,0 0 8px #ffae3855!important
 
 <section class="schedule-panel" aria-label="게임별 한 달 서버 일정표">
 <div class="schedule-head"><h2 id="scheduleTitle">📅 서버 오픈 일정</h2><div class="schedule-controls"><button type="button" id="schedulePrev" aria-label="이전 달">◀</button><span id="schedulePeriod" class="schedule-period"></span><button type="button" id="scheduleNext" aria-label="다음 달">▶</button><button type="button" id="scheduleToday">이번 달</button><button type="button" data-demo="광고 문의">+ 일정 문의</button></div></div>
-<div class="gemhub-demo-notice">📌 달력 배치 확인용 광고 9개가 포함되어 있습니다. ‘시연용’ 표시는 실제 등록 광고가 아닙니다.</div><div class="schedule-scroll"><div class="schedule-grid" id="scheduleGrid"></div></div>
+<div class="gemhub-demo-notice">📌 날짜별로 5~10개씩 시연용 광고를 배치했습니다. ‘시연용’ 표시는 실제 등록 광고가 아닙니다.</div><div class="schedule-scroll"><div class="schedule-grid" id="scheduleGrid"></div></div>
 <div class="schedule-foot">서버 이름을 누르면 등록된 공식 홈페이지가 새 창으로 열립니다. 등록된 일정이 없으면 빈칸으로 표시됩니다.</div>
 </section>
 </div>
@@ -1190,8 +1190,9 @@ async function loadServerSchedules(){
   renderSchedule();
 }
 
-const gemhubCalendarDemoDates=["2026-10-19","2026-10-20","2026-10-21","2026-10-22","2026-10-25","2026-10-27","2026-10-29","2026-10-31","2026-11-01"];
-const gemhubCalendarDemoEntries=gemhubCalendarDemoDates.map((date,i)=>({date,name:'2.0테더서버 비영리 반지제공',description:'안녕하세요',adStyle:['red-yellow','sky','premium','blue-white','black-white'][i%5],demo:true}));
+const gemhubDemoDailyCounts={"2026-10-19":9,"2026-10-20":7,"2026-10-21":6,"2026-10-22":9,"2026-10-23":10,"2026-10-24":8,"2026-10-25":5,"2026-10-26":7,"2026-10-27":9,"2026-10-28":6,"2026-10-29":10,"2026-10-30":8,"2026-10-31":7,"2026-11-01":9};
+const gemhubDemoColors=['red-yellow','sky','premium','blue-white','black-white'];
+const gemhubCalendarDemoEntries=Object.entries(gemhubDemoDailyCounts).flatMap(([date,count])=>Array.from({length:count},(_,i)=>({date,name:'2.0테더서버 비영리 반지제공',description:'안녕하세요',adStyle:gemhubDemoColors[i%gemhubDemoColors.length],demo:true})));
 let scheduleWeekOffset=0;
 function scheduleISO(d){return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}
 function renderSchedule(){
