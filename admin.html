@@ -88,6 +88,14 @@ textarea{min-height:88px;resize:vertical}.twocol{display:grid;grid-template-colu
 .schedule-grid .schedule-entry.ad-sparkle:hover{filter:none!important}
 .schedule-grid .schedule-entry.ad-sparkle .gemhub-ad-name,.schedule-grid .schedule-entry.ad-sparkle .gemhub-ad-subtitle{animation:none!important;opacity:1!important;filter:none!important;text-shadow:none!important}
 @media(prefers-reduced-motion:reduce){.schedule-grid .schedule-entry.ad-sparkle{animation:none!important;box-shadow:0 0 0 2px #fff,0 0 12px 4px #ffe600!important}}
+
+/* High-visibility sparkle demo with moving sheen, static legible lettering */
+@keyframes gemhubSparkleRing{0%,100%{box-shadow:0 0 0 1px #fff9,0 0 4px 1px #ffe50055}50%{box-shadow:0 0 0 3px #fff,0 0 15px 6px #fff,0 0 30px 10px #ffe500}}
+@keyframes gemhubSparkleSweep{0%{background-position:180% 0}100%{background-position:-180% 0}}
+.schedule-grid .schedule-entry.ad-sparkle{animation:gemhubSparkleRing 1.1s ease-in-out infinite!important;isolation:isolate!important;position:relative!important;z-index:2!important;overflow:hidden!important}
+.schedule-grid .schedule-entry.ad-sparkle::before{content:''!important;position:absolute!important;inset:0!important;z-index:-1!important;pointer-events:none!important;background:linear-gradient(110deg,transparent 22%,#ffffff00 34%,#ffffffb0 48%,#ffffff00 62%,transparent 78%)!important;background-size:240% 100%!important;animation:gemhubSparkleSweep 1.65s linear infinite!important}
+.schedule-grid .schedule-entry.ad-sparkle .gemhub-ad-name,.schedule-grid .schedule-entry.ad-sparkle .gemhub-ad-subtitle{position:relative!important;z-index:1!important}
+@media(prefers-reduced-motion:reduce){.schedule-grid .schedule-entry.ad-sparkle,.schedule-grid .schedule-entry.ad-sparkle::before{animation:none!important}.schedule-grid .schedule-entry.ad-sparkle{box-shadow:0 0 0 3px #fff,0 0 14px 5px #ffe500!important}}
 </style>
 </head>
 <body>
@@ -232,7 +240,7 @@ const gemhubDemoDailyCounts={"2026-10-19":9,"2026-10-20":7,"2026-10-21":6,"2026-
 const gemhubDemoColors=['red-yellow','sky','premium','blue-white','black-white'];
 
 const demoStoreKey='gemhub_admin_demo_test_v1';
-function demoSeed(){return Object.entries(gemhubDemoDailyCounts).flatMap(([date,count])=>Array.from({length:count},(_,k)=>({id:'demo-'+date+'-'+k,game:'리니지 클래식',server_name:'2.0테더서버 비영리 반지제공',description:'안녕하세요',opening_at:date+'T14:00:00+09:00',expires_at:date+'T23:59:00+09:00',promotion_url:'https://example.com',ad_style:gemhubDemoColors[k%gemhubDemoColors.length],ad_animation:'none',demo:true})));}
+function demoSeed(){return Object.entries(gemhubDemoDailyCounts).flatMap(([date,count])=>Array.from({length:count},(_,k)=>({id:'demo-'+date+'-'+k,game:'리니지 클래식',server_name:'2.0테더서버 비영리 반지제공',description:'안녕하세요',opening_at:date+'T14:00:00+09:00',expires_at:date+'T23:59:00+09:00',promotion_url:'https://example.com',ad_style:gemhubDemoColors[k%gemhubDemoColors.length],ad_animation:k===0?'sparkle':'none',demo:true})));}
 let demoSchedules=[];
 try{const saved=localStorage.getItem(demoStoreKey);demoSchedules=saved===null?demoSeed():JSON.parse(saved);if(!Array.isArray(demoSchedules))demoSchedules=demoSeed()}catch(e){demoSchedules=demoSeed()}
 function saveDemoSchedules(){try{localStorage.setItem(demoStoreKey,JSON.stringify(demoSchedules))}catch(e){console.warn('시연 데이터 저장 실패',e)}renderList();adminPreviewRender()}
