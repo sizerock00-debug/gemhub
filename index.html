@@ -548,7 +548,7 @@ function relativeTradeTime(value){
 function formatTradePrice(value){
  const str=String(value??'').trim();
  if(!str)return '가격 협의';
- if(/^\\d[\\d,]*$/.test(str))return Number(str.replaceAll(',','')).toLocaleString('ko-KR')+'원';
+ if(/^\d[\d,]*$/.test(str))return Number(str.replaceAll(',','')).toLocaleString('ko-KR')+'원';
  return str;
 }
 function renderRows(){
