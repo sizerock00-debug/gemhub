@@ -655,7 +655,7 @@ body.gh-notice-open{overflow:hidden}
 /* 등록 이미지 배너 2배 크기 테스트 */
 .ad-sidebar .ad-tile-test-double{aspect-ratio:1.6/1!important}
 .bottom-ads-grid .ad-tile-test-double{grid-column:span 2;grid-row:span 2;aspect-ratio:auto!important;min-height:76px}
-</style></head>
+</style><style id="gemhub-left-one-demo-style">#adsLeft>.gemhub-left-one-demo:first-child{aspect-ratio:1.6/1!important;min-height:0!important}#adsLeft>.gemhub-left-one-demo img{width:100%;height:100%;object-fit:cover}</style></head>
 <body>
 <header class="top"><div class="wrap top-inner"><div class="brand-wrap"><a href="#" class="logo"><span class="brand-pad">💎</span> GEM<span>HUB</span></a><div class="sub">게임 거래와 서버 홍보의 모든 것</div></div>
 <div class="header-search"><input id="globalSearch" type="search" placeholder="게임, 아이템, 서버명, 길드명을 검색해보세요..." aria-label="통합 검색"></div>
@@ -1229,7 +1229,7 @@ function renderAds(){
     const placement={adsLeft:'left',adsRight:'right',adsBottom:'bottom'}[id];
     const placed=relevant.filter(a=>a.placement===placement);
     const group=placed.length?placed:visible.slice(offset,offset+count);
-    for(let i=0;i<count;i++)target.appendChild(adNode(group[i]));
+    for(let i=0;i<count;i++){if(id==='adsLeft'&&i===0){const test=adNode({name:'겜허브 좌측 1번 테스트 배너',image:'https://sizerock00-debug.github.io/gemhub/assets/test-banner-left-1.svg',url:'https://sizerock00-debug.github.io/gemhub/'});test.classList.add('gemhub-left-one-demo');test.title='테스트 광고 · 겜허브 홈페이지 열기';target.appendChild(test)}else target.appendChild(adNode(group[i]))}
   }
 }
 
