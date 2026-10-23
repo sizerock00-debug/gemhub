@@ -132,6 +132,11 @@ textarea{min-height:88px;resize:vertical}.twocol{display:grid;grid-template-colu
 .banner-bottom .banner-slot span{font-size:13px}
 @media(max-width:650px){.banner-bottom{grid-template-columns:repeat(2,minmax(0,1fr))}.banner-bottom .banner-slot span{font-size:11px}}
 @media(max-width:390px){.banner-bottom{grid-template-columns:1fr}}
+
+/* 홈페이지와 동일한 하단 광고 5열 x 2행 고정 */
+#bannerSlotsBottom.banner-bottom{grid-template-columns:repeat(5,minmax(0,1fr))!important;grid-auto-flow:row!important;gap:8px!important}
+#bannerSlotsBottom .banner-slot{aspect-ratio:338/138!important;height:auto!important;min-height:0!important;grid-column:auto!important;grid-row:auto!important}
+@media(max-width:650px){#bannerSlotsBottom.banner-bottom{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:3px!important}#bannerSlotsBottom .banner-slot{padding:2px!important}#bannerSlotsBottom .banner-slot span{font-size:8px!important}}
 </style>
 </head>
 <body>
