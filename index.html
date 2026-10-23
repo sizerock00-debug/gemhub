@@ -226,6 +226,16 @@ body{background:#050314;color:#f6eaff}
 .bottom-ads-grid .gemhub-ad-slot-action{font-size:10px!important}
 .bottom-ads-grid .gemhub-ad-slot-help{font-size:9px!important}
 @media(max-width:780px){.gemhub-ad-slot-label{font-size:10px!important;padding:2px 5px!important}.gemhub-ad-slot-action{font-size:10px!important}.gemhub-ad-slot-help{font-size:9px!important}}
+
+/* 하단 배너 10칸: 좌우 배너와 동일한 338:138 비율, 광고 모집 문구 유지 */
+.bottom-ads-grid{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr))!important;gap:8px!important}
+.bottom-ads-grid .ad-tile{width:100%!important;height:auto!important;aspect-ratio:338/138!important;min-height:0!important;grid-column:auto!important;grid-row:auto!important}
+.bottom-ads-grid .gemhub-unassigned-ad{gap:5px!important;padding:8px!important}
+.bottom-ads-grid .gemhub-ad-slot-label{font-size:clamp(11px,1vw,14px)!important;padding:3px 10px!important}
+.bottom-ads-grid .gemhub-ad-slot-action{font-size:clamp(11px,1vw,15px)!important}
+.bottom-ads-grid .gemhub-ad-slot-help{font-size:clamp(10px,.8vw,12px)!important}
+@media(max-width:650px){.bottom-ads-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:390px){.bottom-ads-grid{grid-template-columns:1fr!important}}
 </style>
 <style>
 /* GEMHUB 확정 시안: 기능 유지형 메인화면 개편 */
@@ -743,7 +753,7 @@ body.gh-notice-open{overflow:hidden}
 <aside class="ad-sidebar" id="adsRight" aria-label="오른쪽 서버 광고"></aside>
 </div>
 
-<section class="bottom-ads" aria-label="하단 배너 광고 30개"><div class="bottom-ads-grid" id="adsBottom"></div></section>
+<section class="bottom-ads" aria-label="하단 배너 광고 10개"><div class="bottom-ads-grid" id="adsBottom"></div></section>
 </main>
 <footer class="footer">© GEMHUB · 게임 거래와 서버 홍보의 모든 것</footer><div class="toast" id="toast" role="status"></div>
 <div class="trade-backdrop" id="tradeBackdrop" aria-hidden="true"><div class="trade-dialog" role="dialog" aria-modal="true" aria-labelledby="tradeTitle"><button class="trade-close" type="button" id="tradeClose" aria-label="닫기">×</button><h2 id="tradeTitle">🛒 거래 글 등록</h2><p>로그인한 회원만 글을 등록할 수 있습니다. 실제 개인정보, 비밀번호, 현금 거래 정보는 올리지 마세요.</p><form id="tradeForm"><label for="tradeGame">게임</label><select id="tradeGame" required></select><label for="tradeServer">서버 이름</label><input id="tradeServer" maxlength="80" required placeholder="예: 서버 A"><label for="tradeCategory">거래 종류</label><select id="tradeCategory" required><option value="아이템">아이템 거래</option><option value="계정">계정 거래</option><option value="부주 구인">부주 구인</option></select><label for="tradePostTitle">거래 글 제목</label><input id="tradePostTitle" maxlength="120" required placeholder="예: 장비 판매합니다"><label for="tradePrice">가격 / 조건 (게임 내 재화)</label><input id="tradePrice" maxlength="80" required placeholder="예: 100만 아데나 / 협의"><label for="tradeContent">상세 설명</label><textarea id="tradeContent" maxlength="3000" required placeholder="아이템 정보와 거래 조건을 적어주세요."></textarea><div class="trade-actions"><button type="button" class="btn" id="tradeCancel">취소</button><button type="submit" class="btn primary" id="tradeSave">등록하기</button></div><div class="trade-message" id="tradeMessage" role="status"></div></form></div></div>
@@ -1268,7 +1278,7 @@ function renderAds(){
   const sideHeight=window.innerWidth>780 && center ? center.getBoundingClientRect().height : 0;
   const sideGap=5, sideTileHeight=window.innerWidth>780 ? 138 : 0;
   const sideCount=sideHeight ? Math.max(10,Math.floor((sideHeight+sideGap)/(sideTileHeight+sideGap))) : 10;
-  for(const [id,count] of [['adsLeft',sideCount],['adsRight',sideCount],['adsBottom',30]]){
+  for(const [id,count] of [['adsLeft',sideCount],['adsRight',sideCount],['adsBottom',10]]){
     const target=document.getElementById(id);
     if(!target)continue;
     target.replaceChildren();
