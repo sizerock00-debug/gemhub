@@ -586,7 +586,7 @@ let listings=[]; // 실제 Supabase 거래 글만 표시합니다.
 let favoriteIds=new Set();
 let favoritesLoadedFor=null;
 async function loadFavorites(){
- favoriteIds=new Set();favoritesLoadedFor=currentUser?.id||null;
+ favoriteIds=new Set();window.gemhubFavoritePosts=null;favoritesLoadedFor=currentUser?.id||null;
  if(currentUser&&authClient){try{const {data,error}=await authClient.from('trade_favorites').select('trade_post_id').eq('user_id',currentUser.id);if(error)throw error;favoriteIds=new Set((data||[]).map(x=>String(x.trade_post_id)))}catch(e){console.error('관심 목록 불러오기 실패',e);showToast('관심 목록을 불러오지 못했습니다.')}}
  updateFavoriteUI();
 }
@@ -610,7 +610,7 @@ async function toggleFavorite(post,button){
  try{
   if(had){const {error}=await authClient.from('trade_favorites').delete().eq('user_id',currentUser.id).eq('trade_post_id',post.id);if(error)throw error;favoriteIds.delete(key)}
   else{const {error}=await authClient.from('trade_favorites').insert({user_id:currentUser.id,trade_post_id:post.id});if(error)throw error;favoriteIds.add(key)}
-  updateFavoriteUI();if(!document.getElementById('favoritesBackdrop').hidden)renderFavoriteList();
+  updateFavoriteUI();if(!document.getElementById('favoritesBackdrop').hidden)await openFavorites();
  }catch(err){console.error('관심 등록 오류',err);showToast('관심 저장에 실패했습니다. 잠시 후 다시 시도해 주세요.')}
  finally{if(button)button.disabled=false}
 }
@@ -621,20 +621,32 @@ function updateDetailFavorite(){
 document.getElementById('detailFavorite').addEventListener('click',e=>{if(currentDetailPost)toggleFavorite(currentDetailPost,e.currentTarget)});
 function renderFavoriteList(){
  const target=document.getElementById('favoritesList');target.replaceChildren();
- const saved=listings.filter(x=>favoriteIds.has(String(x.id)));
+ const saved=Array.isArray(window.gemhubFavoritePosts)?window.gemhubFavoritePosts:listings.filter(x=>favoriteIds.has(String(x.id)));
  if(!saved.length){const p=document.createElement('p');p.className='favorite-empty';p.textContent=favoriteIds.size?'관심 글을 불러오지 못했거나 목록에 없는 글입니다.':'아직 관심 등록한 거래 물품이 없습니다.';target.appendChild(p);return}
  saved.forEach(post=>{
   const item=document.createElement('div');item.className='favorite-item';
   const info=document.createElement('button');info.type='button';info.className='favorite-item-info';
   const name=document.createElement('strong');name.textContent=post.title||'거래 물품';
-  const meta=document.createElement('small');meta.textContent=[post.game,post.server,post.price].filter(Boolean).join(' · ');
+  const meta=document.createElement('small');meta.textContent=[post.game,post.server,post.price,post.status==='completed'?'🔒 거래완료':'🟢 거래중'].filter(Boolean).join(' · ');
   info.append(name,meta);info.addEventListener('click',()=>{closeFavorites();openDetail(post)});
   item.append(info,makeFavoriteButton(post));target.appendChild(item);
  });
 }
-function openFavorites(){
+async function openFavorites(){
  if(!currentUser){showToast('관심 목록은 로그인 후 이용할 수 있습니다.');openAuth('signin');return}
- document.getElementById('favoritesBackdrop').hidden=false;renderFavoriteList();
+ const panel=document.getElementById('favoritesBackdrop'),target=document.getElementById('favoritesList');
+ panel.hidden=false;target.textContent='내 관심 거래를 불러오는 중입니다...';
+ try{
+  const {data:marks,error:markError}=await authClient.from('trade_favorites').select('trade_post_id').eq('user_id',currentUser.id);
+  if(markError)throw markError;
+  favoriteIds=new Set((marks||[]).map(x=>String(x.trade_post_id)));updateFavoriteUI();
+  if(!favoriteIds.size){window.gemhubFavoritePosts=[];renderFavoriteList();return}
+  const {data:posts,error:postError}=await authClient.from('trade_posts').select('id,created_at,game,server,category,title,price,status,content').in('id',[...favoriteIds]).order('created_at',{ascending:false});
+  if(postError)throw postError;
+  if(panel.hidden)return;
+  window.gemhubFavoritePosts=(posts||[]).map(x=>({...x,kind:x.category}));
+  renderFavoriteList();
+ }catch(err){target.textContent='관심 거래를 불러오지 못했습니다: '+(err?.message||'잠시 후 다시 시도해주세요.')}
 }
 function closeFavorites(){document.getElementById('favoritesBackdrop').hidden=true}
 
