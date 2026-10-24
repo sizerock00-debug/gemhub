@@ -103,6 +103,14 @@ body{background:#050314;color:#f6eaff}
  .market-layout.gemhub-compact-trades .table-scroll{flex:0 0 auto!important}
 }
 
+/* 달력과 거래글의 실제 높이를 기준으로 좌우 광고와 하단 광고를 배치 */
+@media(min-width:651px){
+ .layout-grid{align-items:start!important}
+ .layout-grid>.center-area{align-self:start!important;height:auto!important;min-height:0!important}
+ .center-area>.market-layout{flex:0 0 auto!important}
+ .market-layout>#market,.market-layout>#market>.board,.market-layout .table-scroll{flex:0 0 auto!important}
+}
+
 /* 4차: 요청하신 노란색 제목 및 게임 선택 안내 */
 .board-heading-yellow{color:#ffe14d!important;font-weight:900;text-shadow:0 0 10px #f8bd2460}
 .board-tab[data-filter="전체"]{color:#ffe14d!important;font-weight:900}
