@@ -1167,9 +1167,9 @@ async function openMyPosts(){
    Object.entries(labels).forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;status.appendChild(option)});status.value=currentStatus;
    status.addEventListener('change',async()=>{
     const next=status.value;if(next===currentStatus)return;
-    if(!confirm('거래 상태를 '+labels[next]+'(으)로 변경하시겠습니까? 홈페이지에도 반영됩니다.')){status.value=currentStatus;return}
+    if(!confirm(next==='completed'?'거래완료 처리하면 거래글이 즉시 영구 삭제되고 검색·내 거래글·관심 목록에서도 사라집니다. 복구할 수 없습니다. 진행하시겠습니까?':'거래 상태를 '+labels[next]+'(으)로 변경하시겠습니까? 홈페이지에도 반영됩니다.')){status.value=currentStatus;return}
     status.disabled=true;
-    try{const {data:updated,error}=await authClient.from('trade_posts').update({status:next}).eq('id',post.id).eq('user_id',currentUser.id).select('id,status');if(error)throw error;if(!updated?.length)throw new Error('변경 권한 또는 대상 거래글을 확인해 주세요.');await loadTradePosts();await openMyPosts();showToast('거래 상태가 '+labels[next]+'(으)로 변경되었습니다.')}
+    try{if(next==='completed'){const {error}=await authClient.from('trade_posts').update({status:'completed'}).eq('id',post.id).eq('user_id',currentUser.id);if(error)throw error;}else{const {data:updated,error}=await authClient.from('trade_posts').update({status:next}).eq('id',post.id).eq('user_id',currentUser.id).select('id,status');if(error)throw error;if(!updated?.length)throw new Error('변경 권한 또는 대상 거래글을 확인해 주세요.');}await loadTradePosts();await openMyPosts();showToast(next==='completed'?'거래완료 처리되어 거래글이 삭제되었습니다.':'거래 상태가 '+labels[next]+'(으)로 변경되었습니다.')}
     catch(err){status.value=currentStatus;status.disabled=false;showToast('상태 변경 실패: '+(err?.message||'다시 시도해 주세요.'))}
    });statusLabel.appendChild(status);actions.appendChild(statusLabel);
    const del=document.createElement('button');del.type='button';del.textContent='삭제';
