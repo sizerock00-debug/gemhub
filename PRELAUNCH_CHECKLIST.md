@@ -186,3 +186,11 @@ Supabase Auth/Database/Edge Functions를 사용하고 있으므로, 실제 프�
 - [x] 회원 탈퇴/관리자 회원 삭제 Edge Function v2가 ACTIVE이며 JWT 검증이 활성화된 것을 확인함.
 - [ ] 실제 테스트 계정으로 삭제 실행 및 잔존 데이터 검증은 미완료.
 - [ ] Supabase Auth 유출 비밀번호 보호 기능은 여전히 비활성화이며 현재 플랜에서 제공 여부를 확인해 별도 조치 필요.
+
+
+## 2026-10-24 추가 RLS 성능 최적화
+
+- [x] `gemhub_admins.admin_read_own_record`, `trade_posts` 본인 등록 정책, `trade_favorites` 본인 추가/조회/삭제 정책에서 `auth.uid()`를 `(select auth.uid())` 형태로 변경하여 행별 반복 평가를 줄임.
+- [x] 정책 변경 후 적용 결과를 다시 조회해 확인함.
+- [ ] 남은 RLS 성능 경고는 server_schedules의 정책 2건 및 trade_posts의 기존 UPDATE 정책 등이다. 기능 영향 확인 없이 일괄 수정하지 않음.
+- [ ] 실제 브라우저의 계정별 권한/기능 검증은 여전히 미완료.
