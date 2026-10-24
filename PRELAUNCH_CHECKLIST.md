@@ -122,6 +122,22 @@ Supabase Auth/Database/Edge Functions를 사용하고 있으므로, 실제 프�
 - `gemhub_push_deliveries` 테이블은 RLS가 활성화되어 있고 정책이 없음. 의도된 내부 전용 테이블인지 확인하고, 브라우저 역할에서 접근 불가한지 검증.
 - 실제 브라우저의 두 계정 테스트는 아직 수행되지 않았으므로, 기능 점검 완료로 간주하지 않음.
 
+## 6-1. 2026-10-24 사전 점검 결과
+
+- [x] Supabase 프로젝트 상태: ACTIVE_HEALTHY
+- [x] 데이터베이스 거래글 19개 확인: active 16, completed 2, pending 1
+- [x] 거래완료 글 2개 모두 completed_at 기록이 존재함
+- [x] 현재 24시간 만료 삭제 대상 거래완료 글 0개
+- [x] 48시간보다 오래된 공개 상태 거래글 1개가 존재함. SELECT 정책에서 일반 회원 조회가 차단되는 구조를 확인했으며, 행 자체를 자동 삭제하는 것은 별도 기능임.
+- [x] 거래완료 글 SELECT 정책: completed/hidden 상태는 일반 조회에서 제외하고 관리자 여부를 허용하는 조건 확인
+- [x] 거래완료 삭제 cron: `gemhub-delete-expired-completed-trades`, 5분 간격, active=true 확인
+- [x] `gemhub_set_trade_completed_at` 함수의 search_path를 `public, pg_temp`로 고정
+- [x] 계정 삭제 Edge Function은 활성화되어 있고 JWT 검증이 켜져 있음. 관리자 계정은 셀프 탈퇴를 막도록 되어 있음.
+- [ ] 실제 브라우저의 회원가입/로그인/거래/채팅/탈퇴 테스트 미완료
+- [ ] Supabase Auth의 유출된 비밀번호 보호 설정은 현재 비활성화로 진단됨. Dashboard에서 활성화 필요.
+- [ ] 관리자 RPC 권한 경고는 함수 내부에서 관리자 여부를 검사하는지 검토했음. 이 함수들은 권한 검사 코드가 있으므로 무작정 실행 권한을 제거하지 말고, 별도 테스트 후 최소 권한을 확정할 것.
+- [ ] `gemhub_push_deliveries`는 RLS가 켜져 있으나 정책이 없음. 브라우저 역할이 접근할 수 없는 내부 전용 테이블인지 확인할 것.
+
 ## 7. 시험 운영 권장 방식
 
 1. 운영자 계정 1개와 일반 테스트 계정 2개로 시작합니다.
