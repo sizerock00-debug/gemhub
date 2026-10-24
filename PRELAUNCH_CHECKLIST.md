@@ -226,3 +226,11 @@ Supabase Auth/Database/Edge Functions를 사용하고 있으므로, 실제 프�
 - [x] authenticated 역할에는 SELECT, (post_id, sender_id, recipient_id, body) INSERT, read_at UPDATE만 부여함. 메시지 본문·발신자·수신자·거래 연결·작성 시각을 기존 메시지에서 수정할 수 없도록 컬럼 권한을 제한.
 - [x] 변경 후 실제 컬럼 권한을 다시 조회해 검증함.
 - [ ] 실제 두 테스트 계정으로 메시지 송수신 및 읽음 처리 확인은 미완료.
+
+
+## 2026-10-24 푸시 발송 내부 테이블 정책 명시
+
+- [x] `gemhub_push_deliveries`에 service_role 전용 정책을 추가해 서버 측 작업만 허용한다는 의도를 명시함.
+- [x] anon/authenticated/PUBLIC의 테이블 권한이 없는 상태를 재확인함.
+- [x] 정책 및 보안 진단을 다시 조회함.
+- [ ] 유출 비밀번호 보호는 여전히 비활성 상태이며, 실제 회원 기능 브라우저 테스트도 미완료.
