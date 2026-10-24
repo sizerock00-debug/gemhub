@@ -157,7 +157,7 @@ textarea{min-height:88px;resize:vertical}.twocol{display:grid;grid-template-colu
         <form id="scheduleForm">
           <input type="hidden" id="scheduleId">
           <label>게임 선택 *
-            <select id="game" required><option value="리니지 클래식">리니지 클래식</option><option value="리니지W">리니지W</option><option value="아이온">아이온</option><option value="뮤">뮤</option><option value="메이플스토리">메이플스토리</option><option value="로스트아크">로스트아크</option><option value="블레이드앤소울">블레이드앤소울</option><option value="바람의나라">바람의나라</option><option value="렌2">렌2</option><option value="기타게임">기타게임</option><option value="로블록스">로블록스</option><option value="마인크래프트">마인크래프트</option><option value="발로란트">발로란트</option><option value="리그오브레전드">리그오브레전드</option><option value="FC온라인">FC온라인</option><option value="서든어택">서든어택</option><option value="배틀그라운드">배틀그라운드</option><option value="오버워치2">오버워치2</option><option value="원신">원신</option><option value="스타크래프트">스타크래프트</option><option value="던전앤파이터">던전앤파이터</option><option value="리니지M">리니지M</option><option value="디아블로">디아블로</option><option value="다크에덴">다크에덴</option><option value="미르2">미르2</option><option value="R2">R2</option></select>
+            <select id="game" required><option value="리니지">리니지</option><option value="리니지W">리니지W</option><option value="아이온">아이온</option><option value="뮤">뮤</option><option value="메이플스토리">메이플스토리</option><option value="로스트아크">로스트아크</option><option value="블레이드앤소울">블레이드앤소울</option><option value="바람의나라">바람의나라</option><option value="렌2">렌2</option><option value="기타게임">기타게임</option><option value="로블록스">로블록스</option><option value="마인크래프트">마인크래프트</option><option value="발로란트">발로란트</option><option value="리그오브레전드">리그오브레전드</option><option value="FC온라인">FC온라인</option><option value="서든어택">서든어택</option><option value="배틀그라운드">배틀그라운드</option><option value="오버워치2">오버워치2</option><option value="원신">원신</option><option value="스타크래프트">스타크래프트</option><option value="던전앤파이터">던전앤파이터</option><option value="리니지M">리니지M</option><option value="디아블로">디아블로</option><option value="다크에덴">다크에덴</option><option value="미르2">미르2</option><option value="R2">R2</option></select>
           </label>
           <label>서버명 *
             <input id="serverName" required maxlength="100" placeholder="예: 아이온 클래식">
@@ -303,7 +303,7 @@ const gemhubDemoDailyCounts={"2026-10-19":9,"2026-10-20":7,"2026-10-21":6,"2026-
 const gemhubDemoColors=['red-yellow','sky','premium','blue-white','black-white'];
 
 const demoStoreKey='gemhub_admin_demo_test_v1';
-function demoSeed(){return Object.entries(gemhubDemoDailyCounts).flatMap(([date,count])=>Array.from({length:count},(_,k)=>({id:'demo-'+date+'-'+k,game:'리니지 클래식',server_name:'2.0테더서버 비영리 반지제공',description:'안녕하세요',opening_at:date+'T14:00:00+09:00',expires_at:date+'T23:59:00+09:00',promotion_url:'https://example.com',ad_style:gemhubDemoColors[k%gemhubDemoColors.length],ad_animation:k===0?'sparkle':'none',demo:true})));}
+function demoSeed(){return Object.entries(gemhubDemoDailyCounts).flatMap(([date,count])=>Array.from({length:count},(_,k)=>({id:'demo-'+date+'-'+k,game:'리니지',server_name:'2.0테더서버 비영리 반지제공',description:'안녕하세요',opening_at:date+'T14:00:00+09:00',expires_at:date+'T23:59:00+09:00',promotion_url:'https://example.com',ad_style:gemhubDemoColors[k%gemhubDemoColors.length],ad_animation:k===0?'sparkle':'none',demo:true})));}
 let demoSchedules=[];
 try{const saved=localStorage.getItem(demoStoreKey);demoSchedules=saved===null?demoSeed():JSON.parse(saved);if(!Array.isArray(demoSchedules))demoSchedules=demoSeed()}catch(e){demoSchedules=demoSeed()}
 /* Migrate older demo entries created before sparkle existed, without resetting edits. */
@@ -357,7 +357,7 @@ function jumpToSchedule(item){
   const grid=$('adminPreviewGrid');grid.querySelectorAll('.schedule-entry').forEach(el=>{if(el.dataset.scheduleId===String(item.id)){el.classList.add('admin-jump-highlight');el.scrollIntoView({behavior:'smooth',block:'center',inline:'center'});setTimeout(()=>el.classList.remove('admin-jump-highlight'),4000)}});
   $('adminHomePreview').scrollIntoView({behavior:'smooth',block:'start'});
 }
-const scheduleSearchGames=["리니지 클래식","리니지W","아이온","뮤","메이플스토리","로스트아크","블레이드앤소울","바람의나라","렌2","기타게임","로블록스","마인크래프트","발로란트","리그오브레전드","FC온라인","서든어택","배틀그라운드","오버워치2","원신","스타크래프트","던전앤파이터","리니지M","디아블로","다크에덴","미르2","R2"];
+const scheduleSearchGames=["리니지","리니지W","아이온","뮤","메이플스토리","로스트아크","블레이드앤소울","바람의나라","렌2","기타게임","로블록스","마인크래프트","발로란트","리그오브레전드","FC온라인","서든어택","배틀그라운드","오버워치2","원신","스타크래프트","던전앤파이터","리니지M","디아블로","다크에덴","미르2","R2"];
 let scheduleSearchSubmitted=false;
 function renderList(){
   const filter=$('listGameFilter'),selected=filter.value;
