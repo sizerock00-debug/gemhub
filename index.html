@@ -924,7 +924,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeFavorites()});
 let selected=localStorage.getItem('gemhubSelectedGame')||'전체';
 const gameNav=document.getElementById('games'),rows=document.getElementById('rows'),empty=document.getElementById('empty');
 const gameIcons={'전체':'▦','로블록스':'◈','마인크래프트':'🟩','발로란트':'🔻','리그오브레전드':'⚔','FC온라인':'⚽','메이플스토리':'🍄','서든어택':'🪽','배틀그라운드':'🎯','오버워치2':'🎮','원신':'✨','스타크래프트':'✦','던전앤파이터':'🔥','리니지 클래식':'⚔','리니지W':'🛡','리니지M':'👑','아이온':'🪽','뮤':'💎','디아블로':'🔥','다크에덴':'🦇','미르2':'🐉','R2':'🛡','로스트아크':'⚓','블레이드앤소울':'⚔','바람의나라':'🍃','렌2':'🏰','기타게임':'🎲'};
-function chooseGame(game){selected=game;localStorage.setItem('gemhubSelectedGame',selected);adPage=0;scheduleWeekOffset=0;renderGames();renderRows();renderAds();renderSchedule()}
+function chooseGame(game){tradePage=0;selected=game;localStorage.setItem('gemhubSelectedGame',selected);adPage=0;scheduleWeekOffset=0;renderGames();renderRows();renderAds();renderSchedule()}
 function renderGames(){
  gameNav.replaceChildren();
  
@@ -936,7 +936,8 @@ function renderGames(){
  });
 }
 function formatPostTime(value){if(!value)return "-";const d=new Date(value);if(Number.isNaN(d.getTime()))return "-";return new Intl.DateTimeFormat("ko-KR",{timeZone:"Asia/Seoul",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).format(d)}
-let tradeExpanded=false;
+let tradePage=0;
+const TRADE_PAGE_SIZE=15;
 function relativeTradeTime(value){
  if(!value)return '-';const d=new Date(value);if(Number.isNaN(d.getTime()))return '-';
  const sec=Math.max(0,Math.floor((Date.now()-d.getTime())/1000));
@@ -957,12 +958,14 @@ function renderRows(){
  syncServerFilter();
  const serverChoice=document.getElementById('serverFilter').value,kind=document.getElementById('kind').value,query=document.getElementById('search').value.trim().toLowerCase();
  const data=listings.filter(x=>x.status!=='hidden'&&(selected==='전체'||x.game===selected)&&(serverChoice==='전체'||x.server===serverChoice)&&(kind==='전체'||(kind==='완료'?x.status==='completed':x.kind===kind))&&[x.game,x.server,x.title,x.price].some(v=>String(v||'').toLowerCase().includes(query)));
- const shown=tradeExpanded?data:data.slice(0,15);
+ const totalPages=Math.max(1,Math.ceil(data.length/TRADE_PAGE_SIZE));
+ tradePage=Math.min(tradePage,totalPages-1);
+ const shown=data.slice(tradePage*TRADE_PAGE_SIZE,(tradePage+1)*TRADE_PAGE_SIZE);
  rows.replaceChildren();
  shown.forEach((x,index)=>{
   const tr=document.createElement('tr');tr.className='trade-neon-row clickable-row'+(x.status==='completed'?' trade-is-completed':'');tr.tabIndex=0;tr.setAttribute('role','button');tr.setAttribute('aria-label',x.title+' 상세보기');
   const cell=(value,cls)=>{const td=document.createElement('td');td.textContent=value;if(cls)td.className=cls;tr.appendChild(td);return td};
-  cell(String(index+1),'trade-no');
+  cell(String(tradePage*TRADE_PAGE_SIZE+index+1),'trade-no');
   const gameTd=document.createElement('td');gameTd.className='trade-game';const gameIcon=document.createElement('span');gameIcon.className='trade-game-icon';gameIcon.textContent=gameIcons[x.game]||'🎮';const gameName=document.createElement('span');gameName.textContent=x.game||'-';gameTd.append(gameIcon,gameName);tr.appendChild(gameTd);
   cell(x.server||'-','trade-server');
   const titleTd=cell(x.title||'-','trade-title');if(x.status==='completed'){const badge=document.createElement('span');badge.className='gemhub-trade-state is-complete';badge.textContent='✓ 거래완료';titleTd.prepend(badge)}else{const badge=document.createElement('span');badge.className='gemhub-trade-state '+('is-active');badge.textContent='● 거래대기';titleTd.prepend(badge)}
@@ -975,14 +978,14 @@ function renderRows(){
  });
  empty.hidden=data.length!==0;
  document.querySelector('.market-layout')?.classList.toggle('gemhub-compact-trades',selected!=='전체'||data.length===0);
- const more=document.getElementById('tradeMore');more.hidden=data.length<=15;more.textContent=tradeExpanded?'접기 ⌃':'더보기 ❯ ('+(data.length-15)+'개)';
+ const more=document.getElementById('tradeMore');more.hidden=data.length<=TRADE_PAGE_SIZE;more.textContent=tradePage<totalPages-1?'다음 15개 ❯ ('+(tradePage+1)+' / '+totalPages+'페이지)':'처음 15개 ↺ ('+(tradePage+1)+' / '+totalPages+'페이지)';
 }
-document.getElementById('tradeMore').addEventListener('click',()=>{tradeExpanded=!tradeExpanded;renderRows()});
+document.getElementById('tradeMore').addEventListener('click',()=>{const filtered=listings.filter(x=>x.status!=='hidden'&&(selected==='전체'||x.game===selected)&&(document.getElementById('serverFilter').value==='전체'||x.server===document.getElementById('serverFilter').value)&&(document.getElementById('kind').value==='전체'||x.kind===document.getElementById('kind').value)&&[x.game,x.server,x.title,x.price].some(v=>String(v||'').toLowerCase().includes(document.getElementById('search').value.trim().toLowerCase())));tradePage=(tradePage+1)%Math.max(1,Math.ceil(filtered.length/TRADE_PAGE_SIZE));renderRows()});
 function syncServerFilter(){const filter=document.getElementById('serverFilter');const previous=filter.value;const servers=[...new Set(listings.filter(x=>selected==='전체'||x.game===selected).map(x=>x.server).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ko'));filter.replaceChildren();for(const value of ['전체',...servers]){const o=document.createElement('option');o.value=value;o.textContent=value==='전체'?'전체 서버':value;filter.appendChild(o)}filter.value=servers.includes(previous)?previous:'전체'}
-document.getElementById('serverFilter').addEventListener('change',renderRows);
-document.getElementById('globalSearch').addEventListener('input',e=>{document.getElementById('search').value=e.target.value;renderRows()});
+document.getElementById('serverFilter').addEventListener('change',()=>{tradePage=0;renderRows()});
+document.getElementById('globalSearch').addEventListener('input',e=>{document.getElementById('search').value=e.target.value;tradePage=0;renderRows()});
 document.querySelectorAll('[data-jump]').forEach(b=>b.addEventListener('click',()=>document.getElementById(b.dataset.jump)?.scrollIntoView({behavior:'smooth',block:'start'})));
-document.getElementById('kind').addEventListener('change',renderRows);document.getElementById('search').addEventListener('input',renderRows);
+document.getElementById('kind').addEventListener('change',()=>{tradePage=0;renderRows()});document.getElementById('search').addEventListener('input',()=>{tradePage=0;renderRows()});
 // Supabase 공개용 연결 정보: secret/service_role 키는 절대 사용하지 않습니다.
 const SUPABASE_URL='https://scivlgypxtuzsgfbxgdf.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_D5cYjFWB8Yd7UJ22ldJYPg_eEAUMtBa';
