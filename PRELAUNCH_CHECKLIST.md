@@ -218,3 +218,11 @@ Supabase Auth/Database/Edge Functions를 사용하고 있으므로, 실제 프�
 - [x] `trade_favorites` INSERT 정책을 강화함. 로그인 사용자는 본인 user_id로만 관심 등록할 수 있고, 본인 소유 글/완료·숨김 글/48시간 만료 글에는 직접 API 호출로도 관심 등록할 수 없도록 DB에서 검증.
 - [x] 정책을 데이터베이스에서 다시 조회해 적용 결과 확인.
 - [ ] 실제 브라우저에서 본인 글 하트가 숨겨지는지와 타인 글 관심 등록/해제 동작을 테스트해야 함.
+
+
+## 2026-10-24 채팅 테이블 권한 최소화
+
+- [x] `trade_messages`에서 anon 역할의 모든 테이블 권한을 제거함.
+- [x] authenticated 역할에는 SELECT, (post_id, sender_id, recipient_id, body) INSERT, read_at UPDATE만 부여함. 메시지 본문·발신자·수신자·거래 연결·작성 시각을 기존 메시지에서 수정할 수 없도록 컬럼 권한을 제한.
+- [x] 변경 후 실제 컬럼 권한을 다시 조회해 검증함.
+- [ ] 실제 두 테스트 계정으로 메시지 송수신 및 읽음 처리 확인은 미완료.
