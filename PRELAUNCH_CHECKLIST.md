@@ -128,7 +128,7 @@ Supabase Auth/Database/Edge Functions를 사용하고 있으므로, 실제 프�
 - [x] 데이터베이스 거래글 19개 확인: active 16, completed 2, pending 1
 - [x] 거래완료 글 2개 모두 completed_at 기록이 존재함
 - [x] 현재 24시간 만료 삭제 대상 거래완료 글 0개
-- [x] 48시간보다 오래된 공개 상태 거래글 1개가 존재함. SELECT 정책에서 일반 회원 조회가 차단되는 구조를 확인했으며, 행 자체를 자동 삭제하는 것은 별도 기능임.
+- [x] 48시간 초과 일반 거래글은 예약 작업에서 실제 삭제하도록 함수를 보완함. 최근 재조회에서 삭제 대상은 0개였음.
 - [x] 거래완료 글 SELECT 정책: completed/hidden 상태는 일반 조회에서 제외하고 관리자 여부를 허용하는 조건 확인
 - [x] 거래완료 삭제 cron: `gemhub-delete-expired-completed-trades`, 5분 간격, active=true 확인
 - [x] `gemhub_set_trade_completed_at` 함수의 search_path를 `public, pg_temp`로 고정
@@ -234,3 +234,12 @@ Supabase Auth/Database/Edge Functions를 사용하고 있으므로, 실제 프�
 - [x] anon/authenticated/PUBLIC의 테이블 권한이 없는 상태를 재확인함.
 - [x] 정책 및 보안 진단을 다시 조회함.
 - [ ] 유출 비밀번호 보호는 여전히 비활성 상태이며, 실제 회원 기능 브라우저 테스트도 미완료.
+
+
+## 2026-10-24 오픈 문서 초안 정리
+
+- [x] `TERMS_DRAFT.md` 이용약관 내부 초안을 작성함.
+- [x] `PRIVACY_POLICY_DRAFT.md` 개인정보 처리방침 내부 초안을 작성함.
+- [x] 두 문서 모두 운영자 정보, 연락처, 실제 데이터 흐름, Supabase 리전/국외 이전 검토 등 미확정 사항을 표시했으며 공개 정책으로 배포하지 않음.
+- [x] 거래글 만료 설명을 업데이트함: 일반 글 48시간 및 완료 글 24시간 경과 시 동일한 5분 간격 예약 작업에서 실제 삭제 대상.
+- [ ] 운영 주체와 문의 채널 확정, 실제 데이터 처리·리전 검증, 국내 법령 검토 후 초안을 최종화하고 사이트에 게시해야 함.
