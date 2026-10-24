@@ -194,3 +194,11 @@ Supabase Auth/Database/Edge Functions를 사용하고 있으므로, 실제 프�
 - [x] 정책 변경 후 적용 결과를 다시 조회해 확인함.
 - [ ] 남은 RLS 성능 경고는 server_schedules의 정책 2건 및 trade_posts의 기존 UPDATE 정책 등이다. 기능 영향 확인 없이 일괄 수정하지 않음.
 - [ ] 실제 브라우저의 계정별 권한/기능 검증은 여전히 미완료.
+
+
+## 2026-10-24 서버 일정 RLS 정책 정리
+
+- [x] 중복된 `admins_read_server_schedules` 정책을 제거함. 기존 `Public can read schedules` 정책이 공개 일정 읽기를 이미 허용하므로 중복 정책을 제거해 행별 권한 평가를 줄임.
+- [x] 중복된 `admins_update_server_schedules` 정책을 제거함. 기존 `Admins can update schedules` 정책이 동일한 관리자 검사와 함께 UPDATE를 보호하므로 이를 유지함.
+- [x] 정책 변경 후 실제 정책 목록을 다시 확인함.
+- [ ] 실제 브라우저에서 관리자 일정 수정 및 비관리자 수정 거부 테스트는 미완료.
