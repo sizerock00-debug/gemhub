@@ -94,6 +94,15 @@ body{background:#050314;color:#f6eaff}
 }
 .bottom-ads{margin-top:28px!important}
 
+
+/* 게임 변경 시 거래글이 없으면 빈 거래영역을 즉시 접어 달력을 바로 아래에 표시 */
+@media(min-width:651px){
+ .center-area>.market-layout.gemhub-no-trades{flex:0 0 auto!important}
+ .market-layout.gemhub-no-trades>#market,
+ .market-layout.gemhub-no-trades>#market>.board,
+ .market-layout.gemhub-no-trades .table-scroll{flex:0 0 auto!important}
+}
+
 /* 4차: 요청하신 노란색 제목 및 게임 선택 안내 */
 .board-heading-yellow{color:#ffe14d!important;font-weight:900;text-shadow:0 0 10px #f8bd2460}
 .board-tab[data-filter="전체"]{color:#ffe14d!important;font-weight:900}
@@ -946,6 +955,7 @@ function renderRows(){
   rows.appendChild(tr);
  });
  empty.hidden=data.length!==0;
+ document.querySelector('.market-layout')?.classList.toggle('gemhub-no-trades',data.length===0);
  const more=document.getElementById('tradeMore');more.hidden=data.length<=15;more.textContent=tradeExpanded?'접기 ⌃':'더보기 ❯ ('+(data.length-15)+'개)';
 }
 document.getElementById('tradeMore').addEventListener('click',()=>{tradeExpanded=!tradeExpanded;renderRows()});
