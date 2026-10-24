@@ -178,3 +178,11 @@ Supabase Auth/Database/Edge Functions를 사용하고 있으므로, 실제 프�
 - [x] 두 함수 모두 JWT 검증 활성 상태 유지. 관리자 자기 자신 삭제 및 다른 관리자 삭제 방지 유지.
 - [ ] 실제 일반 테스트 계정으로 셀프 탈퇴 실행 후 데이터 잔존 여부 확인은 아직 수행하지 않음. 운영 계정/실제 회원을 삭제하지 않음.
 - [ ] 관리자 회원 삭제 기능도 테스트 계정으로만 검증할 것.
+
+
+## 2026-10-24 추가 성능 점검
+
+- [x] 보안 점검 이후 발견된 외래키 인덱스 7개를 추가함: chat_blocks.blocked_id, hidden_chats.other_user_id, notifications.user_id, server_schedule_requests.user_id, trade_favorites.trade_post_id, trade_messages.post_id, trade_messages.sender_id.
+- [x] 회원 탈퇴/관리자 회원 삭제 Edge Function v2가 ACTIVE이며 JWT 검증이 활성화된 것을 확인함.
+- [ ] 실제 테스트 계정으로 삭제 실행 및 잔존 데이터 검증은 미완료.
+- [ ] Supabase Auth 유출 비밀번호 보호 기능은 여전히 비활성화이며 현재 플랜에서 제공 여부를 확인해 별도 조치 필요.
