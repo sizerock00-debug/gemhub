@@ -132,6 +132,7 @@ Supabase Auth/Database/Edge Functions를 사용하고 있으므로, 실제 프�
 - [x] 거래완료 글 SELECT 정책: completed/hidden 상태는 일반 조회에서 제외하고 관리자 여부를 허용하는 조건 확인
 - [x] 거래완료 삭제 cron: `gemhub-delete-expired-completed-trades`, 5분 간격, active=true 확인
 - [x] `gemhub_set_trade_completed_at` 함수의 search_path를 `public, pg_temp`로 고정
+- [x] `gemhub_is_admin()` 함수도 빈 search_path와 스키마 명시 참조를 사용하도록 보강
 - [x] 계정 삭제 Edge Function은 활성화되어 있고 JWT 검증이 켜져 있음. 관리자 계정은 셀프 탈퇴를 막도록 되어 있음.
 - [ ] 실제 브라우저의 회원가입/로그인/거래/채팅/탈퇴 테스트 미완료
 - [ ] Supabase Auth의 유출된 비밀번호 보호 설정은 현재 비활성화로 진단됨. Dashboard에서 활성화 필요.
