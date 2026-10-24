@@ -840,7 +840,7 @@ body.gh-notice-open{overflow:hidden}
 <div class="favorites-backdrop" id="favoritesBackdrop" hidden><section class="favorites-dialog" role="dialog" aria-modal="true" aria-labelledby="favoritesHeading"><div class="favorites-heading"><h2 id="favoritesHeading">💗 나만의 관심 거래함</h2><button type="button" id="favoritesClose" aria-label="닫기">×</button></div><p>내가 찜한 거래 글만 모았습니다. 상세 내용을 확인하고 문의 문구를 복사할 수 있습니다.</p><div class="favorites-toolbar"><input id="favoritesSearch" type="search" placeholder="관심 거래 검색" aria-label="관심 거래 검색"><select id="favoritesFilter" aria-label="거래 상태"><option value="all">전체</option><option value="active">거래대기</option><option value="completed">거래완료</option></select></div><div id="favoritesList"></div><div id="favoritePreview" class="favorite-preview" hidden></div></section></div>
 <div class="favorite-remove-backdrop" id="favoriteRemoveBackdrop" hidden><section class="favorite-remove-dialog" role="alertdialog" aria-modal="true" aria-labelledby="favoriteRemoveTitle" aria-describedby="favoriteRemoveDescription"><h3 id="favoriteRemoveTitle">♥ 관심 거래 삭제</h3><p id="favoriteRemoveDescription">선택하신 거래글을 내 관심 목록에서 삭제하시겠습니까?<br>관심 목록에서만 삭제되며 원본 거래글은 삭제되지 않습니다.</p><div class="favorite-remove-actions"><button type="button" id="favoriteRemoveCancel">취소</button><button type="button" id="favoriteRemoveYes">관심 해제</button></div></section></div><div id="gemhubCommsBackdrop" class="gemhub-comms-backdrop" hidden><section class="gemhub-comms-dialog" role="dialog" aria-modal="true" aria-labelledby="gemhubCommsTitle"><div class="gemhub-comms-head"><h2 id="gemhubCommsTitle">💬 대화창</h2><button type="button" id="gemhubCommsClose" aria-label="닫기">×</button></div><div id="gemhubCommsBody"></div></section></div><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-const games=['전체','리니지 클래식','리니지W','아이온','뮤','메이플스토리','로스트아크','블레이드앤소울','바람의나라','렌2','기타게임','로블록스','마인크래프트','발로란트','리그오브레전드','FC온라인','서든어택','배틀그라운드','오버워치2','원신','스타크래프트','던전앤파이터','리니지M','디아블로','다크에덴','미르2','R2'];
+const games=['전체','리니지','리니지W','아이온','뮤','메이플스토리','로스트아크','블레이드앤소울','바람의나라','렌2','기타게임','로블록스','마인크래프트','발로란트','리그오브레전드','FC온라인','서든어택','배틀그라운드','오버워치2','원신','스타크래프트','던전앤파이터','리니지M','디아블로','다크에덴','미르2','R2'];
 let listings=[]; // 실제 Supabase 거래 글만 표시합니다.
 /* 로그인 사용자별 관심 거래: 기존 trade_favorites RLS 테이블 활용 */
 let favoriteIds=new Set();
@@ -932,7 +932,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeFavorites()});
 
 let selected=localStorage.getItem('gemhubSelectedGame')||'전체';
 const gameNav=document.getElementById('games'),rows=document.getElementById('rows'),empty=document.getElementById('empty');
-const gameIcons={'전체':'▦','로블록스':'◈','마인크래프트':'🟩','발로란트':'🔻','리그오브레전드':'⚔','FC온라인':'⚽','메이플스토리':'🍄','서든어택':'🪽','배틀그라운드':'🎯','오버워치2':'🎮','원신':'✨','스타크래프트':'✦','던전앤파이터':'🔥','리니지 클래식':'⚔','리니지W':'🛡','리니지M':'👑','아이온':'🪽','뮤':'💎','디아블로':'🔥','다크에덴':'🦇','미르2':'🐉','R2':'🛡','로스트아크':'⚓','블레이드앤소울':'⚔','바람의나라':'🍃','렌2':'🏰','기타게임':'🎲'};
+const gameIcons={'전체':'▦','로블록스':'◈','마인크래프트':'🟩','발로란트':'🔻','리그오브레전드':'⚔','FC온라인':'⚽','메이플스토리':'🍄','서든어택':'🪽','배틀그라운드':'🎯','오버워치2':'🎮','원신':'✨','스타크래프트':'✦','던전앤파이터':'🔥','리니지':'⚔','리니지W':'🛡','리니지M':'👑','아이온':'🪽','뮤':'💎','디아블로':'🔥','다크에덴':'🦇','미르2':'🐉','R2':'🛡','로스트아크':'⚓','블레이드앤소울':'⚔','바람의나라':'🍃','렌2':'🏰','기타게임':'🎲'};
 function chooseGame(game){tradePage=0;selected=game;localStorage.setItem('gemhubSelectedGame',selected);adPage=0;scheduleWeekOffset=0;renderGames();renderRows();renderAds();renderSchedule()}
 function renderGames(){
  gameNav.replaceChildren();
@@ -940,7 +940,7 @@ function renderGames(){
  games.forEach(game=>{
   const b=document.createElement('button');b.className='game'+(game===selected?' active':'');b.type='button';b.setAttribute('aria-pressed',String(game===selected));
   const ico=document.createElement('span');ico.className='game-icon';ico.textContent=gameIcons[game]||'🎮';
-  const label=document.createElement('span');label.className='game-label';label.textContent=game==='리니지 클래식'?'리니지':game==='전체'?'전체게임':game;b.append(ico,label);b.addEventListener('click',()=>chooseGame(game));gameNav.appendChild(b);
+  const label=document.createElement('span');label.className='game-label';label.textContent=game==='리니지'?'리니지':game==='전체'?'전체게임':game;b.append(ico,label);b.addEventListener('click',()=>chooseGame(game));gameNav.appendChild(b);
 
  });
 }
@@ -990,7 +990,7 @@ function renderRows(){
  const more=document.getElementById('tradeMore');more.hidden=data.length<=TRADE_PAGE_SIZE;more.textContent=tradePage<totalPages-1?'다음 15개 ❯ ('+(tradePage+1)+' / '+totalPages+'페이지)':'처음 15개 ↺ ('+(tradePage+1)+' / '+totalPages+'페이지)';
 }
 document.getElementById('tradeMore').addEventListener('click',()=>{const filtered=listings.filter(x=>x.status!=='hidden'&&(selected==='전체'||x.game===selected)&&(document.getElementById('kind').value==='전체'||x.kind===document.getElementById('kind').value)&&[x.game,x.server,x.title,x.price].some(v=>String(v||'').toLowerCase().includes(document.getElementById('search').value.trim().toLowerCase())));tradePage=(tradePage+1)%Math.max(1,Math.ceil(filtered.length/TRADE_PAGE_SIZE));renderRows()});
-function syncServerFilter(){const filter=document.getElementById('serverFilter');filter.replaceChildren();for(const value of games){const o=document.createElement('option');o.value=value;o.textContent=value==='전체'?'전체 게임':value==='리니지 클래식'?'리니지':value;filter.appendChild(o)}filter.value=games.includes(selected)?selected:'전체'}
+function syncServerFilter(){const filter=document.getElementById('serverFilter');filter.replaceChildren();for(const value of games){const o=document.createElement('option');o.value=value;o.textContent=value==='전체'?'전체 게임':value==='리니지'?'리니지':value;filter.appendChild(o)}filter.value=games.includes(selected)?selected:'전체'}
 document.getElementById('serverFilter').addEventListener('change',()=>{chooseGame(document.getElementById('serverFilter').value)});
 document.getElementById('globalSearch').addEventListener('input',e=>{document.getElementById('search').value=e.target.value;tradePage=0;renderRows()});
 document.querySelectorAll('[data-jump]').forEach(b=>b.addEventListener('click',()=>document.getElementById(b.dataset.jump)?.scrollIntoView({behavior:'smooth',block:'start'})));
@@ -1101,7 +1101,7 @@ document.getElementById('authClose').addEventListener('click',closeAuth);backdro
 const tradeBackdrop=document.getElementById('tradeBackdrop');
 const tradeGame=document.getElementById('tradeGame');
 for(const game of games.filter(x=>x!=='전체')){const opt=document.createElement('option');opt.value=game;opt.textContent=game;tradeGame.appendChild(opt)}
-function openTrade(){if(!currentUser){showToast('거래 글 등록은 로그인 후 이용할 수 있습니다.');openAuth('signin');return}document.getElementById('tradeForm').reset();tradeGame.value=selected==='전체'?'리니지 클래식':selected;document.getElementById('tradeMessage').textContent='';tradeBackdrop.classList.add('open');tradeBackdrop.setAttribute('aria-hidden','false');document.getElementById('tradeServer').focus()}
+function openTrade(){if(!currentUser){showToast('거래 글 등록은 로그인 후 이용할 수 있습니다.');openAuth('signin');return}document.getElementById('tradeForm').reset();tradeGame.value=selected==='전체'?'리니지':selected;document.getElementById('tradeMessage').textContent='';tradeBackdrop.classList.add('open');tradeBackdrop.setAttribute('aria-hidden','false');document.getElementById('tradeServer').focus()}
 function closeTrade(){tradeBackdrop.classList.remove('open');tradeBackdrop.setAttribute('aria-hidden','true')}
 
 document.getElementById('tradeClose').addEventListener('click',closeTrade);
@@ -1485,7 +1485,7 @@ function renderSchedule(){
   if(i%7===0){for(let j=0;j<7;j++){const d=new Date(start);d.setDate(start.getDate()+i+j);const head=document.createElement('div');head.className='schedule-day-name';head.textContent=d.getDate()+'일('+['일','월','화','수','목','금','토'][d.getDay()]+')';grid.appendChild(head)}}
   const day=new Date(start);day.setDate(start.getDate()+i);const iso=scheduleISO(day);
   const cell=document.createElement('div');cell.className='schedule-date'+(iso===today?' today':'');
-  const entries=[...serverSchedules.filter(x=>x.date===iso&&(selected==='전체'||x.game===selected)),...(selected==='전체'||selected==='리니지 클래식'?gemhubCalendarDemoEntries.filter(x=>x.date===iso):[])];
+  const entries=[...serverSchedules.filter(x=>x.date===iso&&(selected==='전체'||x.game===selected)),...(selected==='전체'||selected==='리니지'?gemhubCalendarDemoEntries.filter(x=>x.date===iso):[])];
   for(const item of entries){const valid=typeof item.url==='string'&&/^https:\/\/[^\s]+$/i.test(item.url);const el=document.createElement(valid&&!item.demo?'a':'div');el.className = 'schedule-entry ' + ({
   premium: 'ad-premium',
   'red-yellow': 'ad-red-yellow',
