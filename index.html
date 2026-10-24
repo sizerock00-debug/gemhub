@@ -307,7 +307,7 @@ body{background:#060310}
 .board-top{padding:10px;background:#100a23}
 .board-heading-yellow{color:#f5eaff!important;font-size:19px!important;text-shadow:none!important}
 .search-guide{display:none}
-.search-with-guide #serverFilter{display:block;min-width:110px;max-width:160px;border:1px solid #7440a3;border-radius:6px;background:#180e30;color:#f6e9ff;padding:7px}
+.search-with-guide #serverFilter{display:block;min-width:125px;max-width:170px;border:1px solid #7440a3;border-radius:6px;background:#180e30;color:#f6e9ff;padding:7px}
 .trade-register-row{padding:6px 12px;background:#100a23}
 .trade-register-wide{width:auto;font-size:12px;padding:8px 12px}
 .market-layout th,.market-layout td{padding:9px 7px;font-size:12px}
@@ -784,7 +784,7 @@ body.gh-notice-open{overflow:hidden}
 <section class="hero" aria-label="메인 광고 배너"><div class="hero-box main-banner-carousel" id="mainBannerCarousel" aria-roledescription="캐러셀"><div class="hero-copy" id="mainBannerCopy"><p class="hero-kicker" id="mainBannerKicker">게임을 더 즐겁게, 함께하는 공간</p><div class="hero-brand" id="mainBannerTitle">GEMHUB</div><h1 id="mainBannerDescription">게임 거래와 서버 홍보의 모든 것</h1><a class="hero-cta" id="mainBannerLink" href="#market">지금 시작하기 →</a></div><p class="hero-tagline" id="mainBannerTagline">함께하는 게임,<br>더 큰 즐거움!</p><div class="banner-controls"><button type="button" class="banner-arrow" id="bannerPrev" aria-label="이전 배너">❮</button><div class="banner-indicators" id="bannerIndicators" aria-label="배너 선택"></div><button type="button" class="banner-arrow" id="bannerNext" aria-label="다음 배너">❯</button><button type="button" class="banner-pause" id="bannerPause" aria-label="자동 넘김 일시정지">Ⅱ</button></div></div></section>
 <section class="section game-section"><div class="section-title visually-hidden"><h2>🎮 게임 선택</h2></div><nav class="games" id="games" aria-label="게임 선택"></nav></section>
 <div class="market-layout">
-<section class="section" id="market"><div class="board"><div class="board-top"><div class="board-heading-group"><h2 class="board-heading-yellow">🔥 실시간 인기 거래</h2></div><div class="filters search-with-guide"><select id="serverFilter" aria-label="서버 선택"><option value="전체">전체 서버</option></select><input id="search" type="search" placeholder="아이템명, 서버명, 캐릭터명 검색..." aria-label="매물 검색" aria-describedby="searchGuide"><p class="search-guide" id="searchGuide">게임과 서버를 선택하거나 물품명으로 검색하세요.</p></div></div>
+<section class="section" id="market"><div class="board"><div class="board-top"><div class="board-heading-group"><h2 class="board-heading-yellow">🔥 실시간 인기 거래</h2></div><div class="filters search-with-guide"><select id="serverFilter" aria-label="게임 선택"><option value="전체">전체 게임</option></select><input id="search" type="search" placeholder="아이템명, 서버명, 캐릭터명 검색..." aria-label="매물 검색" aria-describedby="searchGuide"><p class="search-guide" id="searchGuide">게임과 서버를 선택하거나 물품명으로 검색하세요.</p></div></div>
 
 <div class="trade-register-row"><button class="btn primary trade-register-wide" id="boardRegister" type="button">✏️ 거래 물품 등록</button><button class="btn primary board-refresh" type="button" id="reloadPosts" title="최신 거래 글 다시 불러오기">↻ 최신글 새로고침</button></div>
 <div class="board-tabs" hidden><button class="board-tab active" type="button" data-filter="전체">🎮 플레이할게임클릭</button><button class="board-tab" type="button" data-filter="계정">💜 계정</button><button class="board-tab" type="button" data-filter="아이템">📦 아이템</button></div>
@@ -965,8 +965,8 @@ function gemhubKindLabel(value){return value==='부주 구인'||value==='부주�
 function gemhubKindClass(value){const kind=gemhubKindLabel(value);return kind==='삽니다'?'is-buy':kind==='계정'?'is-account':'is-item'}
 function renderRows(){
  syncServerFilter();
- const serverChoice=document.getElementById('serverFilter').value,kind=document.getElementById('kind').value,query=document.getElementById('search').value.trim().toLowerCase();
- const data=listings.filter(x=>x.status!=='hidden'&&(selected==='전체'||x.game===selected)&&(serverChoice==='전체'||x.server===serverChoice)&&(kind==='전체'||(kind==='완료'?x.status==='completed':x.kind===kind))&&[x.game,x.server,x.title,x.price].some(v=>String(v||'').toLowerCase().includes(query)));
+ const kind=document.getElementById('kind').value,query=document.getElementById('search').value.trim().toLowerCase();
+ const data=listings.filter(x=>x.status!=='hidden'&&(selected==='전체'||x.game===selected)&&(kind==='전체'||(kind==='완료'?x.status==='completed':x.kind===kind))&&[x.game,x.server,x.title,x.price].some(v=>String(v||'').toLowerCase().includes(query)));
  const totalPages=Math.max(1,Math.ceil(data.length/TRADE_PAGE_SIZE));
  tradePage=Math.min(tradePage,totalPages-1);
  const shown=data.slice(tradePage*TRADE_PAGE_SIZE,(tradePage+1)*TRADE_PAGE_SIZE);
@@ -989,9 +989,9 @@ function renderRows(){
  document.querySelector('.market-layout')?.classList.toggle('gemhub-compact-trades',selected!=='전체'||data.length===0);
  const more=document.getElementById('tradeMore');more.hidden=data.length<=TRADE_PAGE_SIZE;more.textContent=tradePage<totalPages-1?'다음 15개 ❯ ('+(tradePage+1)+' / '+totalPages+'페이지)':'처음 15개 ↺ ('+(tradePage+1)+' / '+totalPages+'페이지)';
 }
-document.getElementById('tradeMore').addEventListener('click',()=>{const filtered=listings.filter(x=>x.status!=='hidden'&&(selected==='전체'||x.game===selected)&&(document.getElementById('serverFilter').value==='전체'||x.server===document.getElementById('serverFilter').value)&&(document.getElementById('kind').value==='전체'||x.kind===document.getElementById('kind').value)&&[x.game,x.server,x.title,x.price].some(v=>String(v||'').toLowerCase().includes(document.getElementById('search').value.trim().toLowerCase())));tradePage=(tradePage+1)%Math.max(1,Math.ceil(filtered.length/TRADE_PAGE_SIZE));renderRows()});
-function syncServerFilter(){const filter=document.getElementById('serverFilter');const previous=filter.value;const servers=[...new Set(listings.filter(x=>selected==='전체'||x.game===selected).map(x=>x.server).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ko'));filter.replaceChildren();for(const value of ['전체',...servers]){const o=document.createElement('option');o.value=value;o.textContent=value==='전체'?'전체 서버':value;filter.appendChild(o)}filter.value=servers.includes(previous)?previous:'전체'}
-document.getElementById('serverFilter').addEventListener('change',()=>{tradePage=0;renderRows()});
+document.getElementById('tradeMore').addEventListener('click',()=>{const filtered=listings.filter(x=>x.status!=='hidden'&&(selected==='전체'||x.game===selected)&&(document.getElementById('kind').value==='전체'||x.kind===document.getElementById('kind').value)&&[x.game,x.server,x.title,x.price].some(v=>String(v||'').toLowerCase().includes(document.getElementById('search').value.trim().toLowerCase())));tradePage=(tradePage+1)%Math.max(1,Math.ceil(filtered.length/TRADE_PAGE_SIZE));renderRows()});
+function syncServerFilter(){const filter=document.getElementById('serverFilter');filter.replaceChildren();for(const value of games){const o=document.createElement('option');o.value=value;o.textContent=value==='전체'?'전체 게임':value==='리니지 클래식'?'리니지':value;filter.appendChild(o)}filter.value=games.includes(selected)?selected:'전체'}
+document.getElementById('serverFilter').addEventListener('change',()=>{chooseGame(document.getElementById('serverFilter').value)});
 document.getElementById('globalSearch').addEventListener('input',e=>{document.getElementById('search').value=e.target.value;tradePage=0;renderRows()});
 document.querySelectorAll('[data-jump]').forEach(b=>b.addEventListener('click',()=>document.getElementById(b.dataset.jump)?.scrollIntoView({behavior:'smooth',block:'start'})));
 document.getElementById('kind').addEventListener('change',()=>{tradePage=0;renderRows()});document.getElementById('search').addEventListener('input',()=>{tradePage=0;renderRows()});
