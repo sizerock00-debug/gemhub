@@ -156,3 +156,15 @@ Supabase Auth/Database/Edge Functions를 사용하고 있으므로, 실제 프�
 - [ ] 신고 대응 담당자 및 절차 준비
 - [ ] 백업/복구 절차 확인
 - [ ] 운영자가 최종 공개 승인
+
+
+## 2026-10-24 추가 보안 점검 기록
+
+- [x] 공개 거래글 SELECT 정책과 관리자 전용 SELECT 정책을 분리함. 공개 역할은 최근 48시간 이내이며 completed/hidden이 아닌 글만 조회하고, 관리자 조회는 로그인한 authenticated 역할의 관리자 확인 함수로 별도 처리함.
+- [x] `gemhub_is_admin()`을 SECURITY INVOKER로 변경하고 anon의 EXECUTE 권한을 제거함.
+- [x] `gemhub_pending_schedule_requests()` 및 `gemhub_review_schedule(...)`를 SECURITY INVOKER로 변경하고 익명 실행 권한을 제거함. 함수 내부 관리자 확인은 유지함.
+- [x] `gemhub_push_deliveries` 내부 테이블의 브라우저 역할(anon/authenticated) 권한을 제거함. Edge Function/service role 등 서버측 작업을 위한 테이블로 유지.
+- [x] 보안 advisor 재확인: 이전 SECURITY DEFINER 경고 3건이 사라짐. 남은 항목은 내부 테이블의 RLS 정책 없음(브라우저 권한 제거로 의도된 상태)과 유출 비밀번호 보호 비활성화임.
+- [x] 48시간 초과 일반 거래글 개수 재확인 결과 0개. 48시간/24시간 만료 글 정리 cron은 5분 간격으로 활성화됨.
+- [ ] 브라우저의 실제 회원/비회원/관리자 계정별 접근 테스트는 아직 완료하지 않음.
+- [ ] Supabase Auth 유출 비밀번호 보호는 Free 플랜에서 기능 제한이 있어 현재 미활성 상태. 업그레이드 또는 대체 가능한 보안 설정 검토 필요.
