@@ -3,7 +3,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.57.0";
 
 const cors = {
   "Access-Control-Allow-Origin": "https://sizerock00-debug.github.io",
-  "Access-Control-Allow-Headers": "authorization,apikey,content-type",
+  "Access-Control-Allow-Headers": "authorization,apikey,content-type,x-client-info,x-supabase-api-version",
   "Access-Control-Allow-Methods": "POST,OPTIONS",
 };
 
