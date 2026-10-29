@@ -1257,7 +1257,25 @@ const completed=new Set((postResult.data||[]).filter(p=>p.status==='completed').
 }catch(e){console.warn('대화 알림 확인 실패',e)}}
 const GEMHUB_VAPID_PUBLIC_KEY='BMewJf-r0jmk7wEQ5e6hRRJFYtPqPKIu5YycrCG4qb1LJDFep-5JHXP5IaFd4ba4yLuTx-q_EUWKJG0UOSXOezE';
 function gemhubBase64Bytes(base64){const raw=atob(base64.replace(/-/g,'+').replace(/_/g,'/')+'='.repeat((4-base64.length%4)%4));return Uint8Array.from(raw,c=>c.charCodeAt(0))}
-async function gemhubEnablePush(){if(!currentUser||!authClient)throw Error('로그인 후 이용해 주세요.');if(!('serviceWorker' in navigator)||!('PushManager' in window)||!('Notification' in window))throw Error('현재 브라우저에서 웹 푸시를 지원하지 않습니다.');if(Notification.permission==='denied')throw Error('브라우저 설정에서 겜허브 알림 차단을 해제해 주세요.');const permission=await Notification.requestPermission();if(permission!=='granted')throw Error('알림 권한을 허용해야 푸시 알림을 받을 수 있습니다.');const reg=await navigator.serviceWorker.register('./sw.js',{scope:'./'});await navigator.serviceWorker.ready;let sub=await reg.pushManager.getSubscription();if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:gemhubBase64Bytes(GEMHUB_VAPID_PUBLIC_KEY)});const json=sub.toJSON();const {error}=await authClient.from('gemhub_push_subscriptions').upsert({user_id:currentUser.id,endpoint:sub.endpoint,p256dh:json.keys.p256dh,auth_key:json.keys.auth_key,updated_at:new Date().toISOString()},{onConflict:'endpoint'});if(error)throw error;document.getElementById('chatAlertState').textContent='푸시 등록됨';return true}
+async function gemhubEnablePush(){
+if(!currentUser||!authClient)throw Error('로그인 후 이용해 주세요.');
+if(!('serviceWorker' in navigator)||!('PushManager' in window)||!('Notification' in window))throw Error('현재 브라우저에서 웹 푸시를 지원하지 않습니다.');
+if(Notification.permission==='denied')throw Error('브라우저 설정에서 겜허브 알림 차단을 해제해 주세요.');
+const permission=await Notification.requestPermission();
+if(permission!=='granted')throw Error('알림 권한을 허용해야 푸시 알림을 받을 수 있습니다.');
+let reg;
+try{reg=await navigator.serviceWorker.register('./sw.js',{scope:'./'});await navigator.serviceWorker.ready}catch(e){console.error('GEMHUB service worker registration failed',e);throw Error('알림 서비스 워커 등록에 실패했습니다. 페이지를 새로고침한 뒤 다시 시도해 주세요.')}
+let sub=await reg.pushManager.getSubscription();
+if(!sub){
+try{sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:gemhubBase64Bytes(GEMHUB_VAPID_PUBLIC_KEY)})}
+catch(e){console.error('GEMHUB push subscription failed',e);throw Error('브라우저 푸시 서비스가 기기 등록을 거부했습니다. PC방 네트워크/크롬 정책 또는 푸시 서비스 문제일 수 있습니다. 개인 PC에서도 반복되면 서버 키 설정을 점검해야 합니다.')}
+}
+const json=sub.toJSON();
+const {error}=await authClient.from('gemhub_push_subscriptions').upsert({user_id:currentUser.id,endpoint:sub.endpoint,p256dh:json.keys.p256dh,auth_key:json.keys.auth,updated_at:new Date().toISOString()},{onConflict:'endpoint'});
+if(error){console.error('GEMHUB subscription database save failed',error);throw Error('브라우저 등록은 되었지만 겜허브 서버에 저장하지 못했습니다. 로그인 상태를 새로고침한 뒤 다시 시도해 주세요.')}
+document.getElementById('chatAlertState').textContent='푸시 등록됨';
+return true
+}
 async function gemhubOpenPushDeepLink(){const params=new URLSearchParams(location.search);const post=params.get('chatPost'),sender=params.get('chatUser');if(!post||!sender||!currentUser)return;params.delete('chatPost');params.delete('chatUser');history.replaceState(null,'',location.pathname+(params.toString()?'?'+params:'')+location.hash);openMessageComposer(sender,post)}
 let gemhubAlertTimer=null,gemhubAlertUser=null,gemhubAlertLatest=null,gemhubAlertAudio=null,gemhubAlertBusy=false;
 const gemhubAlertCard=document.createElement('button');gemhubAlertCard.type='button';gemhubAlertCard.className='gemhub-arrival-alert';gemhubAlertCard.hidden=true;document.body.appendChild(gemhubAlertCard);let gemhubAlertHideTimer=null,gemhubAlertTarget=null;
