@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>겜허브 푸시 알림 진단</title>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#0b0717;color:#f5f0ff;font:16px/1.6 system-ui,-apple-system,"Malgun Gothic",sans-serif;padding:24px}.wrap{max-width:720px;margin:0 auto}.card{background:#17102b;border:1px solid #8b36ff;border-radius:16px;padding:22px;margin:16px 0;box-shadow:0 0 20px #6c20b633}h1{font-size:25px;margin:0 0 8px;color:#ffe66b}p{color:#d8cbed}.status{padding:12px;border-radius:10px;background:#24183c;margin:10px 0;overflow-wrap:anywhere}.ok{border-left:4px solid #43d17a}.warn{border-left:4px solid #f6bd4b}.bad{border-left:4px solid #ff637d}button,a.btn{display:inline-block;background:#7c2cff;color:white;border:0;border-radius:10px;padding:12px 16px;font-weight:700;font-size:15px;cursor:pointer;text-decoration:none;margin:6px 6px 6px 0}button:disabled{opacity:.5}small{color:#b8a9d0}code{overflow-wrap:anywhere;color:#ffe66b}
+</style>
+</head>
+<body><main class="wrap">
+<h1>🔔 겜허브 푸시 알림 진단</h1>
+<p>이 페이지는 푸시 등록 오류가 브라우저/네트워크에서 발생하는지 확인하는 별도 시험 도구입니다. 로그인이나 개인정보 입력은 필요하지 않습니다.</p>
+<div class="card">
+<h2>현재 환경 확인</h2>
+<div id="env" class="status">확인 중…</div>
+<div id="perm" class="status">알림 권한 확인 중…</div>
+<div id="sw" class="status">서비스 워커 확인 전</div>
+<div id="push" class="status">푸시 등록 확인 전</div>
+<button id="run">푸시 등록 시험</button>
+<button id="clear">이 페이지 결과 지우기</button>
+</div>
+<div class="card">
+<h2>시험 결과 해석</h2>
+<ul>
+<li><b>등록 성공</b>: 이 브라우저에서 푸시 구독 생성이 가능하다는 뜻입니다. 이후 겜허브 홈페이지에서 <b>대화 도착 알림</b>을 눌러 해당 기기를 계정에 연결하세요.</li>
+<li><b>Push service error</b>: 브라우저 푸시 서비스, PC방 네트워크/정책 또는 해당 환경의 문제일 수 있습니다.</li>
+<li><b>InvalidAccessError / 키 오류</b>: 푸시 공개 키 또는 구독 설정을 추가로 확인해야 합니다.</li>
+</ul>
+<a class="btn" href="./">겜허브 홈페이지로 돌아가기</a>
+<p><small>이 시험은 알림을 실제로 보내는 테스트가 아니라, 브라우저가 푸시 구독을 만들 수 있는지 확인합니다. 등록한 구독은 같은 겜허브 사이트 범위에서 재사용할 수 있습니다.</small></p>
+</div>
+</main>
+<script>
+const PUBLIC_KEY='BMewJf-r0jmk7wEQ5e6hRRJFYtPqPKIu5YycrCG4qb1LJDFep-5JHXP5IaFd4ba4yLuTx-q_EUWKJG0UOSXOezE';
+const el=id=>document.getElementById(id);
+function report(id,text,kind='warn'){el(id).className='status '+kind;el(id).textContent=text}
+function bytes(base64){const raw=atob(base64.replace(/-/g,'+').replace(/_/g,'/')+'='.repeat((4-base64.length%4)%4));return Uint8Array.from(raw,c=>c.charCodeAt(0))}
+report('env','주소: '+location.origin+location.pathname+' · HTTPS: '+(location.protocol==='https:'?'예':'아니요')+' · 브라우저: '+navigator.userAgent,'ok');
+report('perm','현재 알림 권한: '+(('Notification'in window)?Notification.permission:'지원 안 됨'),('Notification'in window&&Notification.permission!=='denied')?'ok':'warn');
+el('run').addEventListener('click',async()=>{
+ const b=el('run');b.disabled=true;report('push','시험 진행 중…','warn');
+ try{
+  if(location.protocol!=='https:'&&location.hostname!=='localhost')throw new Error('HTTPS가 아닙니다. HTTPS 주소에서 실행해야 합니다.');
+  if(!('serviceWorker'in navigator))throw new Error('이 브라우저에서 Service Worker를 지원하지 않습니다.');
+  if(!('PushManager'in window))throw new Error('이 브라우저에서 Push API를 지원하지 않습니다.');
+  if(!('Notification'in window))throw new Error('이 브라우저에서 알림을 지원하지 않습니다.');
+  let permission=Notification.permission;
+  if(permission!=='granted')permission=await Notification.requestPermission();
+  report('perm','현재 알림 권한: '+permission,permission==='granted'?'ok':'bad');
+  if(permission!=='granted')throw new Error('알림 권한이 허용되지 않았습니다: '+permission);
+  let reg;
+  try{reg=await navigator.serviceWorker.register('./sw.js',{scope:'./'});await navigator.serviceWorker.ready;report('sw','서비스 워커 등록 성공 · 범위: '+reg.scope,'ok')}
+  catch(e){report('sw','서비스 워커 등록 실패 · '+e.name+': '+e.message,'bad');throw e}
+  let sub=await reg.pushManager.getSubscription();
+  if(!sub){
+   try{sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:bytes(PUBLIC_KEY)})}
+   catch(e){report('push','푸시 구독 실패 · '+e.name+': '+e.message,'bad');throw e}
+  }
+  const j=sub.toJSON();
+  report('push','푸시 구독 생성 성공! · 공개키 형식 정상 · 구독 엔드포인트: '+new URL(sub.endpoint).hostname+' · 키 필드: '+Object.keys(j.keys||{}).join(', '),'ok');
+ }catch(e){if(!el('push').classList.contains('bad'))report('push','시험 실패 · '+(e.name||'Error')+': '+(e.message||String(e)),'bad');console.error('GemHub push diagnostic',e)}
+ finally{b.disabled=false}
+});
+el('clear').addEventListener('click',()=>{report('perm','현재 알림 권한: '+(('Notification'in window)?Notification.permission:'지원 안 됨'),'warn');report('sw','서비스 워커 확인 전','warn');report('push','푸시 등록 확인 전','warn')});
+</script>
+</body></html>
